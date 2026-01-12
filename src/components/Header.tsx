@@ -15,20 +15,7 @@ const Header = () => {
   const navItems = ["Services", "About Us", "Blogs", "Bookings"];
   return <>
       {/* Top Banner */}
-      <motion.div initial={{
-      y: -100
-    }} animate={{
-      y: 0
-    }} className="gradient-accent py-2 px-3 md:px-4 text-center">
-        <div className="container mx-auto flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-          <p className="text-xs md:text-sm text-accent-foreground leading-tight">
-            ✨ Dr. Herbert  
-          </p>
-          <Button variant="outline" size="sm" className="border-accent-foreground/30 text-accent-foreground hover:bg-accent-foreground/10 text-xs h-7 px-2 md:px-3">
-            Download
-          </Button>
-        </div>
-      </motion.div>
+      
 
       {/* Main Navigation */}
       <motion.header initial={{
