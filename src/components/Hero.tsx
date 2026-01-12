@@ -29,7 +29,7 @@ const Hero = () => {
           delay: 0.3
         }}>
             <h1 className="font-script text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-2">
-              <span className="non-italic font-sans">​The Welness Escape             </span>
+              <span className="non-italic font-sans font-bold">​The Welness Escape             </span>
             </h1>
             <p className="font-display text-lg sm:text-2xl md:text-3xl font-semibold text-foreground tracking-wide uppercase mb-3 md:mb-5">
               FUTURE OF WELLNESS
