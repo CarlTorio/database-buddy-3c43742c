@@ -63,7 +63,7 @@ const Hero = () => {
               Book Now
             </Button>
             <Button size="default" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/5 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
-              Shop Now
+              Join Now
             </Button>
           </motion.div>
         </div>
