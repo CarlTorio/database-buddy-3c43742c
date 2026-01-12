@@ -50,9 +50,6 @@ const Header = () => {
             </ul>
 
             <div className="hidden md:flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="text-foreground/70 hover:text-foreground">
-                <Search className="h-5 w-5" />
-              </Button>
               <Button className="gradient-accent text-accent-foreground hover:opacity-90 transition-opacity">
                 Join Now
               </Button>
