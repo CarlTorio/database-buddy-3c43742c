@@ -5,9 +5,9 @@ const allServices = [
   { title: "Cafe by The Beach", image: "https://i.imgur.com/vjcLpp8.jpeg" },
   { title: "Detox & Slimming", image: "https://i.imgur.com/UKZXsAI.png" },
   { title: "Head Spa", image: "https://i.imgur.com/laPHsD7.png" },
-  { title: "Body Scrub", image: "https://i.imgur.com/bxPNYWE.png" },
+  { title: "Body Scrub", image: "https://i.imgur.com/naDyJ5P.png" },
   { title: "Yoga", image: "https://i.imgur.com/Up1lvBw.png" },
-  { title: "Massage", image: "https://i.imgur.com/GTWS6Gh.png" },
+  { title: "Massage", image: "https://i.imgur.com/LXAK7wa.png" },
   { title: "Wellness Drips", image: "https://i.imgur.com/FzFbPt9.png" },
   { title: "Facials", image: "https://i.imgur.com/bXaHFzI.png" },
 ];
