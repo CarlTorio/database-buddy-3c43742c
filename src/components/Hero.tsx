@@ -12,7 +12,7 @@ const Hero = () => {
       ease: "easeOut"
     }}>
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent z-10" />
-        <img src="https://i.imgur.com/vxnb9U6.png" alt="Beautiful women with radiant skin" className="w-full h-full object-cover object-center" />
+        <img src="https://i.imgur.com/Ehl3eHG.png" alt="Beautiful women with radiant skin" className="w-full h-full object-cover object-center" />
       </motion.div>
 
       {/* Content */}
@@ -29,7 +29,7 @@ const Hero = () => {
           delay: 0.3
         }}>
             <h1 className="font-script text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-2">
-              <span className="italic">Your best skin</span>
+              <span className="italic font-sans">​The Welness Escape             </span>
             </h1>
             <p className="font-display text-lg sm:text-2xl md:text-3xl font-semibold text-foreground tracking-wide uppercase mb-3 md:mb-5">
               FUTURE OF WELLNESS
