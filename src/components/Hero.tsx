@@ -27,10 +27,10 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <h1 className="font-script text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-foreground leading-tight mb-2">
+            <h1 className="font-script text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-2">
               <span className="italic">Your best skin</span>
             </h1>
-            <p className="font-display text-base sm:text-xl md:text-2xl font-semibold text-foreground tracking-wide uppercase mb-3 md:mb-5">
+            <p className="font-display text-lg sm:text-2xl md:text-3xl font-semibold text-foreground tracking-wide uppercase mb-3 md:mb-5">
               FUTURE OF WELLNESS
             </p>
           </motion.div>
@@ -39,7 +39,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-muted-foreground text-sm sm:text-base md:text-base lg:text-lg max-w-md mb-5 md:mb-6 leading-relaxed"
+            className="text-muted-foreground text-base sm:text-lg md:text-xl lg:text-2xl max-w-md mb-5 md:mb-6 leading-relaxed"
           >
             Your destination for advanced skincare and aesthetic treatments. Elevate your beauty and well-being with us.
           </motion.p>
