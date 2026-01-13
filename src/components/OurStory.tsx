@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -6,7 +6,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
@@ -19,10 +18,21 @@ const storyImages = [
 
 const OurStory = () => {
   const ref = useRef(null);
+  const containerRef = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
-    <section className="min-h-[400px] md:min-h-[450px] lg:min-h-[500px] bg-secondary text-primary-foreground relative overflow-hidden" ref={ref}>
+    <section 
+      ref={containerRef}
+      className="min-h-[400px] md:min-h-[450px] lg:min-h-[500px] bg-secondary text-primary-foreground relative overflow-hidden"
+    >
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
         <svg viewBox="0 0 400 400" className="w-full h-full">
@@ -43,8 +53,11 @@ const OurStory = () => {
         </svg>
       </div>
 
-      {/* Full-width Image with Gradient Overlay */}
-      <div className="absolute inset-0">
+      {/* Full-width Image with Parallax Effect */}
+      <motion.div 
+        className="absolute inset-0 h-[120%] -top-[10%]"
+        style={{ y }}
+      >
         <Carousel
           opts={{
             loop: true,
@@ -73,9 +86,9 @@ const OurStory = () => {
         </Carousel>
         {/* Gradient Overlay - transparent left to dark right */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-secondary/70 to-secondary" />
-      </div>
+      </motion.div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative z-10" ref={ref}>
         <div className="flex justify-end">
           <motion.div
             initial={{ opacity: 0, x: 60 }}
