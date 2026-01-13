@@ -5,7 +5,7 @@ import ServicesGrid from "@/components/ServicesGrid";
 import OurStory from "@/components/OurStory";
 import MembershipPlans from "@/components/MembershipPlans";
 import Testimonials from "@/components/Testimonials";
-import SocialFeed from "@/components/SocialFeed";
+import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import FloatingBookButton from "@/components/FloatingBookButton";
 
@@ -20,7 +20,7 @@ const Index = () => {
         <OurStory />
         <MembershipPlans />
         <Testimonials />
-        <SocialFeed />
+        <ContactSection />
       </main>
       <Footer />
       <FloatingBookButton />
