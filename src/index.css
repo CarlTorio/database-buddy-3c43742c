@@ -54,7 +54,7 @@
     /* Gradient definitions */
     --gradient-accent: linear-gradient(135deg, hsl(55 40% 35%) 0%, hsl(55 44% 22%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(55 14% 94%) 0%, hsl(55 20% 92%) 100%);
-    --gradient-card-overlay: linear-gradient(to top, hsla(55, 44%, 15%, 1) 0%, hsla(55, 44%, 15%, 0.85) 35%, transparent 70%);
+    --gradient-card-overlay: linear-gradient(to top, hsla(55, 44%, 15%, 1) 0%, hsla(55, 44%, 15%, 0.95) 40%, hsla(55, 44%, 15%, 0.5) 60%, transparent 80%);
 
     /* Shadows */
     --shadow-soft: 0 4px 20px -4px hsla(55, 44%, 22%, 0.1);
@@ -131,7 +131,7 @@
   }
 
   .gradient-card-overlay {
-    background: linear-gradient(to top, hsla(55, 44%, 15%, 1) 0%, hsla(55, 44%, 15%, 0.85) 35%, transparent 70%);
+    background: linear-gradient(to top, hsla(55, 44%, 15%, 1) 0%, hsla(55, 44%, 15%, 0.95) 40%, hsla(55, 44%, 15%, 0.5) 60%, transparent 80%);
   }
 
   .text-gradient-accent {
