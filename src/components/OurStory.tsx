@@ -65,7 +65,7 @@ const OurStory = () => {
                 <img
                   src={src}
                   alt={`SkinStation Clinic ${index + 1}`}
-                  className="w-full h-full object-cover object-bottom"
+                  className="w-full h-full object-cover object-[center_90%]"
                 />
               </CarouselItem>
             ))}
