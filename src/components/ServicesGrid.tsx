@@ -52,10 +52,10 @@ const ServicesGrid = () => {
               />
               
               {/* Default gradient - bottom half */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[hsla(55,44%,15%,1)] via-[hsla(55,44%,15%,0.8)] via-25% to-transparent to-50% group-hover:opacity-0 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[hsla(150,40%,12%,0.85)] via-[hsla(150,40%,12%,0.5)] via-25% to-transparent to-50% group-hover:opacity-0 transition-opacity duration-300" />
               
               {/* Hover gradient - full cover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[hsla(55,44%,15%,1)] via-[hsla(55,44%,15%,0.9)] to-[hsla(55,44%,15%,0.7)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[hsla(150,40%,12%,0.85)] via-[hsla(150,40%,12%,0.6)] to-[hsla(150,40%,12%,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               {/* Default text position - bottom */}
               <div className="absolute bottom-0 left-0 right-0 p-2 md:p-3 text-center group-hover:opacity-0 transition-opacity duration-300">
