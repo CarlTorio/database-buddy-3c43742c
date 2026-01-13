@@ -65,7 +65,7 @@ const FeaturedServices = () => {
                 <h3 className="font-display text-base md:text-lg lg:text-xl font-semibold mb-1 leading-tight">
                   {service.title}
                 </h3>
-                <p className="text-accent-foreground/80 text-xs md:text-sm leading-relaxed opacity-100 md:opacity-0 md:group-hover:opacity-100 transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-all duration-300 min-h-[2.5rem] md:min-h-0">
+                <p className="text-accent-foreground/80 text-xs md:text-sm leading-relaxed">
                   {service.description}
                 </p>
               </div>
