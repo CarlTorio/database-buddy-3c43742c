@@ -18,6 +18,15 @@ const ServicesGrid = () => {
 
   // Calculate row index for staggered animation (4 columns on desktop, 2 on mobile)
   const getRowIndex = (index: number) => Math.floor(index / 4);
+  
+  // Get initial X position based on column position
+  const getInitialX = (index: number) => {
+    const colIndex = index % 4;
+    if (colIndex === 0) return -100; // Far left
+    if (colIndex === 1) return -50;  // Center-left
+    if (colIndex === 2) return 50;   // Center-right
+    return 100; // Far right
+  };
 
   return (
     <section id="services" className="py-10 md:py-14 bg-cream" ref={ref}>
@@ -48,14 +57,17 @@ const ServicesGrid = () => {
                 key={service.title}
                 initial={{ 
                   opacity: 0, 
-                  y: -60
+                  x: getInitialX(index),
+                  y: -30
                 }}
                 animate={isInView ? { 
                   opacity: 1, 
+                  x: 0,
                   y: 0
                 } : { 
                   opacity: 0, 
-                  y: -60
+                  x: getInitialX(index),
+                  y: -30
                 }}
                 transition={{ 
                   duration: 0.6, 
