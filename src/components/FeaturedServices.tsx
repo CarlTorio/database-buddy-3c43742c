@@ -61,10 +61,10 @@ const FeaturedServices = () => {
               <img src={service.image} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               
               {/* Default gradient - bottom half */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[hsla(150,40%,12%,0.85)] via-[hsla(150,40%,12%,0.5)] via-25% to-transparent to-50% group-hover:opacity-0 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/50 via-25% to-transparent to-50% group-hover:opacity-0 transition-opacity duration-300" />
               
               {/* Hover gradient - full cover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[hsla(150,40%,12%,0.85)] via-[hsla(150,40%,12%,0.6)] to-[hsla(150,40%,12%,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/60 to-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               {/* Default text position - bottom */}
               <div className="absolute bottom-0 left-0 right-0 p-3 md:p-5 text-accent-foreground group-hover:opacity-0 transition-opacity duration-300">
