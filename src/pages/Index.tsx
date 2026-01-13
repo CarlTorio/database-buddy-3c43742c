@@ -3,7 +3,7 @@ import Hero from "@/components/Hero";
 import FeaturedServices from "@/components/FeaturedServices";
 import ServicesGrid from "@/components/ServicesGrid";
 import OurStory from "@/components/OurStory";
-import AppShowcase from "@/components/AppShowcase";
+import MembershipPlans from "@/components/MembershipPlans";
 import Testimonials from "@/components/Testimonials";
 import SocialFeed from "@/components/SocialFeed";
 import Footer from "@/components/Footer";
@@ -18,7 +18,7 @@ const Index = () => {
         <FeaturedServices />
         <ServicesGrid />
         <OurStory />
-        <AppShowcase />
+        <MembershipPlans />
         <Testimonials />
         <SocialFeed />
       </main>
