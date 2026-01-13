@@ -24,7 +24,7 @@ const OurStory = () => {
   return (
     <section className="py-10 md:py-14 bg-cream-dark relative overflow-hidden" ref={ref}>
       {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
+      <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
         <svg viewBox="0 0 400 400" className="w-full h-full">
           <path
             d="M50,200 Q150,100 250,200 T450,200"
@@ -83,15 +83,15 @@ const OurStory = () => {
             <motion.div
               animate={{ y: [0, -15, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-4 -right-4 w-24 h-24 gradient-accent rounded-xl -z-10"
+              className="absolute -bottom-4 -right-4 w-24 h-24 gradient-accent rounded-xl -z-10 pointer-events-none"
             />
           </motion.div>
 
-          {/* Content */}
           <motion.div
             initial={{ opacity: 0, x: 60 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="relative z-10"
           >
             <h2 className="font-display text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold text-foreground mb-3 md:mb-4">
               Our Story
