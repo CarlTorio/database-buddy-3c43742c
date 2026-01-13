@@ -2,19 +2,6 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
-
-const storyImages = [
-  "https://i.imgur.com/mUVIGeu.jpeg",
-  "https://i.imgur.com/XWTQjvN.jpeg",
-  "https://i.imgur.com/eaexp29.jpeg",
-  "https://i.imgur.com/bYBt8fD.jpeg",
-];
 
 const OurStory = () => {
   const ref = useRef(null);
@@ -22,93 +9,49 @@ const OurStory = () => {
 
   return (
     <section 
-      className="min-h-[400px] md:min-h-[450px] lg:min-h-[500px] bg-secondary text-primary-foreground relative overflow-hidden"
       ref={ref}
+      className="relative min-h-[500px] md:min-h-[600px] lg:min-h-[100vh]"
+      style={{
+        backgroundImage: `url('https://i.imgur.com/mUVIGeu.jpeg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none z-20">
-        <svg viewBox="0 0 400 400" className="w-full h-full">
-          <path
-            d="M50,200 Q150,100 250,200 T450,200"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-accent"
-          />
-          <path
-            d="M50,250 Q150,150 250,250 T450,250"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="text-accent"
-          />
-        </svg>
-      </div>
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/50" />
 
-      {/* Background Carousel with Images */}
-      <div className="absolute inset-0">
-        <Carousel
-          opts={{
-            loop: true,
-            dragFree: true,
-          }}
-          plugins={[
-            Autoplay({
-              delay: 3000,
-              stopOnInteraction: false,
-              stopOnMouseEnter: true,
-            }),
-          ]}
-          className="w-full h-full"
+      {/* Content container that scrolls over the fixed background */}
+      <div className="relative z-10 min-h-[500px] md:min-h-[600px] lg:min-h-[100vh] flex items-center justify-center md:justify-end px-4 md:px-8 lg:px-20 py-16">
+        <motion.div
+          initial={{ opacity: 0, x: 60 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="max-w-xl bg-background/95 p-8 md:p-12 rounded-2xl shadow-elevated"
         >
-          <CarouselContent className="h-full -ml-0">
-            {storyImages.map((src, index) => (
-              <CarouselItem key={index} className="h-full pl-0 basis-full">
-                <img 
-                  src={src}
-                  alt={`Wellness resort ${index + 1}`}
-                  className="w-full h-full object-cover object-center"
-                  style={{ objectPosition: 'center 90%' }}
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
-        {/* Gradient Overlay - transparent left to dark right */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-secondary/70 to-secondary" />
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex justify-end">
-          <motion.div
-            initial={{ opacity: 0, x: 60 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="relative z-10 lg:w-1/2 py-8 md:py-12"
-          >
-            <h2 className="font-display text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold text-primary-foreground mb-3 md:mb-4">
-              Our Story
-            </h2>
-            <div className="space-y-2 md:space-y-3 text-primary-foreground/80 text-xs md:text-sm lg:text-base leading-relaxed">
-              <p>
-                Nestled in Maslog, Danao City, Cebu, Hilomè Wellness Resort is a sanctuary where healing begins in silence.
-              </p>
-              <p>
-                Founded by Dr. Herbert Ryan Cruz of Cruzskin Medical and Aesthetic Center, Hilomè draws its name from the Filipino word "Hilom" (healing) and "È" (Elegance)—embodying wellness delivered with grace and sophistication, rooted in Filipino heritage.
-              </p>
-            </div>
-            <div className="mt-6">
-              <Link to="/our-story">
-                <Button
-                  size="default"
-                  className="gradient-accent text-accent-foreground hover:opacity-90 rounded-full px-6 text-sm transition-transform hover:scale-105"
-                >
-                  Read More
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mb-6">
+            Our Story
+          </h2>
+          <div className="space-y-4 text-muted-foreground text-base md:text-lg leading-relaxed">
+            <p>
+              Nestled in Maslog, Danao City, Cebu, Hilomè Wellness Resort is a sanctuary where healing begins in silence.
+            </p>
+            <p>
+              Founded by Dr. Herbert Ryan Cruz of Cruzskin Medical and Aesthetic Center, Hilomè draws its name from the Filipino word "Hilom" (healing) and "È" (Elegance)—embodying wellness delivered with grace and sophistication, rooted in Filipino heritage.
+            </p>
+          </div>
+          <div className="mt-8">
+            <Link to="/our-story">
+              <Button
+                size="lg"
+                className="gradient-accent text-accent-foreground hover:opacity-90 rounded-full px-8 text-base transition-all hover:scale-105 hover:shadow-lg"
+              >
+                Read More
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
