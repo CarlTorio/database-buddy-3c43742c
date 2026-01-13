@@ -15,8 +15,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Poppins", "sans-serif"],
-        display: ["Cormorant Garamond", "serif"],
-        script: ["Cormorant Garamond", "serif"],
+        display: ["Poppins", "sans-serif"],
+        script: ["Poppins", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
