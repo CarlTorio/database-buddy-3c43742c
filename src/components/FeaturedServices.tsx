@@ -36,9 +36,9 @@ const FeaturedServices = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 md:mb-8"
+          className="flex flex-col items-center gap-3 mb-6 md:mb-8"
         >
-          <h2 className="font-display text-xl md:text-2xl lg:text-3xl font-semibold text-foreground">
+          <h2 className="font-display text-xl md:text-2xl lg:text-3xl font-semibold text-foreground text-center">
             Featured Services
           </h2>
           <motion.a
