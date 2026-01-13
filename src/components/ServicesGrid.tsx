@@ -52,19 +52,13 @@ const ServicesGrid = () => {
               />
               <div className="absolute inset-0 gradient-card-overlay opacity-70 group-hover:opacity-85 transition-opacity duration-300" />
               
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-2 md:p-3 text-center">
-                <h3 className="font-display text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold text-accent-foreground mb-1">
+              <div className="absolute bottom-0 left-0 right-0 p-2 md:p-3 text-center">
+                <h3 className="font-display text-[10px] sm:text-xs md:text-sm lg:text-base font-semibold text-accent-foreground mb-0.5">
                   {service.title}
                 </h3>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileHover={{ opacity: 1, y: 0 }}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >
-                  <span className="text-xs text-accent-foreground/80 underline underline-offset-4">
-                    Learn More
-                  </span>
-                </motion.div>
+                <p className="text-[8px] sm:text-[9px] md:text-xs text-accent-foreground/80 leading-tight line-clamp-2">
+                  {service.description}
+                </p>
               </div>
             </motion.div>
           ))}
