@@ -28,7 +28,7 @@ const OurStory = () => {
           initial={{ opacity: 0, x: 60 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="max-w-xl bg-background/95 p-8 md:p-12 rounded-2xl shadow-elevated"
+          className="max-w-xl bg-background/30 p-8 md:p-12 rounded-2xl shadow-elevated"
         >
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mb-6">
             Our Story
