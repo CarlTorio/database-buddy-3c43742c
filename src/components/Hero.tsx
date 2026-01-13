@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 const Hero = () => {
-  return <section className="relative min-h-[70vh] md:min-h-[90vh] flex items-center overflow-hidden pt-8 md:pt-0">
+  return <section className="relative min-h-[60vh] md:min-h-[85vh] flex items-center overflow-hidden pt-8 md:pt-0">
       {/* Background Image with Parallax */}
       <motion.div className="absolute inset-0 z-0" initial={{
       scale: 1.1
