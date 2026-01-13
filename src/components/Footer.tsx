@@ -16,10 +16,11 @@ const Footer = () => {
     Services: {
       type: "links",
       items: [
-        { text: "Anti-Aging Treatment", href: "#" },
-        { text: "Facial & Diamond Peel", href: "#" },
-        { text: "Laser Treatment", href: "#" },
-        { text: "Slimming & Firming", href: "#" },
+        { text: "Facials", href: "#" },
+        { text: "Massage", href: "#" },
+        { text: "Detox & Slimming", href: "#" },
+        { text: "Body Scrub", href: "#" },
+        { text: "and many more", href: "#", isPlain: true },
       ]
     },
     Help: {
@@ -90,7 +91,11 @@ const Footer = () => {
                 ) : (
                   section.items.map((item) => (
                     <li key={item.text}>
-                      {item.isRoute ? (
+                      {item.isPlain ? (
+                        <span className="text-accent-foreground/50 italic text-[10px] md:text-xs">
+                          {item.text}
+                        </span>
+                      ) : item.isRoute ? (
                         <Link
                           to={item.href}
                           className="text-accent-foreground/70 hover:text-accent-foreground transition-colors text-[10px] md:text-xs"
