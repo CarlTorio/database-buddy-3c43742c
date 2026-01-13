@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 
@@ -18,22 +18,19 @@ const services = [{
 
 const FeaturedServices = () => {
   const ref = useRef(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
+  const isInView = useInView(ref, {
+    once: false,
+    amount: 0.3
   });
-
-  // Fade in when entering (0-0.3), stay visible (0.3-0.7), fade out when leaving (0.7-1)
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [50, 0, 0, -50]);
 
   return (
     <section className="py-12 md:py-16 bg-background" ref={ref}>
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div 
-          style={{ opacity, y }}
+          initial={{ opacity: 0, y: 30 }} 
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} 
+          transition={{ duration: 0.6, ease: "easeOut" }} 
           className="flex flex-col items-center gap-3 mb-6 md:mb-8"
         >
           <h2 className="font-display text-xl md:text-2xl lg:text-3xl font-semibold text-foreground text-center">
@@ -50,14 +47,36 @@ const FeaturedServices = () => {
         </motion.div>
 
         {/* Services Grid */}
-        <motion.div 
-          style={{ opacity, y }}
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4 lg:gap-5 max-w-4xl mx-auto"
-        >
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 md:gap-4 lg:gap-5 max-w-4xl mx-auto">
           {services.map((service, index) => {
+            const isLeftColumn = index === 0;
+            const isRightColumn = index === 2;
+            
+            const getInitialX = () => {
+              if (isLeftColumn) return -100;
+              if (isRightColumn) return 100;
+              return 0;
+            };
+
             return (
               <motion.div 
                 key={service.title} 
+                initial={{
+                  opacity: 0,
+                  x: getInitialX()
+                }} 
+                animate={isInView ? {
+                  opacity: 1,
+                  x: 0
+                } : {
+                  opacity: 0,
+                  x: getInitialX()
+                }} 
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1,
+                  ease: "easeOut"
+                }}
                 className="group relative overflow-hidden rounded-lg md:rounded-xl aspect-[4/5] cursor-pointer" 
                 whileHover={{ y: -8 }}
               >
@@ -95,7 +114,7 @@ const FeaturedServices = () => {
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
