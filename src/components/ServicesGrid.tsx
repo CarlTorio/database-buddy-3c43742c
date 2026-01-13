@@ -14,7 +14,7 @@ const allServices = [
 
 const ServicesGrid = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
     <section id="services" className="py-10 md:py-14 bg-cream" ref={ref}>
@@ -37,33 +37,21 @@ const ServicesGrid = () => {
         {/* Services Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 lg:gap-4 max-w-4xl mx-auto">
           {allServices.map((service, index) => {
-            // Determine animation direction based on column position
-            const columnPosition = index % 4; // 0, 1, 2, 3 for 4-column grid
-            const isLeftColumn = columnPosition === 0;
-            const isRightColumn = columnPosition === 3;
-            
-            // Get initial x position based on column
-            const getInitialX = () => {
-              if (isLeftColumn) return -100;
-              if (isRightColumn) return 100;
-              return 0;
-            };
-
             return (
               <motion.div
                 key={service.title}
                 initial={{ 
                   opacity: 0, 
-                  x: getInitialX()
+                  y: -60
                 }}
                 animate={isInView ? { 
                   opacity: 1, 
-                  x: 0
+                  y: 0
                 } : {}}
                 transition={{ 
-                  duration: 0.8, 
-                  delay: index * 0.1,
-                  ease: [0.4, 0, 0.2, 1]
+                  duration: 1.5, 
+                  delay: index * 0.15,
+                  ease: [0.25, 0.1, 0.25, 1]
                 }}
                 className="group relative overflow-hidden rounded-lg md:rounded-xl aspect-[4/5] cursor-pointer"
                 whileHover={{ y: -8 }}
