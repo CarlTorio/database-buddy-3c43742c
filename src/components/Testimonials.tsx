@@ -30,12 +30,15 @@ const testimonials = [
   },
 ];
 
+// Duplicate testimonials for seamless loop
+const duplicatedTestimonials = [...testimonials, ...testimonials];
+
 const Testimonials = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-10 md:py-14 bg-background" ref={ref}>
+    <section className="py-10 md:py-14 bg-background overflow-hidden" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
@@ -45,17 +48,25 @@ const Testimonials = () => {
         >
           Read What They Loved About Hilomè
         </motion.h2>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 lg:gap-6">
-          {testimonials.map((testimonial, index) => (
+      {/* Carousel Container */}
+      <div className="relative w-full">
+        {/* Gradient fade edges */}
+        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+
+        {/* Scrolling Track */}
+        <div className="flex gap-4 md:gap-6 animate-scroll-left hover:[animation-play-state:paused] w-fit">
+          {duplicatedTestimonials.map((testimonial, index) => (
             <motion.div
-              key={testimonial.author}
+              key={`${testimonial.author}-${index}`}
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="relative"
+              transition={{ duration: 0.6, delay: (index % testimonials.length) * 0.1 }}
+              className="flex-shrink-0 w-[280px] md:w-[350px]"
             >
-              <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 shadow-soft hover:shadow-card transition-shadow duration-300 h-full">
+              <div className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 shadow-soft hover:shadow-card hover:-translate-y-2 hover:scale-105 transition-all duration-300 h-full cursor-pointer">
                 {/* Quote Icon */}
                 <div className="mb-3 md:mb-4">
                   <div className="w-8 h-8 md:w-10 md:h-10 gradient-accent rounded-full flex items-center justify-center">
@@ -64,7 +75,7 @@ const Testimonials = () => {
                 </div>
 
                 {/* Quote Text */}
-                <p className="text-foreground/80 leading-relaxed mb-4 md:mb-6 text-xs md:text-sm lg:text-base italic">
+                <p className="text-foreground/80 leading-relaxed mb-4 md:mb-6 text-xs md:text-sm lg:text-base italic min-h-[80px] md:min-h-[100px]">
                   "{testimonial.quote}"
                 </p>
 

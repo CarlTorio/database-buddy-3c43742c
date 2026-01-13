@@ -172,6 +172,20 @@
     }
   }
 
+  /* Infinite scroll carousel animation */
+  .animate-scroll-left {
+    animation: scroll-left 35s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
   .writing-vertical {
     writing-mode: vertical-rl;
     text-orientation: mixed;
