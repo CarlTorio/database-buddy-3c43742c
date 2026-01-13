@@ -2,14 +2,14 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 const allServices = [
-  { title: "Cafe by The Beach", image: "https://i.imgur.com/vjcLpp8.jpeg" },
-  { title: "Detox & Slimming", image: "https://i.imgur.com/UKZXsAI.png" },
-  { title: "Head Spa", image: "https://i.imgur.com/laPHsD7.png" },
-  { title: "Body Scrub", image: "https://i.imgur.com/naDyJ5P.png" },
-  { title: "Yoga", image: "https://i.imgur.com/Up1lvBw.png" },
-  { title: "Massage", image: "https://i.imgur.com/LXAK7wa.png" },
-  { title: "Wellness Drips", image: "https://i.imgur.com/FzFbPt9.png" },
-  { title: "Facials", image: "https://i.imgur.com/bXaHFzI.png" },
+  { title: "Cafe by The Beach", description: "Enjoy healthy refreshments and snacks with ocean views.", image: "https://i.imgur.com/vjcLpp8.jpeg" },
+  { title: "Detox & Slimming", description: "Body contouring and detoxifying treatments for a healthier you.", image: "https://i.imgur.com/UKZXsAI.png" },
+  { title: "Head Spa", description: "Scalp therapy and hair treatments for ultimate relaxation.", image: "https://i.imgur.com/laPHsD7.png" },
+  { title: "Body Scrub", description: "Exfoliating treatments to reveal smooth, glowing skin.", image: "https://i.imgur.com/naDyJ5P.png" },
+  { title: "Yoga", description: "Mindful movement sessions to restore balance and flexibility.", image: "https://i.imgur.com/Up1lvBw.png" },
+  { title: "Massage", description: "Therapeutic massages to relieve tension and promote wellness.", image: "https://i.imgur.com/LXAK7wa.png" },
+  { title: "Wellness Drips", description: "IV vitamin therapy for energy, immunity and rejuvenation.", image: "https://i.imgur.com/FzFbPt9.png" },
+  { title: "Facials", description: "Advanced skincare treatments for a radiant complexion.", image: "https://i.imgur.com/bXaHFzI.png" },
 ];
 
 const ServicesGrid = () => {
