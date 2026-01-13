@@ -16,11 +16,10 @@ const Footer = () => {
     Services: {
       type: "links",
       items: [
-        { text: "Facials", href: "#" },
-        { text: "Massage", href: "#" },
-        { text: "Detox & Slimming", href: "#" },
-        { text: "Body Scrub", href: "#" },
-        { text: "and many more", href: "#", isPlain: true },
+        { text: "Facials", href: "#services" },
+        { text: "Massage", href: "#services" },
+        { text: "Detox & Slimming", href: "#services" },
+        { text: "see all", href: "#services", isHighlight: true },
       ]
     },
     Help: {
@@ -91,10 +90,13 @@ const Footer = () => {
                 ) : (
                   section.items.map((item) => (
                     <li key={item.text}>
-                      {item.isPlain ? (
-                        <span className="text-accent-foreground/50 italic text-[10px] md:text-xs">
+                      {item.isHighlight ? (
+                        <a
+                          href={item.href}
+                          className="text-accent-foreground/90 hover:text-accent-foreground transition-colors text-[10px] md:text-xs font-medium underline underline-offset-2"
+                        >
                           {item.text}
-                        </span>
+                        </a>
                       ) : item.isRoute ? (
                         <Link
                           to={item.href}
