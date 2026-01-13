@@ -17,8 +17,8 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-green-deep text-accent-foreground">
-      <div className="container mx-auto px-4 py-8 md:py-12">
+    <footer className="bg-green-deep text-accent-foreground relative z-10 isolation-isolate">
+      <div className="container mx-auto px-4 py-8 md:py-12 relative">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-5 md:gap-8 lg:gap-6">
           {/* Logo & Description */}
           <div className="col-span-2 md:col-span-2 lg:col-span-1">
@@ -98,7 +98,7 @@ const Footer = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
           viewport={{ once: true }}
-          className="mt-6 pt-4 text-center"
+          className="mt-6 pt-4 border-t border-accent-foreground/10 text-center"
         >
           <p className="text-accent-foreground/50 text-xs">
             © {new Date().getFullYear()} Hilomè. All rights reserved.
