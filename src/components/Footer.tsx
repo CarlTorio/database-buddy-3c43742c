@@ -98,7 +98,7 @@ const Footer = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
           viewport={{ once: true }}
-          className="mt-6 pt-4 border-t border-accent-foreground/10 text-center"
+          className="mt-6 pt-4 text-center"
         >
           <p className="text-accent-foreground/50 text-xs">
             © {new Date().getFullYear()} Hilomè. All rights reserved.
