@@ -17,8 +17,8 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-green-deep text-accent-foreground relative z-10 isolation-isolate">
-      <div className="container mx-auto px-4 py-8 md:py-12 relative">
+    <footer className="bg-green-deep text-accent-foreground relative z-50 isolation-isolate before:absolute before:inset-0 before:bg-green-deep before:-z-10">
+      <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-5 md:gap-8 lg:gap-6">
           {/* Logo & Description */}
           <div className="col-span-2 md:col-span-2 lg:col-span-1">
