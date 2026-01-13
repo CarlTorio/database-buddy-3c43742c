@@ -1,15 +1,12 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Check } from "lucide-react";
-import membershipGold from "@/assets/membership-gold.png";
-import membershipGreen from "@/assets/membership-green.png";
-import membershipPlatinum from "@/assets/membership-platinum.png";
 
 const membershipTiers = [
   {
     name: "GREEN",
     tier: "Basic Tier",
-    image: membershipGreen,
+    image: "https://i.imgur.com/rB3DdLk.png",
     color: "from-green-500 to-green-600",
     benefits: [
       "10% discount on all spa and wellness services",
@@ -26,7 +23,7 @@ const membershipTiers = [
   {
     name: "GOLD",
     tier: "Premium Tier",
-    image: membershipGold,
+    image: "https://i.imgur.com/nkrUlEC.png",
     color: "from-yellow-500 to-amber-600",
     featured: true,
     benefits: [
@@ -45,7 +42,7 @@ const membershipTiers = [
   {
     name: "PLATINUM",
     tier: "Elite Tier",
-    image: membershipPlatinum,
+    image: "https://i.imgur.com/MFJWBLn.png",
     color: "from-gray-400 to-gray-600",
     benefits: [
       "20% discount on spa, aesthetic, food and beverages",
