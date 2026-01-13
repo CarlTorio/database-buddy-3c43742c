@@ -1,7 +1,20 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import clinicInterior from "@/assets/clinic-interior.jpg";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+
+const storyImages = [
+  "https://i.imgur.com/mUVIGeu.jpeg",
+  "https://i.imgur.com/XWTQjvN.jpeg",
+  "https://i.imgur.com/eaexp29.jpeg",
+  "https://i.imgur.com/bYBt8fD.jpeg",
+];
 
 const OurStory = () => {
   const ref = useRef(null);
@@ -31,7 +44,7 @@ const OurStory = () => {
 
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-6 md:gap-10 lg:gap-16 items-center">
-          {/* Image */}
+          {/* Image Carousel */}
           <motion.div
             initial={{ opacity: 0, x: -60 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -39,11 +52,32 @@ const OurStory = () => {
             className="relative"
           >
             <div className="relative overflow-hidden rounded-xl md:rounded-2xl shadow-elevated">
-              <img
-                src={clinicInterior}
-                alt="SkinStation Clinic Interior"
-                className="w-full h-[220px] md:h-[300px] lg:h-[380px] object-cover"
-              />
+              <Carousel
+                opts={{
+                  loop: true,
+                  dragFree: true,
+                }}
+                plugins={[
+                  Autoplay({
+                    delay: 3000,
+                    stopOnInteraction: false,
+                    stopOnMouseEnter: true,
+                  }),
+                ]}
+                className="w-full"
+              >
+                <CarouselContent>
+                  {storyImages.map((src, index) => (
+                    <CarouselItem key={index}>
+                      <img
+                        src={src}
+                        alt={`SkinStation Clinic ${index + 1}`}
+                        className="w-full h-[220px] md:h-[300px] lg:h-[380px] object-cover"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
             <motion.div
               animate={{ y: [0, -15, 0] }}
