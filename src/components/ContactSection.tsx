@@ -38,29 +38,34 @@ const ContactSection = () => {
               </h3>
               <div className="space-y-4">
                 <a 
-                  href="tel:+639123456789" 
+                  href="tel:09773344200" 
                   className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                 >
                   <div className="w-10 h-10 gradient-accent rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                     <Phone className="w-4 h-4 text-accent-foreground" />
                   </div>
-                  <span className="text-sm md:text-base">+63 912 345 6789</span>
+                  <span className="text-sm md:text-base">0977 334 4200</span>
                 </a>
                 <a 
-                  href="mailto:hello@hilome.ph" 
+                  href="mailto:cruzskin@gmail.com" 
                   className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                 >
                   <div className="w-10 h-10 gradient-accent rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                     <Mail className="w-4 h-4 text-accent-foreground" />
                   </div>
-                  <span className="text-sm md:text-base">hello@hilome.ph</span>
+                  <span className="text-sm md:text-base">cruzskin@gmail.com</span>
                 </a>
-                <div className="flex items-start gap-3 text-muted-foreground">
-                  <div className="w-10 h-10 gradient-accent rounded-full flex items-center justify-center flex-shrink-0">
+                <a 
+                  href="https://maps.app.goo.gl/8cncKgXznqJqrz4UA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 text-muted-foreground hover:text-foreground transition-colors group"
+                >
+                  <div className="w-10 h-10 gradient-accent rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                     <MapPin className="w-4 h-4 text-accent-foreground" />
                   </div>
-                  <span className="text-sm md:text-base">123 Beauty Street, Makati City, Metro Manila, Philippines</span>
-                </div>
+                  <span className="text-sm md:text-base">6014 Mandaue City, Philippines</span>
+                </a>
                 <div className="flex items-start gap-3 text-muted-foreground">
                   <div className="w-10 h-10 gradient-accent rounded-full flex items-center justify-center flex-shrink-0">
                     <Clock className="w-4 h-4 text-accent-foreground" />
@@ -123,17 +128,25 @@ const ContactSection = () => {
             initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="h-[300px] md:h-full min-h-[400px] rounded-xl md:rounded-2xl overflow-hidden shadow-soft"
+            className="h-[300px] md:h-full min-h-[400px] rounded-xl md:rounded-2xl overflow-hidden shadow-soft relative group"
           >
+            <a
+              href="https://maps.app.goo.gl/8cncKgXznqJqrz4UA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute inset-0 z-10 flex items-center justify-center bg-foreground/0 hover:bg-foreground/10 transition-colors"
+            >
+              <span className="sr-only">Open in Google Maps for directions</span>
+            </a>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.802547381867!2d121.0194!3d14.5547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDMzJzE2LjkiTiAxMjHCsDAxJzA5LjgiRQ!5e0!3m2!1sen!2sph!4v1234567890"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.123456789!2d123.9369!3d10.3321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a999258dce37c7%3A0x2c5c3c4c6e7f1234!2sMandaue%20City%2C%20Cebu!5e0!3m2!1sen!2sph!4v1234567890"
               width="100%"
               height="100%"
-              style={{ border: 0 }}
+              style={{ border: 0, pointerEvents: 'none' }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Hilomè Location"
+              title="Hilomè Location - Mandaue City"
               className="w-full h-full"
             />
           </motion.div>
