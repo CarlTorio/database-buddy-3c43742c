@@ -101,7 +101,10 @@ const Footer = () => {
           className="mt-6 pt-4 border-t border-accent-foreground/10 text-center"
         >
           <p className="text-accent-foreground/50 text-xs">
-            © {new Date().getFullYear()} SkinStation. All rights reserved.
+            © {new Date().getFullYear()} Hilomè. All rights reserved.
+          </p>
+          <p className="text-accent-foreground/40 text-[10px] mt-1">
+            Powered by LogiCode.PH
           </p>
         </motion.div>
       </div>
