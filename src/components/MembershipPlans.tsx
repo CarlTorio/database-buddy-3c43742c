@@ -171,11 +171,12 @@ const MembershipPlans = () => {
                 scale: 1.02,
                 transition: { duration: 0.3 }
               }}
-              className={`relative bg-card rounded-xl overflow-hidden group cursor-pointer ${
+              className={`relative rounded-xl overflow-hidden group cursor-pointer ${
                 tier.featured ? "lg:scale-105 lg:-translate-y-2" : ""
               }`}
               style={{
                 boxShadow: `0 10px 25px -10px ${tier.glowColor}`,
+                background: tier.gradientBg,
               }}
             >
               {/* Animated Border Glow */}
@@ -243,10 +244,7 @@ const MembershipPlans = () => {
               </div>
 
               {/* Tier Info */}
-              <div 
-                className="p-3 md:p-4 relative rounded-b-xl"
-                style={{ background: tier.gradientBg }}
-              >
+              <div className="p-3 md:p-4 relative">
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={isInView ? { opacity: 1 } : {}}
