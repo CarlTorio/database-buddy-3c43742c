@@ -22,7 +22,7 @@ const OurStory = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-10 md:py-14 bg-cream-dark relative overflow-hidden" ref={ref}>
+    <section className="py-10 md:py-14 bg-secondary text-primary-foreground relative overflow-hidden" ref={ref}>
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
         <svg viewBox="0 0 400 400" className="w-full h-full">
@@ -93,10 +93,10 @@ const OurStory = () => {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="relative z-10"
           >
-            <h2 className="font-display text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold text-foreground mb-3 md:mb-4">
+            <h2 className="font-display text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold text-primary-foreground mb-3 md:mb-4">
               Our Story
             </h2>
-            <div className="space-y-2 md:space-y-3 text-muted-foreground text-xs md:text-sm lg:text-base leading-relaxed">
+            <div className="space-y-2 md:space-y-3 text-primary-foreground/80 text-xs md:text-sm lg:text-base leading-relaxed">
               <p>
                 Nestled in Maslog, Danao City, Cebu, Hilomè Wellness Resort is a sanctuary where healing begins in silence.
               </p>
