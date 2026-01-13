@@ -52,13 +52,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        brown: {
+        green: {
           light: "hsl(var(--brown-light))",
           DEFAULT: "hsl(var(--brown-dark))",
           dark: "hsl(var(--brown-dark))",
           deep: "hsl(var(--brown-deep))",
         },
-        cream: {
+        sage: {
           DEFAULT: "hsl(var(--cream))",
           dark: "hsl(var(--cream-dark))",
         },
