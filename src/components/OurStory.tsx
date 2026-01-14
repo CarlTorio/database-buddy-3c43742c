@@ -34,12 +34,20 @@ const OurStory = () => {
             Our Story
           </h2>
           <div className="space-y-4 text-muted-foreground text-base md:text-lg leading-relaxed">
-            <p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+            >
               Nestled in Maslog, Danao City, Cebu, Hilomè Wellness Resort is a sanctuary where healing begins in silence.
-            </p>
-            <p>
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+            >
               Founded by Dr. Herbert Ryan Cruz of Cruzskin Medical and Aesthetic Center, Hilomè draws its name from the Filipino word "Hilom" (healing) and "È" (Elegance)—embodying wellness delivered with grace and sophistication, rooted in Filipino heritage.
-            </p>
+            </motion.p>
           </div>
           <div className="mt-8">
             <Link to="/our-story">
