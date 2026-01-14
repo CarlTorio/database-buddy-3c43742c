@@ -179,7 +179,7 @@ const ThankYou = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
                 
                 {/* Content */}
-                <div className="relative h-full flex flex-col items-center justify-end p-6 text-center" style={{ paddingBottom: "30px" }}>
+                <div className="relative h-full flex flex-col items-center justify-end p-6 text-center" style={{ paddingBottom: "200px" }}>
                   {/* Booking Details - positioned at bottom half */}
                   <div className="flex flex-col items-center w-full">
                     {/* Booking Number */}
