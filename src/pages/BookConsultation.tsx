@@ -19,12 +19,11 @@ const BookConsultation = () => {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const branches = [
-    "Main Branch - Manila",
-    "Makati Branch",
-    "Quezon City Branch",
-    "BGC Branch",
-    "Ortigas Branch",
+  const memberships = [
+    "Non-member",
+    "Green Member",
+    "Gold Member",
+    "Platinum Member",
   ];
 
   const handleChange = (
@@ -219,10 +218,10 @@ const BookConsultation = () => {
                   </div>
                 </div>
 
-                {/* Preferred Branch */}
+                {/* Membership */}
                 <div>
                   <label className="block text-primary-foreground font-semibold text-sm mb-1">
-                    Preferred Branch <span className="text-red-300">*</span>
+                    Membership <span className="text-red-300">*</span>
                   </label>
                   <select
                     name="preferredBranch"
@@ -236,15 +235,15 @@ const BookConsultation = () => {
                     }}
                   >
                     <option value="" className="bg-primary text-primary-foreground">
-                      Select a branch
+                      Select membership
                     </option>
-                    {branches.map((branch, index) => (
+                    {memberships.map((membership, index) => (
                       <option
                         key={index}
-                        value={branch}
+                        value={membership}
                         className="bg-primary text-primary-foreground"
                       >
-                        {branch}
+                        {membership}
                       </option>
                     ))}
                   </select>
