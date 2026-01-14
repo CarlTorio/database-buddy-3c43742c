@@ -110,7 +110,7 @@ const shimmerAnimation = {
 
 const MembershipPlans = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, amount: 0.6 });
 
   return (
     <section className="py-8 md:py-10 lg:py-12 bg-background relative overflow-hidden" ref={ref}>
