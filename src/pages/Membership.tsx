@@ -369,12 +369,12 @@ const Membership = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="bg-card rounded-xl p-4 md:p-6 shadow-md border border-border/50"
+                className="bg-card rounded-lg p-3 md:p-4 shadow-md border border-border/50"
               >
-                <h2 className="font-display text-base font-semibold text-foreground mb-1">
+                <h2 className="font-display text-sm font-semibold text-foreground mb-0.5">
                   Message or Note
                 </h2>
-                <p className="text-muted-foreground text-xs mb-3">
+                <p className="text-muted-foreground text-[10px] mb-2">
                   Any questions or special requests? Let us know!
                 </p>
                 
@@ -384,7 +384,7 @@ const Membership = () => {
                   placeholder="Enter your message or note (optional)"
                   value={formData.message}
                   onChange={handleInputChange}
-                  className="min-h-[80px]"
+                  className="min-h-[60px] text-sm"
                 />
               </motion.div>
 
