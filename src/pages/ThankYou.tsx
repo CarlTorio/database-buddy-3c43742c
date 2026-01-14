@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { CheckCircle, ArrowLeft, Home, Download, X } from "lucide-react";
+import { CheckCircle, Home, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
+import bookingStubBg from "@/assets/booking-stub.png";
 interface BookingDetails {
   name: string;
   email: string;
@@ -68,9 +69,9 @@ const ThankYou = () => {
   }
   const formattedDate = bookingDetails.date ? format(new Date(bookingDetails.date), "MMMM d, yyyy") : "";
   const dayOfWeek = bookingDetails.date ? format(new Date(bookingDetails.date), "EEEE") : "";
-  return <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="pt-20 pb-16">
+      <main className="flex-1 flex items-center justify-center pt-20 pb-32">
         <div className="container mx-auto px-4">
           {/* Download Prompt Modal */}
           {showDownloadPrompt && <motion.div initial={{
@@ -112,85 +113,87 @@ const ThankYou = () => {
         }} animate={{
           opacity: 1,
           y: 0
-        }} className="max-w-lg mx-auto">
-            {/* Thank You Message */}
-            <div className="text-center mb-8">
-              <motion.div initial={{
-              scale: 0
-            }} animate={{
-              scale: 1
-            }} transition={{
-              type: "spring",
-              stiffness: 200,
-              delay: 0.2
-            }} className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-                <CheckCircle className="w-10 h-10 text-primary" />
-              </motion.div>
-              
-              <motion.h1 initial={{
-              opacity: 0,
-              y: 10
-            }} animate={{
-              opacity: 1,
-              y: 0
-            }} transition={{
-              delay: 0.3
-            }} className="font-display text-3xl md:text-4xl text-foreground mb-2">
-                Thank You!
-              </motion.h1>
-              
-              <motion.p initial={{
-              opacity: 0,
-              y: 10
-            }} animate={{
-              opacity: 1,
-              y: 0
-            }} transition={{
-              delay: 0.4
-            }} className="text-foreground/70">
-                Your booking has been confirmed. Please arrive 10 minutes before your scheduled appointment.
-              </motion.p>
-            </div>
-
-            {/* Booking Stub - Paper Style with Background Image */}
+        }} className="max-w-2xl mx-auto text-center">
+            {/* Check Icon */}
+            <motion.div 
+              initial={{ scale: 0 }} 
+              animate={{ scale: 1 }} 
+              transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+              className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-8"
+            >
+              <CheckCircle className="w-10 h-10 text-primary" />
+            </motion.div>
             
+            {/* Welcome Message */}
+            <motion.h1 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.3 }}
+              className="font-display text-3xl md:text-4xl text-foreground mb-6"
+            >
+              Your Booking is Confirmed!
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.4 }}
+              className="text-foreground/70 text-lg leading-relaxed mb-10 max-w-xl mx-auto"
+            >
+              Thank you for choosing Hilomè. We're excited to welcome you for your appointment. 
+              Please arrive 10 minutes early to ensure a relaxing and seamless experience. 
+              Our team is ready to guide you on your wellness journey.
+            </motion.p>
 
-            {/* Download Button */}
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            delay: 0.6
-          }} className="text-center mb-6">
-              <Button onClick={handleDownload} disabled={isDownloading} className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 mx-auto">
+            {/* Action Buttons */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.5 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <Button 
+                onClick={handleDownload} 
+                disabled={isDownloading} 
+                className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 px-8"
+              >
                 <Download className="w-4 h-4" />
                 {isDownloading ? "Downloading..." : "Download Receipt"}
               </Button>
-            </motion.div>
-
-            {/* Action Buttons */}
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            delay: 0.7
-          }} className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={() => navigate("/book-consultation")} variant="outline" size="sm" className="flex items-center gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Book Another
-              </Button>
-              <Button onClick={() => navigate("/")} variant="outline" size="sm" className="flex items-center gap-2">
+              <Button 
+                onClick={() => navigate("/")} 
+                variant="outline" 
+                className="flex items-center gap-2 px-8"
+              >
                 <Home className="w-4 h-4" />
                 Back to Home
               </Button>
             </motion.div>
           </motion.div>
+
+          {/* Hidden Receipt for Download */}
+          <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+            <div 
+              ref={stubRef}
+              className="relative w-[400px] h-[600px]"
+              style={{
+                backgroundImage: `url(${bookingStubBg})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
+            >
+              <div className="relative h-full flex flex-col items-center justify-center p-6 text-center">
+                <h2 className="font-display text-2xl text-[#5a5a3a] mb-2">Booking Receipt</h2>
+                <p className="text-[#5a5a3a]/70 text-sm mb-4">#{bookingNumber}</p>
+                <div className="space-y-2 text-[#5a5a3a]">
+                  <p className="font-medium">{bookingDetails.name}</p>
+                  <p className="text-sm">{formattedDate} ({dayOfWeek})</p>
+                  <p className="text-sm">{bookingDetails.time}</p>
+                  <p className="text-sm">{bookingDetails.membership}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
       <Footer />
