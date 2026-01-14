@@ -1,12 +1,12 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { CheckCircle, ArrowLeft, Home, Download } from "lucide-react";
+import { CheckCircle, ArrowLeft, Home, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { format } from "date-fns";
-import bookingStubBg from "@/assets/booking-stub.png";
+import html2canvas from "html2canvas";
 
 interface BookingDetails {
   name: string;
@@ -30,6 +30,9 @@ const ThankYou = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const bookingDetails = location.state as BookingDetails | null;
+  const stubRef = useRef<HTMLDivElement>(null);
+  const [showDownloadPrompt, setShowDownloadPrompt] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Generate booking number once and memoize it
   const bookingNumber = useMemo(() => {
@@ -42,6 +45,30 @@ const ThankYou = () => {
       navigate("/");
     }
   }, [bookingDetails, navigate]);
+
+  const handleDownload = async () => {
+    if (!stubRef.current) return;
+    
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(stubRef.current, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+      });
+      
+      const link = document.createElement("a");
+      link.download = `hilome-booking-${bookingNumber}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      setShowDownloadPrompt(false);
+    } catch (error) {
+      console.error("Error downloading receipt:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (!bookingDetails) {
     return null;
@@ -60,6 +87,48 @@ const ThankYou = () => {
       <Header />
       <main className="pt-20 pb-16">
         <div className="container mx-auto px-4">
+          {/* Download Prompt Modal */}
+          {showDownloadPrompt && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="bg-background rounded-2xl p-6 max-w-sm w-full shadow-elevated text-center"
+              >
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-10 h-10 text-primary" />
+                </div>
+                <h2 className="font-display text-2xl text-foreground mb-2">
+                  Booking Confirmed!
+                </h2>
+                <p className="text-foreground/70 text-sm mb-6">
+                  Would you like to download your booking receipt? You can show this to our staff when you arrive.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    {isDownloading ? "Downloading..." : "Download Receipt"}
+                  </Button>
+                  <Button
+                    onClick={() => setShowDownloadPrompt(false)}
+                    variant="ghost"
+                    className="w-full text-foreground/60"
+                  >
+                    Maybe Later
+                  </Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -67,22 +136,13 @@ const ThankYou = () => {
           >
             {/* Success Message */}
             <div className="text-center mb-8">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-4"
-              >
-                <CheckCircle className="w-12 h-12 text-primary" />
-              </motion.div>
-              
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 className="font-display text-3xl md:text-4xl text-foreground mb-2"
               >
-                Booking Confirmed!
+                Your Booking Receipt
               </motion.h1>
               
               <motion.p
@@ -91,124 +151,109 @@ const ThankYou = () => {
                 transition={{ delay: 0.4 }}
                 className="text-foreground/70"
               >
-                Please save or screenshot your booking stub below
+                Show this receipt to our staff when you arrive
               </motion.p>
             </div>
 
-            {/* Booking Stub - Paper Style */}
+            {/* Booking Stub - Paper Style with Background Image */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, type: "spring" }}
-              className="relative mx-auto mb-8"
+              className="relative mx-auto mb-6"
               style={{ maxWidth: "380px" }}
             >
-              {/* Paper Background */}
               <div 
+                ref={stubRef}
                 className="relative rounded-lg overflow-hidden shadow-elevated"
                 style={{
-                  backgroundImage: `url(${bookingStubBg})`,
+                  backgroundImage: `url(https://i.imgur.com/7En3vdq.png)`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   aspectRatio: "3/4",
                 }}
               >
-                {/* Overlay for readability */}
-                <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/60 to-primary/80" />
+                {/* Semi-transparent overlay for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/30 to-transparent" />
                 
                 {/* Content */}
-                <div className="relative h-full flex flex-col items-center justify-between p-6 text-center">
-                  {/* Header */}
-                  <div className="pt-4">
-                    <h2 className="font-display text-3xl text-primary-foreground tracking-wider">
-                      HILOMÈ
-                    </h2>
-                    <p className="text-primary-foreground/70 text-xs tracking-widest uppercase mt-1">
-                      Skin & Body Clinic
-                    </p>
+                <div className="relative h-full flex flex-col items-center justify-between p-8 text-center">
+                  {/* Header - positioned at top */}
+                  <div className="pt-2">
+                    {/* Logo/brand area - leave empty as it's in the background */}
                   </div>
 
-                  {/* Booking Details */}
-                  <div className="flex-1 flex flex-col items-center justify-center py-6 w-full">
+                  {/* Booking Details - centered */}
+                  <div className="flex-1 flex flex-col items-center justify-center py-4 w-full">
                     {/* Booking Number */}
-                    <div className="mb-6">
-                      <p className="text-primary-foreground/60 text-xs tracking-widest uppercase mb-1">
+                    <div className="mb-5 bg-white/80 backdrop-blur-sm rounded-lg px-6 py-3">
+                      <p className="text-primary/70 text-[10px] tracking-widest uppercase mb-1 font-medium">
                         Booking Number
                       </p>
-                      <p className="font-display text-2xl md:text-3xl text-primary-foreground font-bold tracking-wide">
+                      <p className="font-display text-2xl text-primary font-bold tracking-wide">
                         {bookingNumber}
                       </p>
                     </div>
 
-                    {/* Divider */}
-                    <div className="w-24 h-px bg-primary-foreground/30 mb-6" />
-
                     {/* Guest Name */}
                     <div className="mb-4">
-                      <p className="text-primary-foreground/60 text-xs tracking-widest uppercase mb-1">
-                        Guest
+                      <p className="text-primary/60 text-[10px] tracking-widest uppercase mb-1">
+                        Guest Name
                       </p>
-                      <p className="font-display text-xl text-primary-foreground">
+                      <p className="font-display text-xl text-primary font-semibold">
                         {bookingDetails.name}
                       </p>
                     </div>
 
                     {/* Date & Time */}
-                    <div className="mb-4">
-                      <p className="text-primary-foreground/60 text-xs tracking-widest uppercase mb-1">
-                        Schedule
+                    <div className="mb-4 bg-white/60 backdrop-blur-sm rounded-lg px-5 py-3">
+                      <p className="text-primary/60 text-[10px] tracking-widest uppercase mb-1">
+                        Appointment Schedule
                       </p>
-                      <p className="text-primary-foreground font-medium">
+                      <p className="text-primary font-semibold text-sm">
                         {dayOfWeek}
                       </p>
-                      <p className="text-primary-foreground text-lg font-semibold">
+                      <p className="text-primary text-lg font-bold">
                         {formattedDate}
                       </p>
-                      <p className="text-primary-foreground/80 text-sm mt-1">
+                      <p className="text-primary/80 font-medium">
                         {bookingDetails.time}
                       </p>
                     </div>
 
                     {/* Membership Badge */}
                     <div className="mt-2">
-                      <span className="inline-block px-4 py-1 rounded-full bg-primary-foreground/20 text-primary-foreground text-xs tracking-wide">
+                      <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 text-primary text-xs font-medium tracking-wide">
                         {bookingDetails.membership}
                       </span>
                     </div>
                   </div>
 
                   {/* Footer */}
-                  <div className="pb-4">
-                    <p className="text-primary-foreground/50 text-[10px] tracking-wide">
+                  <div className="pb-2">
+                    <p className="text-primary/50 text-[9px] tracking-wide">
                       Please arrive 10 minutes before your appointment
-                    </p>
-                    <p className="text-primary-foreground/40 text-[10px] mt-1">
-                      Contact: 0977 334 4200
                     </p>
                   </div>
                 </div>
-
-                {/* Decorative corner elements */}
-                <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-primary-foreground/30" />
-                <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-primary-foreground/30" />
-                <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-primary-foreground/30" />
-                <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-primary-foreground/30" />
               </div>
             </motion.div>
 
-            {/* Reminder Notice */}
+            {/* Download Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-muted rounded-xl p-5 mb-6 text-center"
+              className="text-center mb-6"
             >
-              <p className="text-foreground font-medium mb-1 text-sm">
-                📱 Take a screenshot of your booking stub!
-              </p>
-              <p className="text-foreground/70 text-xs">
-                Show this to our staff when you arrive. A confirmation will also be sent to {bookingDetails.email}
-              </p>
+              <Button
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 mx-auto"
+              >
+                <Download className="w-4 h-4" />
+                {isDownloading ? "Downloading..." : "Download Receipt"}
+              </Button>
             </motion.div>
 
             {/* Action Buttons */}
@@ -229,8 +274,9 @@ const ThankYou = () => {
               </Button>
               <Button
                 onClick={() => navigate("/")}
+                variant="outline"
                 size="sm"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2"
+                className="flex items-center gap-2"
               >
                 <Home className="w-4 h-4" />
                 Back to Home
