@@ -25,7 +25,7 @@ const OurStory = () => {
       {/* Content container that scrolls over the fixed background */}
       <div className="relative z-10 min-h-[400px] md:min-h-[450px] lg:min-h-[500px] flex items-center justify-center md:justify-start px-4 md:px-8 lg:px-20 py-12">
         <motion.div
-          initial={{ opacity: 0, x: 60 }}
+          initial={{ opacity: 0, x: -60 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="max-w-xl bg-background/70 p-8 md:p-12 rounded-2xl shadow-elevated"
