@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History } from 'lucide-react';
+import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -264,10 +264,18 @@ const HilomeAdminDashboard = () => {
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Date & Time</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Membership</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Status</th>
+                  <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {bookings.map(booking => (
+                {bookings
+                  .filter(booking => filterStatus === 'all' || booking.status === filterStatus)
+                  .filter(booking => 
+                    booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    booking.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    booking.phone.includes(searchTerm)
+                  )
+                  .map(booking => (
                   <tr key={booking.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
                     <td className="py-4 px-2 font-medium">{booking.name}</td>
                     <td className="py-4 px-2">
@@ -287,6 +295,19 @@ const HilomeAdminDashboard = () => {
                       <Badge className={getStatusColor(booking.status)}>
                         {booking.status}
                       </Badge>
+                    </td>
+                    <td className="py-4 px-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        asChild
+                      >
+                        <a href={`tel:${booking.phone.replace(/-/g, '')}`}>
+                          <Phone className="h-4 w-4" />
+                          Call
+                        </a>
+                      </Button>
                     </td>
                   </tr>
                 ))}
