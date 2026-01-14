@@ -229,7 +229,7 @@ const BookConsultation = () => {
                     {submitted ? <span className="flex items-center gap-2">
                         <CheckCircle className="w-5 h-5" />
                         Consultation Booked!
-                      </span> : "Book your FREE consultation now!"}
+                      </span> : "Book your consultation now!"}
                   </Button>
                 </motion.div>
               </div>
