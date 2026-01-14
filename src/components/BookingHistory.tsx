@@ -268,6 +268,7 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Appointment</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Membership</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -309,6 +310,19 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
                         <Badge className={getStatusColor(booking.status)}>
                           {booking.status}
                         </Badge>
+                      </td>
+                      <td className="py-4 px-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          asChild
+                        >
+                          <a href={`tel:${booking.phone.replace(/-/g, '')}`}>
+                            <Phone className="h-4 w-4" />
+                            Call
+                          </a>
+                        </Button>
                       </td>
                     </tr>
                   ))}
