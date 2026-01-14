@@ -182,14 +182,46 @@ const ThankYou = () => {
                 backgroundPosition: "center"
               }}
             >
-              <div className="relative h-full flex flex-col items-center justify-center p-6 text-center">
-                <h2 className="font-display text-2xl text-[#5a5a3a] mb-2">Booking Receipt</h2>
-                <p className="text-[#5a5a3a]/70 text-sm mb-4">#{bookingNumber}</p>
-                <div className="space-y-2 text-[#5a5a3a]">
-                  <p className="font-medium">{bookingDetails.name}</p>
-                  <p className="text-sm">{formattedDate} ({dayOfWeek})</p>
-                  <p className="text-sm">{bookingDetails.time}</p>
-                  <p className="text-sm">{bookingDetails.membership}</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                <div className="bg-white/90 rounded-xl p-6 shadow-lg max-w-[320px] w-full">
+                  <h2 className="font-display text-2xl text-[#5a5a3a] mb-1">HILOMÈ</h2>
+                  <p className="text-[#5a5a3a]/60 text-xs mb-4">Wellness & Beauty</p>
+                  
+                  <div className="border-t border-dashed border-[#5a5a3a]/30 my-3"></div>
+                  
+                  <p className="text-[#5a5a3a] font-bold text-lg mb-1">Booking #{bookingNumber}</p>
+                  
+                  <div className="border-t border-dashed border-[#5a5a3a]/30 my-3"></div>
+                  
+                  <div className="space-y-2 text-[#5a5a3a] text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-[#5a5a3a]/60">Name:</span>
+                      <span className="font-medium">{bookingDetails.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#5a5a3a]/60">Date:</span>
+                      <span className="font-medium">{formattedDate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#5a5a3a]/60">Day:</span>
+                      <span className="font-medium">{dayOfWeek}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#5a5a3a]/60">Time:</span>
+                      <span className="font-medium">{bookingDetails.time}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#5a5a3a]/60">Service:</span>
+                      <span className="font-medium">{bookingDetails.membership}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-dashed border-[#5a5a3a]/30 my-3"></div>
+                  
+                  <p className="text-[#5a5a3a]/60 text-xs">
+                    Please arrive 10 minutes early.<br/>
+                    Show this receipt upon arrival.
+                  </p>
                 </div>
               </div>
             </div>
