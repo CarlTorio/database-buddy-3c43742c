@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import OurStoryPage from "./pages/OurStory";
 import BookConsultation from "./pages/BookConsultation";
+import Membership from "./pages/Membership";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/our-story" element={<OurStoryPage />} />
           <Route path="/book-consultation" element={<BookConsultation />} />
+          <Route path="/membership" element={<Membership />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

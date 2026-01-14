@@ -330,7 +330,7 @@ const MembershipPlans = () => {
               <span className="relative z-10">Inquire About Membership</span>
             </motion.a>
             <motion.a
-              href="/book-consultation"
+              href="/membership"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center justify-center bg-primary text-primary-foreground rounded-full px-6 py-2 text-xs font-medium"

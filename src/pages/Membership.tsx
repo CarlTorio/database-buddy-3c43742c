@@ -1,0 +1,392 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { Check, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { z } from "zod";
+import { toast } from "sonner";
+
+const membershipOptions = [
+  {
+    id: "green",
+    name: "GREEN",
+    tier: "Basic Tier",
+    image: "https://i.imgur.com/rB3DdLk.png",
+    glowColor: "rgba(34, 197, 94, 0.4)",
+    benefits: [
+      "10% discount on all spa and wellness services",
+      "5% discount on Aesthetic Services",
+      "5% discount on food and beverages",
+      "FREE 1 Hr. Massage or Relaxing Facial - during birth month only",
+      "FREE Warts Removal (1 area only)",
+      "FREE 1 Celebrity Drip (Wellness Drip)",
+      "Complimentary Wellness Kit",
+      "Unlimited access (Member Only)",
+    ],
+  },
+  {
+    id: "gold",
+    name: "GOLD",
+    tier: "Premium Tier",
+    image: "https://i.imgur.com/nkrUlEC.png",
+    glowColor: "rgba(234, 179, 8, 0.5)",
+    benefits: [
+      "FREE (2) Vanity Fit Drip (Anti-aging and Slimming)",
+      "15% discount on spa and aesthetic services",
+      "10% discount on food and beverages",
+      "FREE (5) 1 Hr. Body Massage and (5) Relaxing Facial",
+      "FREE (2pax) Warts Removal (1 area only)",
+      "Exclusive invites to HilomÈ Retreats and seasonal events",
+      "Unlimited access (up to 2pax)",
+      "Complimentary 1 night stay for 2pax with FREE Breakfast",
+    ],
+  },
+  {
+    id: "platinum",
+    name: "PLATINUM",
+    tier: "Elite Tier",
+    image: "https://i.imgur.com/MFJWBLn.png",
+    glowColor: "rgba(148, 163, 184, 0.5)",
+    benefits: [
+      "20% discount on spa, aesthetic, food and beverages",
+      "FREE 1 Skin or Medical Consultation",
+      "FREE (12) Signature Services (Choice of Massage, Relaxing Facial)",
+      "FREE (6) Multivitamin Drip",
+      "FREE (3) Warts Removal (1 area only)",
+      "Exclusive invites to HilomÈ Retreats and seasonal events",
+      "Unlimited access (up to 3pax)",
+      "Complimentary 2 nights stay for 2pax with FREE Breakfast",
+    ],
+  },
+];
+
+const formSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  contact: z.string().trim().min(1, "Contact number is required").max(20, "Contact number is too long"),
+  email: z.string().trim().email("Please enter a valid email address").max(255, "Email is too long"),
+  membership: z.string().min(1, "Please select a membership plan"),
+  message: z.string().max(1000, "Message must be less than 1000 characters").optional(),
+});
+
+const Membership = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [selectedMembership, setSelectedMembership] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    contact: "",
+    email: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const dataToValidate = {
+      ...formData,
+      membership: selectedMembership,
+    };
+
+    const result = formSchema.safeParse(dataToValidate);
+
+    if (!result.success) {
+      const newErrors: Record<string, string> = {};
+      result.error.errors.forEach((error) => {
+        if (error.path[0]) {
+          newErrors[error.path[0] as string] = error.message;
+        }
+      });
+      setErrors(newErrors);
+      toast.error("Please fill in all required fields correctly");
+      return;
+    }
+
+    // Form is valid - show success
+    setIsSubmitted(true);
+  };
+
+  const selectedPlan = membershipOptions.find((m) => m.id === selectedMembership);
+
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-cream/30 to-background">
+        <Header />
+        <main className="pt-24 pb-16">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="max-w-2xl mx-auto text-center py-16"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="w-20 h-20 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-6"
+              >
+                <Check className="w-10 h-10 text-accent" />
+              </motion.div>
+              
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mb-4">
+                Thank You
+              </h1>
+              
+              <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-8 max-w-lg mx-auto">
+                Your message has been received. Our team will reach out to you shortly to guide you on your journey to radiant, healthy skin. In the meantime, explore our treatments to discover how we can care for your skin.
+              </p>
+              
+              <Link to="/">
+                <Button className="gradient-accent text-accent-foreground rounded-full px-8 py-3">
+                  Back to Home
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-cream/30 to-background">
+      <Header />
+      <main className="pt-24 pb-16">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto mb-10"
+          >
+            <div className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/20 rounded-full px-3 py-1 mb-4">
+              <Sparkles className="w-3 h-3 text-accent" />
+              <span className="text-accent font-medium text-xs uppercase tracking-wider">
+                Join Our Wellness Family
+              </span>
+              <Sparkles className="w-3 h-3 text-accent" />
+            </div>
+            
+            <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground mb-3">
+              Membership Registration
+            </h1>
+            <p className="text-muted-foreground text-sm md:text-base">
+              Fill out the form below to start your journey with Hilomè. Choose your preferred membership tier and we'll get in touch with you shortly.
+            </p>
+          </motion.div>
+
+          <div className="max-w-4xl mx-auto">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Personal Information */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border/50"
+              >
+                <h2 className="font-display text-lg font-semibold text-foreground mb-6">
+                  Personal Information
+                </h2>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium">
+                      Full Name <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      placeholder="Enter your full name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className={errors.name ? "border-red-500" : ""}
+                    />
+                    {errors.name && (
+                      <p className="text-xs text-red-500">{errors.name}</p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="contact" className="text-sm font-medium">
+                      Contact Number <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="contact"
+                      name="contact"
+                      placeholder="Enter your contact number"
+                      value={formData.contact}
+                      onChange={handleInputChange}
+                      className={errors.contact ? "border-red-500" : ""}
+                    />
+                    {errors.contact && (
+                      <p className="text-xs text-red-500">{errors.contact}</p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="email" className="text-sm font-medium">
+                      Email Address <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email address"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className={errors.email ? "border-red-500" : ""}
+                    />
+                    {errors.email && (
+                      <p className="text-xs text-red-500">{errors.email}</p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Membership Selection */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border/50"
+              >
+                <h2 className="font-display text-lg font-semibold text-foreground mb-2">
+                  Choose Your Membership <span className="text-red-500">*</span>
+                </h2>
+                <p className="text-muted-foreground text-sm mb-6">
+                  Select the membership tier that best suits your wellness needs.
+                </p>
+                
+                {errors.membership && (
+                  <p className="text-xs text-red-500 mb-4">{errors.membership}</p>
+                )}
+
+                <RadioGroup
+                  value={selectedMembership}
+                  onValueChange={(value) => {
+                    setSelectedMembership(value);
+                    if (errors.membership) {
+                      setErrors((prev) => ({ ...prev, membership: "" }));
+                    }
+                  }}
+                  className="grid md:grid-cols-3 gap-4"
+                >
+                  {membershipOptions.map((membership) => (
+                    <motion.div
+                      key={membership.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Label
+                        htmlFor={membership.id}
+                        className={`cursor-pointer block rounded-xl p-4 border-2 transition-all ${
+                          selectedMembership === membership.id
+                            ? "border-accent bg-accent/5"
+                            : "border-border hover:border-accent/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <RadioGroupItem value={membership.id} id={membership.id} />
+                          <div>
+                            <p className="font-semibold text-foreground">{membership.name}</p>
+                            <p className="text-xs text-muted-foreground">{membership.tier}</p>
+                          </div>
+                        </div>
+                        <img
+                          src={membership.image}
+                          alt={`${membership.name} Membership Card`}
+                          className="w-full h-auto rounded-lg mb-3"
+                        />
+                      </Label>
+                    </motion.div>
+                  ))}
+                </RadioGroup>
+
+                {/* Selected Plan Benefits */}
+                {selectedPlan && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-6 p-4 bg-accent/5 rounded-xl border border-accent/20"
+                  >
+                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-accent" />
+                      {selectedPlan.name} Benefits Include:
+                    </h3>
+                    <ul className="grid md:grid-cols-2 gap-2">
+                      {selectedPlan.benefits.map((benefit, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <Check className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+              </motion.div>
+
+              {/* Message */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border/50"
+              >
+                <h2 className="font-display text-lg font-semibold text-foreground mb-2">
+                  Message or Note
+                </h2>
+                <p className="text-muted-foreground text-sm mb-4">
+                  Any questions or special requests? Let us know!
+                </p>
+                
+                <Textarea
+                  id="message"
+                  name="message"
+                  placeholder="Enter your message or note (optional)"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  className="min-h-[120px]"
+                />
+              </motion.div>
+
+              {/* Submit Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-center"
+              >
+                <Button
+                  type="submit"
+                  className="gradient-accent text-accent-foreground rounded-full px-12 py-3 text-base font-medium"
+                >
+                  Submit Application
+                </Button>
+              </motion.div>
+            </form>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Membership;
