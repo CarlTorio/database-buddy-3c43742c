@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, CheckCircle, Phone, Mail, MapPin, Clock, Facebook, Instagram } from "lucide-react";
+import { ArrowLeft, CheckCircle, Phone, Mail, MapPin, Clock, Facebook, Instagram, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import DateTimePicker from "@/components/DateTimePicker";
+import { format } from "date-fns";
 
 const BookConsultation = () => {
   const navigate = useNavigate();
@@ -18,6 +20,15 @@ const BookConsultation = () => {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
+
+  const handleDateTimeConfirm = (date: string, time: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      date,
+      time,
+    }));
+  };
 
   const memberships = [
     "Non-member",
@@ -251,26 +262,19 @@ const BookConsultation = () => {
                   <label className="block text-primary-foreground font-semibold text-sm mb-1">
                     Preferred Schedule <span className="text-red-300">*</span>
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                      onClick={(e) => (e.target as HTMLInputElement).showPicker()}
-                      placeholder="Date"
-                      className="w-full bg-transparent border-b-2 border-primary-foreground/50 text-primary-foreground py-2 px-0 focus:outline-none focus:border-accent transition-colors text-sm cursor-pointer"
-                    />
-                    <input
-                      type="time"
-                      name="time"
-                      value={formData.time}
-                      onChange={handleChange}
-                      onClick={(e) => (e.target as HTMLInputElement).showPicker()}
-                      placeholder="Time"
-                      className="w-full bg-transparent border-b-2 border-primary-foreground/50 text-primary-foreground py-2 px-0 focus:outline-none focus:border-accent transition-colors text-sm cursor-pointer"
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsDateTimePickerOpen(true)}
+                    className="w-full bg-transparent border-b-2 border-primary-foreground/50 text-primary-foreground py-2 px-0 focus:outline-none focus:border-accent transition-colors text-sm cursor-pointer text-left flex items-center justify-between"
+                  >
+                    <span className={formData.date && formData.time ? "text-primary-foreground" : "text-primary-foreground/50"}>
+                      {formData.date && formData.time 
+                        ? `${format(new Date(formData.date), "MMMM d, yyyy")} at ${formData.time}`
+                        : "Select date and time"
+                      }
+                    </span>
+                    <Calendar className="w-4 h-4 text-primary-foreground/70" />
+                  </button>
                 </div>
 
                 {/* Message */}
@@ -321,6 +325,14 @@ const BookConsultation = () => {
         </div>
       </main>
       <Footer />
+      
+      <DateTimePicker
+        isOpen={isDateTimePickerOpen}
+        onClose={() => setIsDateTimePickerOpen(false)}
+        onConfirm={handleDateTimeConfirm}
+        selectedDate={formData.date}
+        selectedTime={formData.time}
+      />
     </div>
   );
 };
