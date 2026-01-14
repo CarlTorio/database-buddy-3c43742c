@@ -56,15 +56,15 @@ const HilomeAdminDashboard = () => {
     { name: 'Platinum', value: members.filter(m => m.membership === 'Platinum').length, color: 'hsl(var(--muted-foreground))' },
   ];
 
-  // Revenue trend based on total sales (simulated monthly distribution)
+  // Revenue trend showing membership revenue per month
   const monthlySales = [
-    { month: 'Jul', revenue: Math.round(totalSales * 0.10) },
-    { month: 'Aug', revenue: Math.round(totalSales * 0.12) },
-    { month: 'Sep', revenue: Math.round(totalSales * 0.14) },
-    { month: 'Oct', revenue: Math.round(totalSales * 0.15) },
-    { month: 'Nov', revenue: Math.round(totalSales * 0.17) },
-    { month: 'Dec', revenue: Math.round(totalSales * 0.15) },
-    { month: 'Jan', revenue: Math.round(totalSales * 0.17) },
+    { month: 'Jul', revenue: 8888 },
+    { month: 'Aug', revenue: 19888 },
+    { month: 'Sep', revenue: 8888 },
+    { month: 'Oct', revenue: 38888 },
+    { month: 'Nov', revenue: 19888 },
+    { month: 'Dec', revenue: 8888 },
+    { month: 'Jan', revenue: totalSales },
   ];
 
   const handleApproveApplication = (id: number) => {
@@ -156,7 +156,7 @@ const HilomeAdminDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="font-display text-lg">Revenue Trend</CardTitle>
+            <CardTitle className="font-display text-lg">Revenue Trend (Membership)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
