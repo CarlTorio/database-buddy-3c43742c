@@ -219,15 +219,15 @@ const Membership = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="bg-card rounded-xl p-4 md:p-6 shadow-md border border-border/50"
+                className="bg-card rounded-lg p-3 md:p-4 shadow-md border border-border/50"
               >
-                <h2 className="font-display text-base font-semibold text-foreground mb-4">
+                <h2 className="font-display text-sm font-semibold text-foreground mb-3">
                   Personal Information
                 </h2>
                 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-medium">
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="name" className="text-xs font-medium">
                       Full Name <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -236,15 +236,15 @@ const Membership = () => {
                       placeholder="Enter your full name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className={errors.name ? "border-red-500" : ""}
+                      className={`h-8 text-sm ${errors.name ? "border-red-500" : ""}`}
                     />
                     {errors.name && (
-                      <p className="text-xs text-red-500">{errors.name}</p>
+                      <p className="text-[10px] text-red-500">{errors.name}</p>
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="contact" className="text-sm font-medium">
+                  <div className="space-y-1">
+                    <Label htmlFor="contact" className="text-xs font-medium">
                       Contact Number <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -253,15 +253,15 @@ const Membership = () => {
                       placeholder="Enter your contact number"
                       value={formData.contact}
                       onChange={handleInputChange}
-                      className={errors.contact ? "border-red-500" : ""}
+                      className={`h-8 text-sm ${errors.contact ? "border-red-500" : ""}`}
                     />
                     {errors.contact && (
-                      <p className="text-xs text-red-500">{errors.contact}</p>
+                      <p className="text-[10px] text-red-500">{errors.contact}</p>
                     )}
                   </div>
                   
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="email" className="text-sm font-medium">
+                  <div className="space-y-1 md:col-span-2">
+                    <Label htmlFor="email" className="text-xs font-medium">
                       Email Address <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -271,10 +271,10 @@ const Membership = () => {
                       placeholder="Enter your email address"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={errors.email ? "border-red-500" : ""}
+                      className={`h-8 text-sm ${errors.email ? "border-red-500" : ""}`}
                     />
                     {errors.email && (
-                      <p className="text-xs text-red-500">{errors.email}</p>
+                      <p className="text-[10px] text-red-500">{errors.email}</p>
                     )}
                   </div>
                 </div>
