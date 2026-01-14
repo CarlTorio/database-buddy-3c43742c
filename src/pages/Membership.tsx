@@ -147,11 +147,11 @@ const Membership = () => {
               </motion.div>
               
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mb-4">
-                Thank You
+                Welcome to the Hilomè Family
               </h1>
               
               <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-8 max-w-lg mx-auto">
-                Your message has been received. Our team will reach out to you shortly to guide you on your journey to radiant, healthy skin. In the meantime, explore our treatments to discover how we can care for your skin.
+                Your wellness journey begins here. Our team will reach out shortly to welcome you and guide you through your membership benefits. Get ready to experience the art of holistic healing and rejuvenation.
               </p>
               
               <Link to="/">
