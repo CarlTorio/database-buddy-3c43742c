@@ -167,14 +167,14 @@ const Membership = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cream/30 to-background">
       <Header />
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
+      <main className="pt-20 pb-10">
+        <div className="container mx-auto px-4 max-w-3xl">
           {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
-            className="mb-6"
+            className="mb-4"
           >
             <Button
               variant="ghost"
@@ -191,38 +191,38 @@ const Membership = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto mb-10"
+            className="text-center max-w-xl mx-auto mb-6"
           >
-            <div className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/20 rounded-full px-3 py-1 mb-4">
-              <Sparkles className="w-3 h-3 text-accent" />
-              <span className="text-accent font-medium text-xs uppercase tracking-wider">
+            <div className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/20 rounded-full px-2.5 py-0.5 mb-3">
+              <Sparkles className="w-2.5 h-2.5 text-accent" />
+              <span className="text-accent font-medium text-[10px] uppercase tracking-wider">
                 Join Our Wellness Family
               </span>
-              <Sparkles className="w-3 h-3 text-accent" />
+              <Sparkles className="w-2.5 h-2.5 text-accent" />
             </div>
             
-            <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground mb-3">
+            <h1 className="font-display text-xl md:text-2xl lg:text-3xl font-semibold text-foreground mb-2">
               Membership Registration
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base">
+            <p className="text-muted-foreground text-xs md:text-sm">
               Fill out the form below to start your journey with Hilomè. Choose your preferred membership tier and we'll get in touch with you shortly.
             </p>
           </motion.div>
 
-          <div className="max-w-4xl mx-auto">
-            <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="max-w-2xl mx-auto">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* Personal Information */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border/50"
+                className="bg-card rounded-xl p-4 md:p-6 shadow-md border border-border/50"
               >
-                <h2 className="font-display text-lg font-semibold text-foreground mb-6">
+                <h2 className="font-display text-base font-semibold text-foreground mb-4">
                   Personal Information
                 </h2>
                 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-sm font-medium">
                       Full Name <span className="text-red-500">*</span>
@@ -282,12 +282,12 @@ const Membership = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border/50"
+                className="bg-card rounded-xl p-4 md:p-6 shadow-md border border-border/50"
               >
-                <h2 className="font-display text-lg font-semibold text-foreground mb-2">
+                <h2 className="font-display text-base font-semibold text-foreground mb-1">
                   Choose Your Membership <span className="text-red-500">*</span>
                 </h2>
-                <p className="text-muted-foreground text-sm mb-6">
+                <p className="text-muted-foreground text-xs mb-4">
                   Select the membership tier that best suits your wellness needs.
                 </p>
                 
@@ -303,7 +303,7 @@ const Membership = () => {
                       setErrors((prev) => ({ ...prev, membership: "" }));
                     }
                   }}
-                  className="grid md:grid-cols-3 gap-4"
+                  className="grid md:grid-cols-3 gap-3"
                 >
                   {membershipOptions.map((membership) => (
                     <motion.div
@@ -313,23 +313,23 @@ const Membership = () => {
                     >
                       <Label
                         htmlFor={membership.id}
-                        className={`cursor-pointer block rounded-xl p-4 border-2 transition-all ${
+                        className={`cursor-pointer block rounded-lg p-3 border-2 transition-all ${
                           selectedMembership === membership.id
                             ? "border-accent bg-accent/5"
                             : "border-border hover:border-accent/50"
                         }`}
                       >
-                        <div className="flex items-center gap-3 mb-3">
+                        <div className="flex items-center gap-2 mb-2">
                           <RadioGroupItem value={membership.id} id={membership.id} />
                           <div>
-                            <p className="font-semibold text-foreground">{membership.name}</p>
-                            <p className="text-xs text-muted-foreground">{membership.tier}</p>
+                            <p className="font-semibold text-sm text-foreground">{membership.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{membership.tier}</p>
                           </div>
                         </div>
                         <img
                           src={membership.image}
                           alt={`${membership.name} Membership Card`}
-                          className="w-full h-auto rounded-lg mb-3"
+                          className="w-full h-auto rounded-md"
                         />
                       </Label>
                     </motion.div>
@@ -342,16 +342,16 @@ const Membership = () => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     transition={{ duration: 0.3 }}
-                    className="mt-6 p-4 bg-accent/5 rounded-xl border border-accent/20"
+                    className="mt-4 p-3 bg-accent/5 rounded-lg border border-accent/20"
                   >
-                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-accent" />
+                    <h3 className="font-semibold text-sm text-foreground mb-2 flex items-center gap-2">
+                      <Sparkles className="w-3 h-3 text-accent" />
                       {selectedPlan.name} Benefits Include:
                     </h3>
-                    <ul className="grid md:grid-cols-2 gap-2">
+                    <ul className="grid md:grid-cols-2 gap-1.5">
                       {selectedPlan.benefits.map((benefit, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <Check className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                        <li key={index} className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                          <Check className="w-3 h-3 text-accent flex-shrink-0 mt-0.5" />
                           <span>{benefit}</span>
                         </li>
                       ))}
@@ -365,12 +365,12 @@ const Membership = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border/50"
+                className="bg-card rounded-xl p-4 md:p-6 shadow-md border border-border/50"
               >
-                <h2 className="font-display text-lg font-semibold text-foreground mb-2">
+                <h2 className="font-display text-base font-semibold text-foreground mb-1">
                   Message or Note
                 </h2>
-                <p className="text-muted-foreground text-sm mb-4">
+                <p className="text-muted-foreground text-xs mb-3">
                   Any questions or special requests? Let us know!
                 </p>
                 
@@ -380,7 +380,7 @@ const Membership = () => {
                   placeholder="Enter your message or note (optional)"
                   value={formData.message}
                   onChange={handleInputChange}
-                  className="min-h-[120px]"
+                  className="min-h-[80px]"
                 />
               </motion.div>
 
@@ -393,7 +393,7 @@ const Membership = () => {
               >
                 <Button
                   type="submit"
-                  className="gradient-accent text-accent-foreground rounded-full px-12 py-3 text-base font-medium"
+                  className="gradient-accent text-accent-foreground rounded-full px-10 py-2.5 text-sm font-medium"
                 >
                   Submit Application
                 </Button>
