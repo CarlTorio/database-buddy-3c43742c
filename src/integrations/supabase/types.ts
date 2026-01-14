@@ -14,7 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          created_at: string
+          date: string
+          email: string
+          id: string
+          membership: string
+          message: string | null
+          name: string
+          phone: string
+          status: string
+          time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          email: string
+          id?: string
+          membership: string
+          message?: string | null
+          name: string
+          phone: string
+          status?: string
+          time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          email?: string
+          id?: string
+          membership?: string
+          message?: string | null
+          name?: string
+          phone?: string
+          status?: string
+          time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      members: {
+        Row: {
+          created_at: string
+          email: string
+          expiration_date: string
+          id: string
+          join_date: string
+          last_payment: string
+          membership: string
+          name: string
+          phone: string
+          status: string
+          total_paid: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expiration_date: string
+          id?: string
+          join_date?: string
+          last_payment?: string
+          membership: string
+          name: string
+          phone: string
+          status?: string
+          total_paid?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expiration_date?: string
+          id?: string
+          join_date?: string
+          last_payment?: string
+          membership?: string
+          name?: string
+          phone?: string
+          status?: string
+          total_paid?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      membership_applications: {
+        Row: {
+          amount: number
+          applied_date: string
+          created_at: string
+          email: string
+          id: string
+          membership: string
+          message: string | null
+          name: string
+          phone: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          applied_date?: string
+          created_at?: string
+          email: string
+          id?: string
+          membership: string
+          message?: string | null
+          name: string
+          phone: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          applied_date?: string
+          created_at?: string
+          email?: string
+          id?: string
+          membership?: string
+          message?: string | null
+          name?: string
+          phone?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
