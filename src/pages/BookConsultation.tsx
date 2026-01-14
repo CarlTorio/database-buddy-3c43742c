@@ -160,6 +160,16 @@ const BookConsultation = () => {
 
             {/* Right Column - Booking Form */}
             <div className="bg-primary p-8 md:p-12">
+              {/* Form Header */}
+              <div className="mb-6">
+                <h2 className="font-display text-2xl md:text-3xl text-primary-foreground mb-2">
+                  Book Your Consultation
+                </h2>
+                <p className="text-primary-foreground/70 text-sm">
+                  Schedule a free consultation with our skincare specialists.
+                </p>
+              </div>
+              
               <div className="space-y-5">
                 {/* Name Field */}
                 <div>
