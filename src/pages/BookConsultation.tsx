@@ -234,9 +234,6 @@ const BookConsultation = () => {
                         : "hsl(var(--primary-foreground) / 0.5)",
                     }}
                   >
-                    <option value="" className="bg-primary text-primary-foreground">
-                      Select membership
-                    </option>
                     {memberships.map((membership, index) => (
                       <option
                         key={index}
