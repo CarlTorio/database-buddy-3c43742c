@@ -76,12 +76,13 @@ const Header = () => {
             {/* Logo */}
             <motion.button
               onClick={handleLogoClick}
+              onDoubleClick={() => navigate('/admin')}
               className="flex items-center ml-12 md:ml-24"
               whileHover={{ scale: 1.02 }}
             >
               <img
                 src="https://i.imgur.com/9beP2dq.png"
-                alt="SkinStation Logo"
+                alt="Hilomè Logo"
                 className="h-8 w-auto"
               />
             </motion.button>
