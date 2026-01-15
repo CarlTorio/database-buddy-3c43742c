@@ -47,6 +47,20 @@ const BookConsultation = () => {
     if (formData.name && formData.email && formData.contactNumber && formData.preferredBranch && formData.date && formData.time) {
       setIsSubmitting(true);
       try {
+        // Save booking to database
+        const { error } = await supabase.from('bookings').insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.contactNumber,
+          membership: formData.preferredBranch,
+          date: formData.date,
+          time: formData.time,
+          message: formData.message || null,
+          status: 'pending'
+        });
+
+        if (error) throw error;
+
         // Navigate to thank you page with booking details
         navigate("/thank-you", {
           state: {
