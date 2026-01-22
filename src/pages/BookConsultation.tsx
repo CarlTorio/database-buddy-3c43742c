@@ -61,6 +61,29 @@ const BookConsultation = () => {
 
         if (error) throw error;
 
+        // Send confirmation email via edge function
+        try {
+          const { error: emailError } = await supabase.functions.invoke('send-booking-confirmation', {
+            body: {
+              name: formData.name,
+              email: formData.email,
+              contactNumber: formData.contactNumber,
+              membership: formData.preferredBranch,
+              date: formData.date,
+              time: formData.time,
+              message: formData.message || undefined
+            }
+          });
+          
+          if (emailError) {
+            console.error('Email sending failed:', emailError);
+            // Don't block the booking if email fails
+          }
+        } catch (emailErr) {
+          console.error('Email service error:', emailErr);
+          // Don't block the booking if email fails
+        }
+
         // Navigate to thank you page with booking details
         navigate("/thank-you", {
           state: {
