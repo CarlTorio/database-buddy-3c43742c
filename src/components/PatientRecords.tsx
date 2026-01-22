@@ -143,9 +143,10 @@ const PatientRecords = () => {
           p.id === selectedPatient.id ? selectedPatient : p
         ));
       } else {
-        setPatients(prev => [...prev, { ...selectedPatient, id: Date.now() }]);
+        const newPatient = { ...selectedPatient, id: Date.now() };
+        setPatients(prev => [...prev, newPatient]);
+        setSelectedPatient(newPatient);
       }
-      closeFullRecord();
     }
   };
 
