@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import BookingHistory from '@/components/BookingHistory';
+import PatientRecords from '@/components/PatientRecords';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -601,6 +602,7 @@ const HilomeAdminDashboard = () => {
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard' },
+    { id: 'patient-records', label: 'Patient Records' },
     { id: 'bookings', label: 'Bookings' },
     { id: 'applications', label: 'Applications', badge: pendingApplications },
     { id: 'members', label: 'Members' },
@@ -634,7 +636,7 @@ const HilomeAdminDashboard = () => {
       {/* Navigation Tabs */}
       <nav className="bg-card border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-4">
+          <div className="grid grid-cols-5">
             {tabs.map((tab, index) => (
               <button
                 key={tab.id}
@@ -662,6 +664,7 @@ const HilomeAdminDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {activeTab === 'dashboard' && renderDashboard()}
+        {activeTab === 'patient-records' && <PatientRecords />}
         {activeTab === 'bookings' && renderBookings()}
         {activeTab === 'applications' && renderApplications()}
         {activeTab === 'members' && renderMembers()}
