@@ -63,6 +63,7 @@ const HilomeAdminDashboard = () => {
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [addedToRecord, setAddedToRecord] = useState<Set<string>>(new Set());
 
   // Fetch data from database
   const fetchData = async () => {
@@ -171,7 +172,7 @@ const HilomeAdminDashboard = () => {
 
       if (existing) {
         toast.info(`${booking.name} is already in patient records`);
-        setActiveTab('patients');
+        setAddedToRecord(prev => new Set(prev).add(booking.id));
         return;
       }
 
@@ -192,7 +193,7 @@ const HilomeAdminDashboard = () => {
       if (insertError) throw insertError;
 
       toast.success(`${booking.name} added to patient records`);
-      setActiveTab('patients');
+      setAddedToRecord(prev => new Set(prev).add(booking.id));
     } catch (error) {
       console.error('Error adding to patient records:', error);
       toast.error('Failed to add to patient records');
@@ -428,13 +429,14 @@ const HilomeAdminDashboard = () => {
                           </a>
                         </Button>
                         <Button
-                          variant="outline"
+                          variant={addedToRecord.has(booking.id) ? "secondary" : "outline"}
                           size="sm"
                           className="gap-2"
                           onClick={() => handleAddToRecord(booking)}
+                          disabled={addedToRecord.has(booking.id)}
                         >
                           <FileText className="h-4 w-4" />
-                          Add to Record
+                          {addedToRecord.has(booking.id) ? "Added to Record" : "Add to Record"}
                         </Button>
                       </div>
                     </td>
