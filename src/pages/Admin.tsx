@@ -766,11 +766,23 @@ const HilomeAdminDashboard = () => {
       {/* For Confirmation Dialog */}
       <Dialog open={showForConfirmation} onOpenChange={setShowForConfirmation}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
+          <DialogHeader className="flex flex-row items-center justify-between">
             <DialogTitle className="font-display text-xl flex items-center gap-2">
               <UserCheck className="h-5 w-5 text-accent" />
               For Confirmation ({pendingConfirmations})
             </DialogTitle>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                fetchPendingMembers();
+                toast.success("Pending confirmations updated");
+              }}
+              className="ml-auto mr-8"
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Reload
+            </Button>
           </DialogHeader>
           <div className="space-y-4 py-4">
             {pendingMembers.length > 0 ? (
