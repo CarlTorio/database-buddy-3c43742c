@@ -175,14 +175,14 @@ const HilomeAdminDashboard = () => {
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'completed': return 'bg-green-500/20 text-green-700';
+      case 'completed': return 'text-green-700';
       case 'confirmed':
-      case 'active': return 'bg-blue-500/20 text-blue-700';
-      case 'pending': return 'bg-accent/20 text-accent';
-      case 'cancelled': return 'bg-destructive/20 text-destructive';
-      case 'no-show': return 'bg-orange-500/20 text-orange-700';
-      case 'expiring': return 'bg-destructive/20 text-destructive';
-      default: return 'bg-muted text-muted-foreground';
+      case 'active': return 'text-blue-700';
+      case 'pending': return 'text-accent';
+      case 'cancelled': return 'text-destructive';
+      case 'no-show': return 'text-orange-700';
+      case 'expiring': return 'text-destructive';
+      default: return 'text-muted-foreground';
     }
   };
 
