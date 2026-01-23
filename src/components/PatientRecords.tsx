@@ -205,12 +205,6 @@ const PatientRecords = () => {
                   <p className="text-sm">{selectedPatient.preferred_time}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Status</label>
-                  <Badge className={getStatusColor(selectedPatient.status)}>
-                    {selectedPatient.status}
-                  </Badge>
-                </div>
-                <div>
                   <label className="text-xs text-muted-foreground mb-1 block">Membership</label>
                   <Badge className={getMembershipColor(selectedPatient.membership)}>
                     {selectedPatient.membership}
@@ -277,7 +271,6 @@ const PatientRecords = () => {
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Contact</th>
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Membership</th>
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Last Booking</th>
-                    <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Status</th>
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Action</th>
                   </tr>
                 </thead>
@@ -296,11 +289,6 @@ const PatientRecords = () => {
                       </td>
                       <td className="py-4 px-2 text-sm">
                         {formatDate(patient.preferred_date)}
-                      </td>
-                      <td className="py-4 px-2">
-                        <Badge className={getStatusColor(patient.status)}>
-                          {patient.status}
-                        </Badge>
                       </td>
                       <td className="py-4 px-2">
                         <Button
