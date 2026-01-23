@@ -137,11 +137,11 @@ const HilomeAdminDashboard = () => {
 
   // Sample data for Members "For Confirmation" - Stripe-ready fields included
   const pendingMembers = [
-    { id: '1', name: 'Elena Rodriguez', email: 'elena.rod@email.com', phone: '09171112233', membership_type: 'Gold', created_at: '2026-01-20', status: 'pending', payment_method: 'gcash', payment_status: 'paid', amount_paid: 19888, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null },
-    { id: '2', name: 'Mark Anthony Reyes', email: 'mark.reyes@email.com', phone: '09182223344', membership_type: 'Platinum', created_at: '2026-01-21', status: 'pending', payment_method: 'card', payment_status: 'paid', amount_paid: 38888, stripe_payment_intent_id: 'pi_demo_123', stripe_receipt_url: 'https://pay.stripe.com/receipts/demo', stripe_charge_id: 'ch_demo_123' },
-    { id: '3', name: 'Patricia Lim', email: 'patricia.lim@email.com', phone: '09193334455', membership_type: 'Green', created_at: '2026-01-22', status: 'pending', payment_method: 'cash', payment_status: 'pending', amount_paid: null, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null },
-    { id: '4', name: 'Roberto Santos', email: 'roberto.s@email.com', phone: '09204445566', membership_type: 'Gold', created_at: '2026-01-22', status: 'pending', payment_method: 'bank_transfer', payment_status: 'paid', amount_paid: 19888, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null },
-    { id: '5', name: 'Angela Cruz', email: 'angela.cruz@email.com', phone: '09215556677', membership_type: 'Green', created_at: '2026-01-23', status: 'pending', payment_method: 'stripe', payment_status: 'paid', amount_paid: 8888, stripe_payment_intent_id: 'pi_demo_456', stripe_receipt_url: 'https://pay.stripe.com/receipts/demo2', stripe_charge_id: 'ch_demo_456' },
+    { id: '1', name: 'Elena Rodriguez', email: 'elena.rod@email.com', phone: '09171112233', membership_type: 'Gold', created_at: '2026-01-20', status: 'pending', payment_method: 'gcash', payment_status: 'paid', amount_paid: 19888, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null, referred_by: 'DIANA2026', referred_by_name: 'Diana Gomez', referral_count: 2 },
+    { id: '2', name: 'Mark Anthony Reyes', email: 'mark.reyes@email.com', phone: '09182223344', membership_type: 'Platinum', created_at: '2026-01-21', status: 'pending', payment_method: 'card', payment_status: 'paid', amount_paid: 38888, stripe_payment_intent_id: 'pi_demo_123', stripe_receipt_url: 'https://pay.stripe.com/receipts/demo', stripe_charge_id: 'ch_demo_123', referred_by: null, referred_by_name: null, referral_count: 0 },
+    { id: '3', name: 'Patricia Lim', email: 'patricia.lim@email.com', phone: '09193334455', membership_type: 'Green', created_at: '2026-01-22', status: 'pending', payment_method: null, payment_status: 'pending', amount_paid: null, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null, referred_by: 'FERVIL26', referred_by_name: 'Fernando Villa', referral_count: 0 },
+    { id: '4', name: 'Roberto Santos', email: 'roberto.s@email.com', phone: '09204445566', membership_type: 'Gold', created_at: '2026-01-22', status: 'pending', payment_method: 'bank_transfer', payment_status: 'paid', amount_paid: 19888, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null, referred_by: null, referred_by_name: null, referral_count: 1 },
+    { id: '5', name: 'Angela Cruz', email: 'angela.cruz@email.com', phone: '09215556677', membership_type: 'Green', created_at: '2026-01-23', status: 'pending', payment_method: 'stripe', payment_status: 'paid', amount_paid: 8888, stripe_payment_intent_id: 'pi_demo_456', stripe_receipt_url: 'https://pay.stripe.com/receipts/demo2', stripe_charge_id: 'ch_demo_456', referred_by: 'GRACE123', referred_by_name: 'Grace Tan', referral_count: 0 },
   ];
 
   // Sample data for Active Members
@@ -591,21 +591,43 @@ const HilomeAdminDashboard = () => {
                               ₱{(membershipPrices[member.membership_type] || 0).toLocaleString()}
                             </span>
                           </div>
-                          <div className="flex items-center gap-3 mt-2">
-                            <div className="flex items-center gap-1">
-                              {getPaymentMethodIcon(member.payment_method)}
-                              <span className="text-xs font-medium">{getPaymentMethodLabel(member.payment_method)}</span>
+                          {member.payment_method && (
+                            <div className="flex items-center gap-3 mt-2">
+                              <div className="flex items-center gap-1">
+                                {getPaymentMethodIcon(member.payment_method)}
+                                <span className="text-xs font-medium">{getPaymentMethodLabel(member.payment_method)}</span>
+                              </div>
+                              <Badge 
+                                variant="outline" 
+                                className={member.payment_status === 'paid' ? 'bg-green-500/10 text-green-600 border-green-500/30' : 'bg-amber-500/10 text-amber-600 border-amber-500/30'}
+                              >
+                                {member.payment_status === 'paid' ? 'Paid' : 'Pending'}
+                              </Badge>
                             </div>
-                            <Badge 
-                              variant="outline" 
-                              className={member.payment_status === 'paid' ? 'bg-green-500/10 text-green-600 border-green-500/30' : 'bg-amber-500/10 text-amber-600 border-amber-500/30'}
-                            >
-                              {member.payment_status === 'paid' ? 'Paid' : 'Pending'}
-                            </Badge>
-                          </div>
+                          )}
                           <p className="text-xs text-muted-foreground mt-1">
                             Date: {new Date(member.created_at).toLocaleDateString()}
                           </p>
+                          {/* Referral info */}
+                          <div className="flex items-center gap-4 mt-2">
+                            {member.referred_by && (
+                              <div className="flex items-center gap-1">
+                                <Gift className="h-3 w-3 text-accent" />
+                                <span className="text-xs text-muted-foreground">
+                                  Referred by: <span className="font-medium text-foreground">{member.referred_by_name}</span>
+                                  <span className="text-muted-foreground/70 ml-1">({member.referred_by})</span>
+                                </span>
+                              </div>
+                            )}
+                            {member.referral_count > 0 && (
+                              <div className="flex items-center gap-1">
+                                <Users className="h-3 w-3 text-green-500" />
+                                <span className="text-xs text-muted-foreground">
+                                  Referrals: <span className="font-medium text-green-600">{member.referral_count}</span>
+                                </span>
+                              </div>
+                            )}
+                          </div>
                           {/* Stripe info - shows when connected */}
                           {member.stripe_payment_intent_id && (
                             <div className="mt-2 p-2 bg-muted/30 rounded-md">
