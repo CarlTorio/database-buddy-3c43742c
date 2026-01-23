@@ -247,6 +247,20 @@ const HilomeAdminDashboard = () => {
 
       if (error) throw error;
 
+      // Automatically create patient record for the walk-in member
+      const { error: patientError } = await supabase
+        .from('patient_records')
+        .insert({
+          name: registerFormData.name,
+          email: registerFormData.email,
+          contact_number: registerFormData.phone || null,
+          membership: registerFormData.membership_type,
+        });
+
+      if (patientError) {
+        console.error('Error creating patient record:', patientError);
+      }
+
       // If referral code was used, increment the referrer's referral_count
       if (referrerId) {
         // Fetch current count and increment
@@ -350,6 +364,22 @@ const HilomeAdminDashboard = () => {
             .from('members')
             .update({ referral_count: (referrer.referral_count || 0) + 1 })
             .eq('id', referrer.id);
+        }
+      }
+
+      // Automatically create patient record for the confirmed member
+      if (member) {
+        const { error: patientError } = await supabase
+          .from('patient_records')
+          .insert({
+            name: member.name,
+            email: member.email,
+            contact_number: member.phone || null,
+            membership: member.membership_type,
+          });
+
+        if (patientError) {
+          console.error('Error creating patient record:', patientError);
         }
       }
 
