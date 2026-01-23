@@ -147,8 +147,31 @@ const HilomeAdminDashboard = () => {
     }
   };
 
-  // Sample data for Members "For Confirmation" - Stripe-ready fields included
-  const pendingMembers = [
+  // Pending members for confirmation - filter from database
+  const [pendingMembersData, setPendingMembersData] = useState<any[]>([]);
+  
+  // Fetch pending members from database
+  const fetchPendingMembers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setPendingMembersData(data || []);
+    } catch (error) {
+      console.error('Error fetching pending members:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingMembers();
+  }, []);
+
+  // Use database pending members, fallback to sample data if empty
+  const pendingMembers = pendingMembersData.length > 0 ? pendingMembersData : [
     { id: '1', name: 'Elena Rodriguez', email: 'elena.rod@email.com', phone: '09171112233', membership_type: 'Gold', created_at: '2026-01-20', status: 'pending', payment_method: 'gcash', payment_status: 'paid', amount_paid: 19888, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null, referred_by: 'DIANA2026', referred_by_name: 'Diana Gomez', referral_count: 2 },
     { id: '2', name: 'Mark Anthony Reyes', email: 'mark.reyes@email.com', phone: '09182223344', membership_type: 'Platinum', created_at: '2026-01-21', status: 'pending', payment_method: 'card', payment_status: 'paid', amount_paid: 38888, stripe_payment_intent_id: 'pi_demo_123', stripe_receipt_url: 'https://pay.stripe.com/receipts/demo', stripe_charge_id: 'ch_demo_123', referred_by: null, referred_by_name: null, referral_count: 0 },
     { id: '3', name: 'Patricia Lim', email: 'patricia.lim@email.com', phone: '09193334455', membership_type: 'Green', created_at: '2026-01-22', status: 'pending', payment_method: null, payment_status: 'pending', amount_paid: null, stripe_payment_intent_id: null, stripe_receipt_url: null, stripe_charge_id: null, referred_by: 'FERVIL26', referred_by_name: 'Fernando Villa', referral_count: 0 },
@@ -306,13 +329,68 @@ const HilomeAdminDashboard = () => {
     { month: 'Jan', revenue: totalSales },
   ];
 
-  // Placeholder functions for member management (requires members table)
+  // Confirm member - change status to active
   const handleConfirmMember = async (id: string) => {
-    toast.info('Members table not yet configured');
+    try {
+      const member = pendingMembers.find(m => m.id === id);
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+
+      const { error } = await supabase
+        .from('members')
+        .update({ 
+          status: 'active',
+          membership_start_date: new Date().toISOString(),
+          membership_expiry_date: expiryDate.toISOString()
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // If member was referred, increment referrer's count
+      if (member?.referred_by) {
+        const { data: referrer } = await supabase
+          .from('members')
+          .select('id, referral_count')
+          .eq('referral_code', member.referred_by)
+          .maybeSingle();
+
+        if (referrer) {
+          await supabase
+            .from('members')
+            .update({ referral_count: (referrer.referral_count || 0) + 1 })
+            .eq('id', referrer.id);
+        }
+      }
+
+      toast.success(`${member?.name || 'Member'} confirmed successfully!`);
+      fetchPendingMembers();
+      fetchMembers();
+    } catch (error) {
+      console.error('Error confirming member:', error);
+      toast.error('Failed to confirm member');
+    }
   };
 
+  // Reject member - change status to rejected
   const handleRejectPendingMember = async (id: string) => {
-    toast.info('Members table not yet configured');
+    try {
+      const member = pendingMembers.find(m => m.id === id);
+      
+      const { error } = await supabase
+        .from('members')
+        .update({ status: 'rejected' })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast.success(`${member?.name || 'Member'} rejected`);
+      fetchPendingMembers();
+      fetchMembers();
+    } catch (error) {
+      console.error('Error rejecting member:', error);
+      toast.error('Failed to reject member');
+    }
   };
 
   // Update booking status
