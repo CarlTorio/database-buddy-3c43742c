@@ -14,7 +14,134 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          contact_number: string
+          created_at: string
+          email: string
+          id: string
+          membership: string | null
+          message: string | null
+          name: string
+          preferred_date: string
+          preferred_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          contact_number: string
+          created_at?: string
+          email: string
+          id?: string
+          membership?: string | null
+          message?: string | null
+          name: string
+          preferred_date: string
+          preferred_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          contact_number?: string
+          created_at?: string
+          email?: string
+          id?: string
+          membership?: string | null
+          message?: string | null
+          name?: string
+          preferred_date?: string
+          preferred_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      patient_records: {
+        Row: {
+          booking_id: string | null
+          contact_number: string | null
+          created_at: string
+          email: string
+          id: string
+          membership: string | null
+          message: string | null
+          name: string
+          notes: string | null
+          preferred_date: string | null
+          preferred_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          booking_id?: string | null
+          contact_number?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          membership?: string | null
+          message?: string | null
+          name: string
+          notes?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          booking_id?: string | null
+          contact_number?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          membership?: string | null
+          message?: string | null
+          name?: string
+          notes?: string | null
+          preferred_date?: string | null
+          preferred_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_records_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          member_id: string | null
+          payment_method: string | null
+          status: string
+          type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id?: string | null
+          payment_method?: string | null
+          status?: string
+          type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          member_id?: string | null
+          payment_method?: string | null
+          status?: string
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
