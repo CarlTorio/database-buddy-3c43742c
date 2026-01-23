@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare } from 'lucide-react';
+import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -323,6 +323,10 @@ const HilomeAdminDashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h2 className="font-display text-2xl font-semibold text-foreground">Bookings Management</h2>
         <div className="flex gap-3">
+          <Button variant="outline" className="gap-2" onClick={fetchData}>
+            <RefreshCw className="h-4 w-4" />
+            Reload
+          </Button>
           <Button variant="outline" className="gap-2" onClick={() => setShowBookingHistory(true)}>
             <History className="h-4 w-4" />
             Booking History
@@ -485,6 +489,10 @@ const HilomeAdminDashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h2 className="font-display text-2xl font-semibold text-foreground">Members Database</h2>
         <div className="flex gap-3">
+          <Button variant="outline" className="gap-2" onClick={fetchData}>
+            <RefreshCw className="h-4 w-4" />
+            Reload
+          </Button>
           <Button 
             variant="outline" 
             className="gap-2 relative"
