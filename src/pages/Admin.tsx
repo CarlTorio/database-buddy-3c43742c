@@ -365,10 +365,10 @@ const HilomeAdminDashboard = () => {
                         value={booking.status} 
                         onValueChange={(value) => handleStatusChange(booking.id, value)}
                       >
-                        <SelectTrigger className="w-[130px] h-8">
-                          <Badge className={getStatusColor(booking.status)}>
+                        <SelectTrigger className="w-[130px] h-8 border-none bg-transparent">
+                          <span className={`font-medium capitalize ${getStatusColor(booking.status)}`}>
                             {booking.status}
-                          </Badge>
+                          </span>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="pending">Pending</SelectItem>
