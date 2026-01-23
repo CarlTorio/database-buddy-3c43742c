@@ -51,10 +51,10 @@ const BookConsultation = () => {
         const { error } = await supabase.from('bookings').insert({
           name: formData.name,
           email: formData.email,
-          phone: formData.contactNumber,
+          contact_number: formData.contactNumber,
           membership: formData.preferredBranch,
-          date: formData.date,
-          time: formData.time,
+          preferred_date: formData.date,
+          preferred_time: formData.time,
           message: formData.message || null,
           status: 'pending'
         });

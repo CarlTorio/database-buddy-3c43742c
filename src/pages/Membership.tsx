@@ -97,21 +97,21 @@ const Membership = () => {
       return;
     }
 
-    // Validate referral code if provided
-    if (formData.referralCode && formData.referralCode.length > 0) {
-      const { data: existingMember, error } = await supabase
-        .from('members')
-        .select('id, referral_code')
-        .eq('referral_code', formData.referralCode.toUpperCase())
-        .eq('status', 'active')
-        .maybeSingle();
-      
-      if (error || !existingMember) {
-        setErrors(prev => ({ ...prev, referralCode: "Invalid referral code" }));
-        toast.error("The referral code you entered is invalid");
-        return;
-      }
-    }
+    // Referral code validation disabled until members table is created
+    // if (formData.referralCode && formData.referralCode.length > 0) {
+    //   const { data: existingMember, error } = await supabase
+    //     .from('members')
+    //     .select('id, referral_code')
+    //     .eq('referral_code', formData.referralCode.toUpperCase())
+    //     .eq('status', 'active')
+    //     .maybeSingle();
+    //   
+    //   if (error || !existingMember) {
+    //     setErrors(prev => ({ ...prev, referralCode: "Invalid referral code" }));
+    //     toast.error("The referral code you entered is invalid");
+    //     return;
+    //   }
+    // }
 
     setIsProcessing(true);
     

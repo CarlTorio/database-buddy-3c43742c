@@ -36,41 +36,14 @@ const HilomeAdminDashboard = () => {
     id: string;
     name: string;
     email: string;
-    phone: string;
-    date: string;
-    time: string;
+    contact_number: string;
+    preferred_date: string;
+    preferred_time: string;
     membership: string;
     status: string;
-  }
-
-  interface Application {
-    id: string;
-    name: string;
-    email: string;
-    phone: string | null;
-    membership_type: string;
-    status: string;
+    message: string | null;
     created_at: string;
     updated_at: string;
-  }
-
-  interface Member {
-    id: string;
-    name: string;
-    email: string;
-    phone: string | null;
-    membership_type: string;
-    status: string;
-    created_at: string;
-    updated_at: string;
-    stripe_customer_id: string | null;
-    stripe_payment_intent_id: string | null;
-    payment_method_type: string | null;
-    payment_method_details: string | null;
-    membership_start_date: string | null;
-    membership_expiry_date: string | null;
-    referral_code: string | null;
-    referral_count: number | null;
   }
 
   // Helper to calculate days left until expiry
@@ -89,27 +62,20 @@ const HilomeAdminDashboard = () => {
   };
 
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch data from database
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [bookingsRes, applicationsRes, membersRes] = await Promise.all([
-        supabase.from('bookings').select('*').order('created_at', { ascending: false }),
-        supabase.from('membership_applications').select('*').order('created_at', { ascending: false }),
-        supabase.from('members').select('*').order('created_at', { ascending: false })
-      ]);
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      if (bookingsRes.error) throw bookingsRes.error;
-      if (applicationsRes.error) throw applicationsRes.error;
-      if (membersRes.error) throw membersRes.error;
+      if (error) throw error;
 
-      setBookings(bookingsRes.data || []);
-      setApplications(applicationsRes.data || []);
-      setMembers(membersRes.data || []);
+      setBookings(data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to load data');
@@ -122,19 +88,21 @@ const HilomeAdminDashboard = () => {
     fetchData();
   }, []);
 
-  // Compute dashboard data dynamically
-  const activeMembers = members.filter(m => m.status === 'active');
-  const pendingMembers = members.filter(m => m.status === 'pending');
-  const totalSales = activeMembers.reduce((sum, member) => sum + (membershipPrices[member.membership_type] || 0), 0);
-  const totalMembers = activeMembers.length;
-  const pendingConfirmations = pendingMembers.length;
+  // Placeholder member arrays (requires members table)
+  const pendingMembers: any[] = [];
+  const activeMembers: any[] = [];
+
+  // Compute dashboard data dynamically (simplified - no members table yet)
+  const totalSales = 0;
+  const totalMembers = 0;
+  const pendingConfirmations = 0;
   const activeBookings = bookings.length;
 
-  // Compute membership distribution dynamically
+  // Compute membership distribution (placeholder data)
   const membershipDistribution = [
-    { name: 'Green', value: members.filter(m => m.membership_type.toUpperCase().includes('GREEN')).length, color: 'hsl(var(--green-600))' },
-    { name: 'Gold', value: members.filter(m => m.membership_type.toUpperCase().includes('GOLD')).length, color: 'hsl(var(--accent))' },
-    { name: 'Platinum', value: members.filter(m => m.membership_type.toUpperCase().includes('PLATINUM')).length, color: 'hsl(var(--muted-foreground))' },
+    { name: 'Green', value: 0, color: 'hsl(var(--green-600))' },
+    { name: 'Gold', value: 0, color: 'hsl(var(--accent))' },
+    { name: 'Platinum', value: 0, color: 'hsl(var(--muted-foreground))' },
   ];
 
   // Revenue trend showing membership revenue per month
@@ -148,64 +116,13 @@ const HilomeAdminDashboard = () => {
     { month: 'Jan', revenue: totalSales },
   ];
 
-  // Handle confirming a pending member (moves them to active status and creates patient record)
+  // Placeholder functions for member management (requires members table)
   const handleConfirmMember = async (id: string) => {
-    try {
-      // First, get the member details
-      const memberToConfirm = members.find(m => m.id === id);
-      if (!memberToConfirm) {
-        toast.error('Member not found');
-        return;
-      }
-
-      // Update member status to active
-      const { error: updateError } = await supabase.from('members')
-        .update({ status: 'active' })
-        .eq('id', id);
-
-      if (updateError) throw updateError;
-
-      // Create patient record from member data
-      const { error: patientError } = await supabase.from('patients')
-        .insert({
-          member_id: id,
-          name: memberToConfirm.name,
-          email: memberToConfirm.email,
-          phone: memberToConfirm.phone,
-          membership_type: memberToConfirm.membership_type,
-          membership_start_date: memberToConfirm.membership_start_date,
-          membership_expiry_date: memberToConfirm.membership_expiry_date,
-          status: 'active'
-        });
-
-      if (patientError) {
-        console.error('Error creating patient record:', patientError);
-        // Don't throw - member is confirmed, just log the patient creation error
-      }
-
-      toast.success('Member confirmed and patient record created!');
-      fetchData(); // Refresh data
-    } catch (error) {
-      console.error('Error confirming member:', error);
-      toast.error('Failed to confirm member');
-    }
+    toast.info('Members table not yet configured');
   };
 
-  // Handle rejecting a pending member
   const handleRejectPendingMember = async (id: string) => {
-    try {
-      const { error } = await supabase.from('members')
-        .update({ status: 'rejected' })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast.success('Member rejected');
-      fetchData(); // Refresh data
-    } catch (error) {
-      console.error('Error rejecting member:', error);
-      toast.error('Failed to reject member');
-    }
+    toast.info('Members table not yet configured');
   };
 
 
@@ -382,18 +299,18 @@ const HilomeAdminDashboard = () => {
                   .filter(booking => 
                     booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     booking.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    booking.phone.includes(searchTerm)
+                    booking.contact_number.includes(searchTerm)
                   )
                   .map(booking => (
                   <tr key={booking.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
                     <td className="py-4 px-2 font-medium">{booking.name}</td>
                     <td className="py-4 px-2">
                       <p className="text-sm">{booking.email}</p>
-                      <p className="text-xs text-muted-foreground">{booking.phone}</p>
+                      <p className="text-xs text-muted-foreground">{booking.contact_number}</p>
                     </td>
                     <td className="py-4 px-2">
-                      <p className="text-sm">{booking.date}</p>
-                      <p className="text-xs text-muted-foreground">{booking.time}</p>
+                      <p className="text-sm">{booking.preferred_date}</p>
+                      <p className="text-xs text-muted-foreground">{booking.preferred_time}</p>
                     </td>
                     <td className="py-4 px-2">
                       <Badge variant="outline" className={getMembershipColor(booking.membership)}>
@@ -412,7 +329,7 @@ const HilomeAdminDashboard = () => {
                         className="gap-2"
                         asChild
                       >
-                        <a href={`tel:${booking.phone.replace(/-/g, '')}`}>
+                        <a href={`tel:${booking.contact_number.replace(/-/g, '')}`}>
                           <Phone className="h-4 w-4" />
                           Call
                         </a>
