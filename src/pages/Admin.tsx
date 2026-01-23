@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet } from 'lucide-react';
+import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -66,7 +66,26 @@ const HilomeAdminDashboard = () => {
     stripe_payment_intent_id: string | null;
     payment_method_type: string | null;
     payment_method_details: string | null;
+    membership_start_date: string | null;
+    membership_expiry_date: string | null;
+    referral_code: string | null;
+    referral_count: number | null;
   }
+
+  // Helper to calculate days left until expiry
+  const calculateDaysLeft = (expiryDate: string | null): number | null => {
+    if (!expiryDate) return null;
+    const expiry = new Date(expiryDate);
+    const today = new Date();
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success('Referral code copied!');
+  };
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -490,7 +509,8 @@ const HilomeAdminDashboard = () => {
                 <tr className="border-b border-border">
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Member</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Membership</th>
-                  <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Payment Method</th>
+                  <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Referral Code</th>
+                  <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Referrals</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Join Date</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Days Left</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Status</th>
@@ -498,56 +518,74 @@ const HilomeAdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {members.map(member => (
-                  <tr key={member.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                    <td className="py-4 px-2">
-                      <p className="font-medium">{member.name}</p>
-                      <p className="text-xs text-muted-foreground">{member.email}</p>
-                    </td>
-                    <td className="py-4 px-2">
-                      <Badge variant="outline" className={getMembershipColor(member.membership_type)}>
-                        {member.membership_type}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-2">
-                      {member.payment_method_type ? (
-                        <div className="flex items-center gap-2">
-                          {member.payment_method_type === 'card' ? (
-                            <CreditCard className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <Wallet className="h-4 w-4 text-muted-foreground" />
-                          )}
-                          <div>
-                            <p className="text-sm font-medium capitalize">{member.payment_method_type}</p>
-                            {member.payment_method_details && (
-                              <p className="text-xs text-muted-foreground">{member.payment_method_details}</p>
-                            )}
+                {members.map(member => {
+                  const daysLeft = calculateDaysLeft(member.membership_expiry_date);
+                  return (
+                    <tr key={member.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                      <td className="py-4 px-2">
+                        <p className="font-medium">{member.name}</p>
+                        <p className="text-xs text-muted-foreground">{member.email}</p>
+                      </td>
+                      <td className="py-4 px-2">
+                        <Badge variant="outline" className={getMembershipColor(member.membership_type)}>
+                          {member.membership_type}
+                        </Badge>
+                      </td>
+                      <td className="py-4 px-2">
+                        {member.referral_code ? (
+                          <div className="flex items-center gap-1">
+                            <code className="text-xs font-mono bg-muted px-2 py-1 rounded">{member.referral_code}</code>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                              onClick={() => copyToClipboard(member.referral_code!)}
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
                           </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td className="py-4 px-2">
+                        <div className="flex items-center gap-1">
+                          <Gift className="h-4 w-4 text-accent" />
+                          <span className="text-sm font-medium">{member.referral_count || 0}</span>
                         </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-2 text-sm">{new Date(member.created_at).toLocaleDateString()}</td>
-                    <td className="py-4 px-2">
-                      <span className="text-sm font-medium text-muted-foreground">—</span>
-                    </td>
-                    <td className="py-4 px-2">
-                      <Badge className={getStatusColor(member.status)}>
-                        {member.status}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSelectedMember(member)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="py-4 px-2 text-sm">
+                        {member.membership_start_date 
+                          ? new Date(member.membership_start_date).toLocaleDateString()
+                          : new Date(member.created_at).toLocaleDateString()
+                        }
+                      </td>
+                      <td className="py-4 px-2">
+                        {daysLeft !== null ? (
+                          <span className={`text-sm font-medium ${daysLeft <= 30 ? 'text-destructive' : daysLeft <= 90 ? 'text-amber-500' : 'text-green-600'}`}>
+                            {daysLeft > 0 ? `${daysLeft} days` : 'Expired'}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td className="py-4 px-2">
+                        <Badge className={getStatusColor(member.status)}>
+                          {member.status}
+                        </Badge>
+                      </td>
+                      <td className="py-4 px-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setSelectedMember(member)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -580,8 +618,20 @@ const HilomeAdminDashboard = () => {
                 <p className="text-sm">{selectedMember.phone || '—'}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Join Date</p>
-                <p className="text-sm">{new Date(selectedMember.created_at).toLocaleDateString()}</p>
+                <p className="text-xs text-muted-foreground">Membership Start</p>
+                <p className="text-sm">
+                  {selectedMember.membership_start_date 
+                    ? new Date(selectedMember.membership_start_date).toLocaleDateString() 
+                    : new Date(selectedMember.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Membership Expiry</p>
+                <p className="text-sm">
+                  {selectedMember.membership_expiry_date 
+                    ? new Date(selectedMember.membership_expiry_date).toLocaleDateString() 
+                    : '—'}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Status</p>
@@ -589,6 +639,43 @@ const HilomeAdminDashboard = () => {
                   {selectedMember.status}
                 </Badge>
               </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Membership Fee</p>
+                <p className="font-medium">₱{(membershipPrices[selectedMember.membership_type] || 0).toLocaleString()}</p>
+              </div>
+
+              {/* Referral Section */}
+              <div className="col-span-2 border-t border-border pt-4 mt-2">
+                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                  <Gift className="h-3 w-3" /> Referral Information
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Referral Code</p>
+                    {selectedMember.referral_code ? (
+                      <div className="flex items-center gap-2">
+                        <code className="font-mono font-medium bg-muted px-2 py-1 rounded text-sm">{selectedMember.referral_code}</code>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => copyToClipboard(selectedMember.referral_code)}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <p className="text-sm">—</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Total Referrals</p>
+                    <p className="font-medium text-accent">{selectedMember.referral_count || 0}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Section */}
               <div className="col-span-2 border-t border-border pt-4 mt-2">
                 <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
                   <CreditCard className="h-3 w-3" /> Payment Information
@@ -611,10 +698,6 @@ const HilomeAdminDashboard = () => {
                     </div>
                   )}
                 </div>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Membership Fee</p>
-                <p className="font-medium">₱{(membershipPrices[selectedMember.membership_type] || 0).toLocaleString()}</p>
               </div>
             </div>
           )}

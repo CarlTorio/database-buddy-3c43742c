@@ -61,11 +61,15 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          membership_expiry_date: string | null
+          membership_start_date: string | null
           membership_type: string
           name: string
           payment_method_details: string | null
           payment_method_type: string | null
           phone: string | null
+          referral_code: string | null
+          referral_count: number | null
           status: string
           stripe_customer_id: string | null
           stripe_payment_intent_id: string | null
@@ -75,11 +79,15 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          membership_expiry_date?: string | null
+          membership_start_date?: string | null
           membership_type: string
           name: string
           payment_method_details?: string | null
           payment_method_type?: string | null
           phone?: string | null
+          referral_code?: string | null
+          referral_count?: number | null
           status?: string
           stripe_customer_id?: string | null
           stripe_payment_intent_id?: string | null
@@ -89,11 +97,15 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          membership_expiry_date?: string | null
+          membership_start_date?: string | null
           membership_type?: string
           name?: string
           payment_method_details?: string | null
           payment_method_type?: string | null
           phone?: string | null
+          referral_code?: string | null
+          referral_count?: number | null
           status?: string
           stripe_customer_id?: string | null
           stripe_payment_intent_id?: string | null
@@ -139,7 +151,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_referral_code: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
