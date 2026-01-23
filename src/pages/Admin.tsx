@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck } from 'lucide-react';
+import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -125,6 +125,32 @@ const HilomeAdminDashboard = () => {
     toast.info('Members table not yet configured');
   };
 
+  // Update booking status
+  const handleStatusChange = async (bookingId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .update({ status: newStatus })
+        .eq('id', bookingId);
+
+      if (error) throw error;
+
+      setBookings(prev => 
+        prev.map(b => b.id === bookingId ? { ...b, status: newStatus } : b)
+      );
+      toast.success(`Status updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status');
+    }
+  };
+
+  // Navigate to Patient Records with the booking
+  const handleAddToRecord = (booking: Booking) => {
+    setActiveTab('patients');
+    toast.success(`Viewing records for ${booking.name}`);
+  };
+
 
   const getMembershipColor = (membership: string) => {
     switch (membership) {
@@ -136,10 +162,13 @@ const HilomeAdminDashboard = () => {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
+      case 'completed': return 'bg-green-500/20 text-green-700';
       case 'confirmed':
-      case 'active': return 'bg-green-500/20 text-green-700';
+      case 'active': return 'bg-blue-500/20 text-blue-700';
       case 'pending': return 'bg-accent/20 text-accent';
+      case 'cancelled': return 'bg-destructive/20 text-destructive';
+      case 'no-show': return 'bg-orange-500/20 text-orange-700';
       case 'expiring': return 'bg-destructive/20 text-destructive';
       default: return 'bg-muted text-muted-foreground';
     }
@@ -275,8 +304,10 @@ const HilomeAdminDashboard = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="no-show">No-show</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -318,22 +349,46 @@ const HilomeAdminDashboard = () => {
                       </Badge>
                     </td>
                     <td className="py-4 px-2">
-                      <Badge className={getStatusColor(booking.status)}>
-                        {booking.status}
-                      </Badge>
+                      <Select 
+                        value={booking.status} 
+                        onValueChange={(value) => handleStatusChange(booking.id, value)}
+                      >
+                        <SelectTrigger className="w-[130px] h-8">
+                          <Badge className={getStatusColor(booking.status)}>
+                            {booking.status}
+                          </Badge>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                          <SelectItem value="no-show">No-show</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </td>
                     <td className="py-4 px-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                        asChild
-                      >
-                        <a href={`tel:${booking.contact_number.replace(/-/g, '')}`}>
-                          <Phone className="h-4 w-4" />
-                          Call
-                        </a>
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          asChild
+                        >
+                          <a href={`tel:${booking.contact_number.replace(/-/g, '')}`}>
+                            <Phone className="h-4 w-4" />
+                            Call
+                          </a>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          onClick={() => handleAddToRecord(booking)}
+                        >
+                          <FileText className="h-4 w-4" />
+                          Add to Record
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
