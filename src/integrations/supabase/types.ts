@@ -56,6 +56,75 @@ export type Database = {
         }
         Relationships: []
       }
+      members: {
+        Row: {
+          amount_paid: number | null
+          created_at: string
+          email: string
+          id: string
+          is_walk_in: boolean
+          membership_expiry_date: string | null
+          membership_start_date: string
+          membership_type: string
+          name: string
+          payment_method: string | null
+          payment_status: string
+          phone: string | null
+          referral_code: string | null
+          referral_count: number
+          referred_by: string | null
+          status: string
+          stripe_charge_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_receipt_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_paid?: number | null
+          created_at?: string
+          email: string
+          id?: string
+          is_walk_in?: boolean
+          membership_expiry_date?: string | null
+          membership_start_date?: string
+          membership_type?: string
+          name: string
+          payment_method?: string | null
+          payment_status?: string
+          phone?: string | null
+          referral_code?: string | null
+          referral_count?: number
+          referred_by?: string | null
+          status?: string
+          stripe_charge_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_receipt_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_paid?: number | null
+          created_at?: string
+          email?: string
+          id?: string
+          is_walk_in?: boolean
+          membership_expiry_date?: string | null
+          membership_start_date?: string
+          membership_type?: string
+          name?: string
+          payment_method?: string | null
+          payment_status?: string
+          phone?: string | null
+          referral_code?: string | null
+          referral_count?: number
+          referred_by?: string | null
+          status?: string
+          stripe_charge_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_receipt_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       patient_records: {
         Row: {
           booking_id: string | null
@@ -140,7 +209,15 @@ export type Database = {
           status?: string
           type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_transactions_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

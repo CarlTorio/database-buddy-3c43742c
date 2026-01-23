@@ -36,6 +36,8 @@ const HilomeAdminDashboard = () => {
     referral_code: ''
   });
   const [isRegistering, setIsRegistering] = useState(false);
+  const [members, setMembers] = useState<any[]>([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
 
   const membershipPrices: Record<string, number> = {
     Green: 8888,
@@ -154,8 +156,83 @@ const HilomeAdminDashboard = () => {
     { id: '5', name: 'Angela Cruz', email: 'angela.cruz@email.com', phone: '09215556677', membership_type: 'Green', created_at: '2026-01-23', status: 'pending', payment_method: 'stripe', payment_status: 'paid', amount_paid: 8888, stripe_payment_intent_id: 'pi_demo_456', stripe_receipt_url: 'https://pay.stripe.com/receipts/demo2', stripe_charge_id: 'ch_demo_456', referred_by: 'GRACE123', referred_by_name: 'Grace Tan', referral_count: 0 },
   ];
 
-  // Sample data for Active Members
-  const activeMembers = [
+  // Fetch members from database
+  const fetchMembers = async () => {
+    setIsLoadingMembers(true);
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMembers(data || []);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+      toast.error('Failed to load members');
+    } finally {
+      setIsLoadingMembers(false);
+    }
+  };
+
+  // Register walk-in member
+  const handleRegisterMember = async () => {
+    if (!registerFormData.name || !registerFormData.email || !registerFormData.phone) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    setIsRegistering(true);
+    try {
+      const membershipPrice = membershipPrices[registerFormData.membership_type] || 0;
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+
+      const { error } = await supabase
+        .from('members')
+        .insert({
+          name: registerFormData.name,
+          email: registerFormData.email,
+          phone: registerFormData.phone,
+          membership_type: registerFormData.membership_type,
+          payment_method: registerFormData.payment_method,
+          payment_status: 'paid',
+          amount_paid: membershipPrice,
+          referred_by: registerFormData.referral_code || null,
+          status: 'active',
+          is_walk_in: true,
+          membership_expiry_date: expiryDate.toISOString()
+        });
+
+      if (error) throw error;
+
+      toast.success(`${registerFormData.name} registered as ${registerFormData.membership_type} member!`);
+      setShowRegisterMember(false);
+      setRegisterFormData({
+        name: '',
+        email: '',
+        phone: '',
+        membership_type: 'Green',
+        payment_method: 'cash',
+        referral_code: ''
+      });
+      
+      // Refresh members list
+      fetchMembers();
+    } catch (error) {
+      console.error('Error registering member:', error);
+      toast.error('Failed to register member');
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  // Use fetched members or fallback to sample data if empty
+  const activeMembers = members.length > 0 ? members : [
     { id: 'a1', name: 'Diana Gomez', email: 'diana.g@email.com', membership_type: 'Platinum', referral_code: 'DIANA2026', referral_count: 3, membership_start_date: '2025-06-15', membership_expiry_date: '2026-06-15', status: 'active', created_at: '2025-06-15' },
     { id: 'a2', name: 'Fernando Villa', email: 'fernando.v@email.com', membership_type: 'Gold', referral_code: 'FERVIL26', referral_count: 1, membership_start_date: '2025-09-01', membership_expiry_date: '2026-09-01', status: 'active', created_at: '2025-09-01' },
     { id: 'a3', name: 'Grace Tan', email: 'grace.tan@email.com', membership_type: 'Green', referral_code: 'GRACE123', referral_count: 0, membership_start_date: '2025-12-10', membership_expiry_date: '2026-12-10', status: 'active', created_at: '2025-12-10' },
@@ -888,23 +965,7 @@ const HilomeAdminDashboard = () => {
               <Button 
                 className="flex-1 bg-accent hover:bg-accent/90 gap-2"
                 disabled={!registerFormData.name || !registerFormData.email || !registerFormData.phone || isRegistering}
-                onClick={() => {
-                  // Placeholder - will be connected to database once members table is created
-                  setIsRegistering(true);
-                  setTimeout(() => {
-                    toast.success(`${registerFormData.name} registered as ${registerFormData.membership_type} member!`);
-                    setShowRegisterMember(false);
-                    setRegisterFormData({
-                      name: '',
-                      email: '',
-                      phone: '',
-                      membership_type: 'Green',
-                      payment_method: 'cash',
-                      referral_code: ''
-                    });
-                    setIsRegistering(false);
-                  }, 1000);
-                }}
+                onClick={handleRegisterMember}
               >
                 {isRegistering ? (
                   <>
