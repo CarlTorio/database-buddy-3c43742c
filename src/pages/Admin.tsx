@@ -1572,6 +1572,7 @@ const HilomeAdminDashboard = () => {
               <MemberBenefitsSection
                 memberId={selectedMember.id}
                 membershipType={selectedMember.membership_type}
+                referralCount={selectedMember.referral_count || 0}
                 onUpdate={() => fetchMembers()}
               />
 

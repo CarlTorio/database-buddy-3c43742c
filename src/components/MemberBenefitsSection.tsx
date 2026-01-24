@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Check, Plus, Gift, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -31,12 +30,14 @@ interface ReferralReward {
 interface MemberBenefitsSectionProps {
   memberId: string;
   membershipType: string;
+  referralCount: number;
   onUpdate?: () => void;
 }
 
 const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
   memberId,
   membershipType,
+  referralCount,
   onUpdate
 }) => {
   const [benefits, setBenefits] = useState<Benefit[]>([]);
@@ -71,7 +72,7 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
         .from('referral_rewards')
         .select('*')
         .eq('member_id', memberId)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: true });
 
       if (rewardsError) throw rewardsError;
 
@@ -155,6 +156,12 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
       return;
     }
 
+    // Check if they can add more rewards (1 referral = 1 reward)
+    if (referralRewards.length >= referralCount) {
+      toast.error(`Cannot add more rewards. Member has ${referralCount} referral(s).`);
+      return;
+    }
+
     setIsAddingReward(true);
     try {
       const { data, error } = await supabase
@@ -168,7 +175,7 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
 
       if (error) throw error;
 
-      setReferralRewards(prev => [data, ...prev]);
+      setReferralRewards(prev => [...prev, data]);
       setNewRewardName('');
       toast.success('Reward added!');
       onUpdate?.();
@@ -210,8 +217,10 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
     }
   };
 
-  const claimableBenefits = benefits.filter(b => b.benefit_type === 'claimable');
-  const inclusionBenefits = benefits.filter(b => b.benefit_type === 'inclusion');
+  // All benefits are now claimable with checkboxes
+  const allBenefits = benefits;
+  const claimedRewardsCount = referralRewards.filter(r => r.claimed).length;
+  const availableRewardSlots = referralCount - referralRewards.length;
 
   if (isLoading) {
     return (
@@ -223,35 +232,14 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
 
   return (
     <>
-      {/* Membership Inclusions */}
-      {inclusionBenefits.length > 0 && (
+      {/* Membership Benefits (All with checkboxes) */}
+      {allBenefits.length > 0 && (
         <div className="col-span-2 border-t border-border pt-4 mt-2">
           <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
-            <Sparkles className="h-3 w-3" /> Membership Inclusions
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {inclusionBenefits.map(benefit => (
-              <Badge 
-                key={benefit.id} 
-                variant="secondary"
-                className="bg-accent/10 text-accent border-accent/30"
-              >
-                <Check className="h-3 w-3 mr-1" />
-                {benefit.benefit_name}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Claimable Benefits */}
-      {claimableBenefits.length > 0 && (
-        <div className="col-span-2 border-t border-border pt-4 mt-2">
-          <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
-            <Gift className="h-3 w-3" /> Claimable Benefits
+            <Sparkles className="h-3 w-3" /> Membership Benefits
           </p>
           <div className="space-y-3">
-            {claimableBenefits.map(benefit => {
+            {allBenefits.map(benefit => {
               const claimedCount = getClaimedCount(benefit.id);
               const sessions = Array.from({ length: benefit.total_quantity }, (_, i) => i + 1);
               
@@ -298,33 +286,53 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
 
       {/* Referral Rewards */}
       <div className="col-span-2 border-t border-border pt-4 mt-2">
-        <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
-          <Gift className="h-3 w-3" /> Referral Rewards
-        </p>
-        
-        {/* Add new reward */}
-        <div className="flex gap-2 mb-3">
-          <Input
-            placeholder="Enter reward (e.g., Free Massage)"
-            value={newRewardName}
-            onChange={(e) => setNewRewardName(e.target.value)}
-            className="text-sm h-8"
-            onKeyDown={(e) => e.key === 'Enter' && handleAddReward()}
-          />
-          <Button
-            size="sm"
-            onClick={handleAddReward}
-            disabled={isAddingReward || !newRewardName.trim()}
-            className="h-8 px-3"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <Gift className="h-3 w-3" /> Referral Rewards
+          </p>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="text-muted-foreground">
+              Total: <span className="font-medium text-foreground">{referralCount}</span>
+            </span>
+            <span className="text-muted-foreground">
+              Claimed: <span className="font-medium text-green-600">{claimedRewardsCount}</span>
+            </span>
+          </div>
         </div>
+        
+        {/* Add new reward - only if they have available slots */}
+        {availableRewardSlots > 0 ? (
+          <div className="flex gap-2 mb-3">
+            <Input
+              placeholder={`Add reward (${availableRewardSlots} slot${availableRewardSlots > 1 ? 's' : ''} left)`}
+              value={newRewardName}
+              onChange={(e) => setNewRewardName(e.target.value)}
+              className="text-sm h-8"
+              onKeyDown={(e) => e.key === 'Enter' && handleAddReward()}
+            />
+            <Button
+              size="sm"
+              onClick={handleAddReward}
+              disabled={isAddingReward || !newRewardName.trim()}
+              className="h-8 px-3"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : referralCount === 0 ? (
+          <p className="text-xs text-muted-foreground text-center py-2 mb-3 bg-muted/30 rounded-lg">
+            No referrals yet. Each referral = 1 reward slot.
+          </p>
+        ) : (
+          <p className="text-xs text-muted-foreground text-center py-2 mb-3 bg-muted/30 rounded-lg">
+            All {referralCount} reward slot{referralCount > 1 ? 's' : ''} assigned.
+          </p>
+        )}
 
         {/* Rewards list */}
-        {referralRewards.length > 0 ? (
+        {referralRewards.length > 0 && (
           <div className="space-y-2">
-            {referralRewards.map(reward => (
+            {referralRewards.map((reward, index) => (
               <div
                 key={reward.id}
                 className={`
@@ -335,9 +343,12 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
                   }
                 `}
               >
-                <span className={`text-sm ${reward.claimed ? 'line-through text-muted-foreground' : ''}`}>
-                  {reward.reward_name}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground w-4">#{index + 1}</span>
+                  <span className={`text-sm ${reward.claimed ? 'line-through text-muted-foreground' : ''}`}>
+                    {reward.reward_name}
+                  </span>
+                </div>
                 <button
                   onClick={() => toggleRewardClaimed(reward.id, reward.claimed)}
                   className={`
@@ -355,10 +366,6 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
               </div>
             ))}
           </div>
-        ) : (
-          <p className="text-xs text-muted-foreground text-center py-2">
-            No referral rewards yet
-          </p>
         )}
       </div>
     </>
