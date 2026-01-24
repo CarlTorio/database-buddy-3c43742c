@@ -13,6 +13,7 @@ import BookingHistory from '@/components/BookingHistory';
 import PatientRecords from '@/components/PatientRecords';
 import AddBookingDialog from '@/components/AddBookingDialog';
 import LinkToPatientDialog from '@/components/LinkToPatientDialog';
+import MemberBenefitsSection from '@/components/MemberBenefitsSection';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -1516,7 +1517,7 @@ const HilomeAdminDashboard = () => {
       </Card>
 
       <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display text-xl">Member Details</DialogTitle>
           </DialogHeader>
@@ -1566,6 +1567,13 @@ const HilomeAdminDashboard = () => {
                 <p className="text-xs text-muted-foreground">Membership Fee</p>
                 <p className="font-medium">₱{(membershipPrices[selectedMember.membership_type] || 0).toLocaleString()}</p>
               </div>
+
+              {/* Membership Benefits Section */}
+              <MemberBenefitsSection
+                memberId={selectedMember.id}
+                membershipType={selectedMember.membership_type}
+                onUpdate={() => fetchMembers()}
+              />
 
               {/* Referral Section */}
               <div className="col-span-2 border-t border-border pt-4 mt-2">

@@ -77,6 +77,51 @@ export type Database = {
           },
         ]
       }
+      member_benefit_claims: {
+        Row: {
+          benefit_id: string
+          claimed_at: string
+          claimed_by: string | null
+          id: string
+          member_id: string
+          notes: string | null
+          session_number: number
+        }
+        Insert: {
+          benefit_id: string
+          claimed_at?: string
+          claimed_by?: string | null
+          id?: string
+          member_id: string
+          notes?: string | null
+          session_number?: number
+        }
+        Update: {
+          benefit_id?: string
+          claimed_at?: string
+          claimed_by?: string | null
+          id?: string
+          member_id?: string
+          notes?: string | null
+          session_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_benefit_claims_benefit_id_fkey"
+            columns: ["benefit_id"]
+            isOneToOne: false
+            referencedRelation: "membership_benefits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_benefit_claims_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           amount_paid: number | null
@@ -142,6 +187,39 @@ export type Database = {
           stripe_charge_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_receipt_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      membership_benefits: {
+        Row: {
+          benefit_name: string
+          benefit_type: string
+          created_at: string
+          description: string | null
+          id: string
+          membership_type: string
+          total_quantity: number
+          updated_at: string
+        }
+        Insert: {
+          benefit_name: string
+          benefit_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          membership_type: string
+          total_quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          benefit_name?: string
+          benefit_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          membership_type?: string
+          total_quantity?: number
           updated_at?: string
         }
         Relationships: []
@@ -229,6 +307,47 @@ export type Database = {
           },
           {
             foreignKeyName: "patient_records_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_rewards: {
+        Row: {
+          claimed: boolean
+          claimed_at: string | null
+          claimed_by: string | null
+          created_at: string
+          id: string
+          member_id: string
+          notes: string | null
+          reward_name: string
+        }
+        Insert: {
+          claimed?: boolean
+          claimed_at?: string | null
+          claimed_by?: string | null
+          created_at?: string
+          id?: string
+          member_id: string
+          notes?: string | null
+          reward_name: string
+        }
+        Update: {
+          claimed?: boolean
+          claimed_at?: string | null
+          claimed_by?: string | null
+          created_at?: string
+          id?: string
+          member_id?: string
+          notes?: string | null
+          reward_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_member_id_fkey"
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "members"
