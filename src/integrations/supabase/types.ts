@@ -127,12 +127,20 @@ export type Database = {
       }
       patient_records: {
         Row: {
+          age: number | null
           booking_id: string | null
           contact_number: string | null
           created_at: string
+          date_of_birth: string | null
           email: string
+          emergency_contact: string | null
+          gender: string | null
           id: string
+          medical_records: Json | null
           membership: string | null
+          membership_expiry_date: string | null
+          membership_join_date: string | null
+          membership_status: string | null
           message: string | null
           name: string
           notes: string | null
@@ -141,12 +149,20 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          age?: number | null
           booking_id?: string | null
           contact_number?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email: string
+          emergency_contact?: string | null
+          gender?: string | null
           id?: string
+          medical_records?: Json | null
           membership?: string | null
+          membership_expiry_date?: string | null
+          membership_join_date?: string | null
+          membership_status?: string | null
           message?: string | null
           name: string
           notes?: string | null
@@ -155,12 +171,20 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          age?: number | null
           booking_id?: string | null
           contact_number?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email?: string
+          emergency_contact?: string | null
+          gender?: string | null
           id?: string
+          medical_records?: Json | null
           membership?: string | null
+          membership_expiry_date?: string | null
+          membership_join_date?: string | null
+          membership_status?: string | null
           message?: string | null
           name?: string
           notes?: string | null
