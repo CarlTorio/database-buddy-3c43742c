@@ -1,108 +1,42 @@
 -- ===========================================================================
--- HILOMÈ DATABASE SCHEMA - CONSOLIDATED
--- Database: PostgreSQL (Supabase/Lovable Cloud)
+-- HILOMÈ CLINIC DATABASE SCHEMA
+-- Consolidated from supabase/migrations/
 -- Generated: 2026-01-24
 -- ===========================================================================
--- This file consolidates all migrations in chronological order.
+-- Migration History (27 files):
+-- 1. 20260114155747 - Initial bookings, membership_applications, members tables
+-- 2. 20260114173526 - Recreate with TEXT date columns
+-- 3. 20260122063913 - Simplified schema with public access
+-- 4. 20260122185947 - Consultation bookings and membership applications
+-- 5. 20260123050204 - Stripe payment tracking columns
+-- 6. 20260123064230 - Membership dates and referral system
+-- 7. 20260123074018 - Patients table creation
+-- 8. 20260123095902 - Bookings with contact_number
+-- 9. 20260123190452 - Patient_records table
+-- 10. 20260123195219 - Bookings and patient_records restructure
+-- 11. 20260123201452 - Transactions table for payments
+-- 12. 20260123202002 - Stripe receipt URL
+-- 13. 20260123204844 - Core schema consolidation
+-- 14. 20260123205337 - Members table with referral code generation
+-- 15. 20260124033117 - Patient records enhancement
+-- 16. 20260124142448 - Major schema consolidation
+-- 17. 20260124144254 - Missing RLS policies
+-- 18. 20260124151751 - Booking and patient record relationships
+-- 19. 20260124155959 - Schema restructure with proper FK order
+-- 20. 20260124162402 - Anon update/delete policies
+-- 21. 20260124174442 - Final schema restructure
+-- 22. 20260124175231 - Membership benefits system
+-- 23. 20260124180521 - Additional anon policies and benefits fixes
+-- 24. 20260124182403 - Complete 4-table schema with functions
+-- 25. 20260124183057 - Membership benefits tables recreation
+-- 26. 20260124183447 - Update policy for anon on members
+-- 27. 20260124183905 - Delete policies for anon
 -- ===========================================================================
 
+
 -- ===========================================================================
--- MIGRATION 1: 20260114155747 - Initial Schema
+-- FUNCTION: Auto-update timestamps
 -- ===========================================================================
-
--- Create bookings table for consultation bookings
-CREATE TABLE public.bookings (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  membership TEXT NOT NULL,
-  date DATE NOT NULL,
-  time TEXT NOT NULL,
-  message TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Create membership_applications table
-CREATE TABLE public.membership_applications (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  membership TEXT NOT NULL,
-  amount INTEGER NOT NULL,
-  message TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  applied_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Create members table for approved applications
-CREATE TABLE public.members (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  membership TEXT NOT NULL,
-  join_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  last_payment DATE NOT NULL DEFAULT CURRENT_DATE,
-  expiration_date DATE NOT NULL,
-  total_paid INTEGER NOT NULL,
-  status TEXT NOT NULL DEFAULT 'active',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Enable Row Level Security on all tables
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.membership_applications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
-
--- Create policies for public access (no auth required for submissions)
-CREATE POLICY "Anyone can create bookings"
-  ON public.bookings FOR INSERT
-  WITH CHECK (true);
-
-CREATE POLICY "Anyone can view bookings"
-  ON public.bookings FOR SELECT
-  USING (true);
-
-CREATE POLICY "Anyone can update bookings"
-  ON public.bookings FOR UPDATE
-  USING (true);
-
-CREATE POLICY "Anyone can create applications"
-  ON public.membership_applications FOR INSERT
-  WITH CHECK (true);
-
-CREATE POLICY "Anyone can view applications"
-  ON public.membership_applications FOR SELECT
-  USING (true);
-
-CREATE POLICY "Anyone can update applications"
-  ON public.membership_applications FOR UPDATE
-  USING (true);
-
-CREATE POLICY "Anyone can delete applications"
-  ON public.membership_applications FOR DELETE
-  USING (true);
-
-CREATE POLICY "Anyone can view members"
-  ON public.members FOR SELECT
-  USING (true);
-
-CREATE POLICY "Anyone can create members"
-  ON public.members FOR INSERT
-  WITH CHECK (true);
-
-CREATE POLICY "Anyone can update members"
-  ON public.members FOR UPDATE
-  USING (true);
-
--- Create function to update timestamps
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -111,638 +45,353 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SET search_path = public;
 
--- Create triggers for automatic timestamp updates
-CREATE TRIGGER update_bookings_updated_at
-  BEFORE UPDATE ON public.bookings
-  FOR EACH ROW
-  EXECUTE FUNCTION public.update_updated_at_column();
 
-CREATE TRIGGER update_applications_updated_at
-  BEFORE UPDATE ON public.membership_applications
-  FOR EACH ROW
-  EXECUTE FUNCTION public.update_updated_at_column();
+-- ===========================================================================
+-- TABLE 1: MEMBERS
+-- Stores membership subscriptions, payments, and referral tracking
+-- ===========================================================================
+CREATE TABLE public.members (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT DEFAULT NULL,
+    membership_type TEXT NOT NULL DEFAULT 'Green',
+    membership_start_date TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD'),
+    membership_expiry_date TEXT DEFAULT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    payment_status TEXT NOT NULL DEFAULT 'pending',
+    payment_method TEXT DEFAULT NULL,
+    amount_paid NUMERIC DEFAULT NULL,
+    stripe_payment_intent_id TEXT DEFAULT NULL,
+    stripe_charge_id TEXT DEFAULT NULL,
+    stripe_receipt_url TEXT DEFAULT NULL,
+    stripe_customer_id TEXT DEFAULT NULL,
+    is_walk_in BOOLEAN NOT NULL DEFAULT false,
+    referral_code TEXT DEFAULT NULL UNIQUE,
+    referred_by TEXT DEFAULT NULL,
+    referral_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
+-- Indexes for members
+CREATE INDEX idx_members_email ON public.members(email);
+CREATE INDEX idx_members_status ON public.members(status);
+CREATE INDEX idx_members_membership_type ON public.members(membership_type);
+CREATE INDEX idx_members_referral_code ON public.members(referral_code);
+
+-- RLS for members
+ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow select for anon" ON public.members
+    FOR SELECT TO anon USING (true);
+
+CREATE POLICY "Allow insert for anon" ON public.members
+    FOR INSERT TO anon WITH CHECK (true);
+
+CREATE POLICY "Allow update for anon on members" ON public.members 
+    FOR UPDATE USING (true);
+
+CREATE POLICY "Allow delete for anon on members" ON public.members 
+    FOR DELETE USING (true);
+
+CREATE POLICY "Allow all for authenticated" ON public.members
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Trigger for members timestamp
 CREATE TRIGGER update_members_updated_at
-  BEFORE UPDATE ON public.members
-  FOR EACH ROW
-  EXECUTE FUNCTION public.update_updated_at_column();
+    BEFORE UPDATE ON public.members
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_updated_at_column();
 
 
 -- ===========================================================================
--- MIGRATION 2: 20260114173526 - Schema Modifications
+-- TABLE 2: BOOKINGS
+-- Stores appointment/consultation bookings
 -- ===========================================================================
-
--- Recreate bookings table with TEXT dates
 CREATE TABLE public.bookings (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  membership TEXT NOT NULL,
-  date TEXT NOT NULL,
-  time TEXT NOT NULL,
-  message TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    contact_number TEXT NOT NULL,
+    preferred_date TEXT NOT NULL,
+    preferred_time TEXT NOT NULL,
+    membership TEXT DEFAULT NULL,
+    message TEXT DEFAULT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    patient_id UUID DEFAULT NULL,
+    member_id UUID DEFAULT NULL REFERENCES public.members(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Recreate members table with TEXT dates
-CREATE TABLE public.members (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  membership TEXT NOT NULL,
-  join_date TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD'),
-  expiration_date TEXT NOT NULL,
-  last_payment TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD'),
-  total_paid NUMERIC NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'active',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
+-- Indexes for bookings
+CREATE INDEX idx_bookings_email ON public.bookings(email);
+CREATE INDEX idx_bookings_status ON public.bookings(status);
+CREATE INDEX idx_bookings_preferred_date ON public.bookings(preferred_date);
+CREATE INDEX idx_bookings_member_id ON public.bookings(member_id);
+CREATE INDEX idx_bookings_patient_id ON public.bookings(patient_id);
 
--- Recreate membership_applications table
-CREATE TABLE public.membership_applications (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  membership TEXT NOT NULL,
-  amount NUMERIC NOT NULL,
-  message TEXT,
-  applied_date TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD'),
-  status TEXT NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Enable Row Level Security on all tables
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.membership_applications ENABLE ROW LEVEL SECURITY;
-
--- Create public read policies
-CREATE POLICY "Anyone can insert bookings" 
-ON public.bookings 
-FOR INSERT 
-WITH CHECK (true);
-
-CREATE POLICY "Anyone can insert membership applications" 
-ON public.membership_applications 
-FOR INSERT 
-WITH CHECK (true);
-
-CREATE POLICY "Anyone can view bookings" 
-ON public.bookings 
-FOR SELECT 
-USING (true);
-
-CREATE POLICY "Anyone can view members" 
-ON public.members 
-FOR SELECT 
-USING (true);
-
-CREATE POLICY "Anyone can view membership applications" 
-ON public.membership_applications 
-FOR SELECT 
-USING (true);
-
-CREATE POLICY "Anyone can insert members" 
-ON public.members 
-FOR INSERT 
-WITH CHECK (true);
-
-CREATE POLICY "Anyone can update members" 
-ON public.members 
-FOR UPDATE 
-USING (true);
-
-CREATE POLICY "Anyone can update membership applications" 
-ON public.membership_applications 
-FOR UPDATE 
-USING (true);
-
-
--- ===========================================================================
--- MIGRATION 3: 20260122063913 - Additional Policies
--- ===========================================================================
-
--- Enable RLS on all tables
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.membership_applications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
-
--- Create policies for public access
-CREATE POLICY "Allow public read bookings" ON public.bookings FOR SELECT USING (true);
-CREATE POLICY "Allow public insert bookings" ON public.bookings FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update bookings" ON public.bookings FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete bookings" ON public.bookings FOR DELETE USING (true);
-
-CREATE POLICY "Allow public read applications" ON public.membership_applications FOR SELECT USING (true);
-CREATE POLICY "Allow public insert applications" ON public.membership_applications FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update applications" ON public.membership_applications FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete applications" ON public.membership_applications FOR DELETE USING (true);
-
-CREATE POLICY "Allow public read members" ON public.members FOR SELECT USING (true);
-CREATE POLICY "Allow public insert members" ON public.members FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update members" ON public.members FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete members" ON public.members FOR DELETE USING (true);
-
-
--- ===========================================================================
--- MIGRATION 4: 20260122185947 - Schema Restructure
--- ===========================================================================
-
--- Create members table with membership_type
-CREATE TABLE public.members (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT,
-  membership_type TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'active',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
-
--- ===========================================================================
--- MIGRATION 5: 20260123050204 - Stripe Payment Tracking
--- ===========================================================================
-
--- Add Stripe payment tracking columns to members table
-ALTER TABLE public.members
-ADD COLUMN stripe_customer_id text,
-ADD COLUMN stripe_payment_intent_id text,
-ADD COLUMN payment_method_type text,
-ADD COLUMN payment_method_details text;
-
--- Add comments for clarity
-COMMENT ON COLUMN public.members.stripe_customer_id IS 'Stripe customer ID for recurring payments';
-COMMENT ON COLUMN public.members.stripe_payment_intent_id IS 'Stripe payment intent or checkout session ID';
-COMMENT ON COLUMN public.members.payment_method_type IS 'Payment method type: card, gcash, grabpay, bank_transfer, etc.';
-COMMENT ON COLUMN public.members.payment_method_details IS 'Human-readable payment details like "Visa •••• 4242" or "GCash"';
-
-
--- ===========================================================================
--- MIGRATION 6: 20260123064230 - Referral System
--- ===========================================================================
-
--- Add membership dates and referral tracking columns
-ALTER TABLE public.members
-ADD COLUMN membership_start_date DATE DEFAULT CURRENT_DATE,
-ADD COLUMN membership_expiry_date DATE,
-ADD COLUMN referral_code TEXT UNIQUE,
-ADD COLUMN referral_count INTEGER DEFAULT 0;
-
--- Create function to generate unique 6-character referral code
-CREATE OR REPLACE FUNCTION public.generate_referral_code()
-RETURNS TEXT
-LANGUAGE plpgsql
-SET search_path = public
-AS $$
-DECLARE
-  chars TEXT := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  result TEXT := '';
-  i INTEGER;
-  code_exists BOOLEAN;
-BEGIN
-  LOOP
-    result := '';
-    FOR i IN 1..6 LOOP
-      result := result || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
-    END LOOP;
-    
-    SELECT EXISTS(SELECT 1 FROM public.members WHERE referral_code = result) INTO code_exists;
-    EXIT WHEN NOT code_exists;
-  END LOOP;
-  
-  RETURN result;
-END;
-$$;
-
--- Create trigger to auto-generate referral code on insert
-CREATE OR REPLACE FUNCTION public.set_member_defaults()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SET search_path = public
-AS $$
-BEGIN
-  -- Generate referral code if not provided
-  IF NEW.referral_code IS NULL THEN
-    NEW.referral_code := public.generate_referral_code();
-  END IF;
-  
-  -- Set start date if not provided
-  IF NEW.membership_start_date IS NULL THEN
-    NEW.membership_start_date := CURRENT_DATE;
-  END IF;
-  
-  -- Calculate expiry date (1 year from start) if not provided
-  IF NEW.membership_expiry_date IS NULL THEN
-    NEW.membership_expiry_date := NEW.membership_start_date + INTERVAL '1 year';
-  END IF;
-  
-  RETURN NEW;
-END;
-$$;
-
-CREATE TRIGGER trigger_set_member_defaults
-BEFORE INSERT ON public.members
-FOR EACH ROW
-EXECUTE FUNCTION public.set_member_defaults();
-
-
--- ===========================================================================
--- MIGRATION 7: 20260123074018 - Patients Table
--- ===========================================================================
-
--- Create patients table for patient records
-CREATE TABLE public.patients (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  member_id UUID REFERENCES public.members(id) ON DELETE SET NULL,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT,
-  date_of_birth DATE,
-  gender TEXT,
-  address TEXT,
-  emergency_contact TEXT,
-  membership_type TEXT,
-  membership_start_date DATE,
-  membership_expiry_date DATE,
-  last_visit DATE,
-  status TEXT NOT NULL DEFAULT 'active',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Enable Row Level Security
-ALTER TABLE public.patients ENABLE ROW LEVEL SECURITY;
-
--- Create policies for public access (admin portal)
-CREATE POLICY "Anyone can view patients" 
-ON public.patients 
-FOR SELECT 
-USING (true);
-
-CREATE POLICY "Anyone can insert patients" 
-ON public.patients 
-FOR INSERT 
-WITH CHECK (true);
-
-CREATE POLICY "Anyone can update patients" 
-ON public.patients 
-FOR UPDATE 
-USING (true);
-
--- Create trigger for automatic timestamp updates
-CREATE TRIGGER update_patients_updated_at
-BEFORE UPDATE ON public.patients
-FOR EACH ROW
-EXECUTE FUNCTION public.update_updated_at_column();
-
--- Add used_referral_code column to members table
-ALTER TABLE public.members ADD COLUMN IF NOT EXISTS used_referral_code TEXT;
-
-
--- ===========================================================================
--- MIGRATION 8: 20260123095902 - Bookings Restructure
--- ===========================================================================
-
--- Create bookings table with contact_number
-CREATE TABLE public.bookings (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  contact_number TEXT NOT NULL,
-  membership TEXT NOT NULL DEFAULT 'Not a member',
-  preferred_date DATE NOT NULL,
-  preferred_time TEXT NOT NULL,
-  message TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Enable Row Level Security
+-- RLS for bookings
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 
--- Create policy for public insert (anyone can book)
-CREATE POLICY "Anyone can create bookings" 
-ON public.bookings 
-FOR INSERT 
-WITH CHECK (true);
+CREATE POLICY "Allow select for anon" ON public.bookings
+    FOR SELECT TO anon USING (true);
 
--- Create policy for public select
-CREATE POLICY "Anyone can view bookings" 
-ON public.bookings 
-FOR SELECT 
-USING (true);
+CREATE POLICY "Allow insert for anon" ON public.bookings
+    FOR INSERT TO anon WITH CHECK (true);
 
--- Create trigger for automatic timestamp updates
+CREATE POLICY "Allow delete for anon on bookings" ON public.bookings 
+    FOR DELETE USING (true);
+
+CREATE POLICY "Allow all for authenticated" ON public.bookings
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Trigger for bookings timestamp
 CREATE TRIGGER update_bookings_updated_at
-BEFORE UPDATE ON public.bookings
-FOR EACH ROW
-EXECUTE FUNCTION public.update_updated_at_column();
+    BEFORE UPDATE ON public.bookings
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_updated_at_column();
 
 
 -- ===========================================================================
--- MIGRATION 9: 20260123190452 - Patient Records Table
+-- TABLE 3: PATIENT_RECORDS
+-- Stores patient medical records, demographics, and history
 -- ===========================================================================
-
--- Create a separate patient_records table
 CREATE TABLE public.patient_records (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  booking_id UUID REFERENCES public.bookings(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  contact_number TEXT NOT NULL,
-  membership TEXT NOT NULL DEFAULT 'Not a member',
-  preferred_date DATE NOT NULL,
-  preferred_time TEXT NOT NULL,
-  message TEXT,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    contact_number TEXT DEFAULT NULL,
+    date_of_birth TEXT DEFAULT NULL,
+    age INTEGER DEFAULT NULL,
+    gender TEXT DEFAULT NULL,
+    emergency_contact TEXT DEFAULT NULL,
+    membership TEXT DEFAULT NULL,
+    membership_join_date TEXT DEFAULT NULL,
+    membership_expiry_date TEXT DEFAULT NULL,
+    membership_status TEXT DEFAULT NULL,
+    member_id UUID DEFAULT NULL REFERENCES public.members(id) ON DELETE SET NULL,
+    booking_id UUID DEFAULT NULL REFERENCES public.bookings(id) ON DELETE SET NULL,
+    source TEXT NOT NULL DEFAULT 'manual',
+    preferred_date TEXT DEFAULT NULL,
+    preferred_time TEXT DEFAULT NULL,
+    message TEXT DEFAULT NULL,
+    notes TEXT DEFAULT NULL,
+    payment_method TEXT DEFAULT NULL,
+    payment_status TEXT DEFAULT 'pending',
+    amount_paid NUMERIC DEFAULT NULL,
+    stripe_payment_intent_id TEXT DEFAULT NULL,
+    stripe_customer_id TEXT DEFAULT NULL,
+    stripe_receipt_url TEXT DEFAULT NULL,
+    medical_records JSONB DEFAULT '[]'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Enable Row Level Security
+-- Indexes for patient_records
+CREATE INDEX idx_patient_records_email ON public.patient_records(email);
+CREATE INDEX idx_patient_records_member_id ON public.patient_records(member_id);
+CREATE INDEX idx_patient_records_booking_id ON public.patient_records(booking_id);
+CREATE INDEX idx_patient_records_source ON public.patient_records(source);
+
+-- RLS for patient_records
 ALTER TABLE public.patient_records ENABLE ROW LEVEL SECURITY;
 
--- Create policies for patient_records
-CREATE POLICY "Anyone can view patient records" 
-ON public.patient_records 
-FOR SELECT 
-USING (true);
+CREATE POLICY "Allow select for anon" ON public.patient_records
+    FOR SELECT TO anon USING (true);
 
-CREATE POLICY "Anyone can create patient records" 
-ON public.patient_records 
-FOR INSERT 
-WITH CHECK (true);
+CREATE POLICY "Allow insert for anon" ON public.patient_records
+    FOR INSERT TO anon WITH CHECK (true);
 
-CREATE POLICY "Anyone can update patient records" 
-ON public.patient_records 
-FOR UPDATE 
-USING (true);
+CREATE POLICY "Allow delete for anon on patient_records" ON public.patient_records 
+    FOR DELETE USING (true);
 
-CREATE POLICY "Anyone can delete patient records" 
-ON public.patient_records 
-FOR DELETE 
-USING (true);
+CREATE POLICY "Allow all for authenticated" ON public.patient_records
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- Create trigger for automatic timestamp updates
+-- Trigger for patient_records timestamp
 CREATE TRIGGER update_patient_records_updated_at
-BEFORE UPDATE ON public.patient_records
-FOR EACH ROW
-EXECUTE FUNCTION public.update_updated_at_column();
+    BEFORE UPDATE ON public.patient_records
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_updated_at_column();
+
+-- Add FK from bookings to patient_records (after patient_records exists)
+ALTER TABLE public.bookings
+    ADD CONSTRAINT fk_bookings_patient 
+    FOREIGN KEY (patient_id) REFERENCES public.patient_records(id) ON DELETE SET NULL;
 
 
 -- ===========================================================================
--- MIGRATION 10: 20260123195219 - Bookings and Patient Records
+-- TABLE 4: TRANSACTIONS
+-- Stores payment transactions for memberships and services
 -- ===========================================================================
-
--- Create bookings table with TEXT dates
-CREATE TABLE public.bookings (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  contact_number TEXT NOT NULL,
-  preferred_date TEXT NOT NULL,
-  preferred_time TEXT NOT NULL,
-  membership TEXT NOT NULL DEFAULT 'Green',
-  status TEXT NOT NULL DEFAULT 'pending',
-  message TEXT,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Create patient_records table with TEXT dates
-CREATE TABLE public.patient_records (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  booking_id UUID REFERENCES public.bookings(id),
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  contact_number TEXT NOT NULL,
-  membership TEXT NOT NULL DEFAULT 'Green',
-  preferred_date TEXT NOT NULL,
-  preferred_time TEXT NOT NULL,
-  message TEXT,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
-
--- Enable RLS on both tables
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.patient_records ENABLE ROW LEVEL SECURITY;
-
--- Create triggers for automatic timestamp updates
-CREATE TRIGGER update_bookings_updated_at
-  BEFORE UPDATE ON public.bookings
-  FOR EACH ROW
-  EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_patient_records_updated_at
-  BEFORE UPDATE ON public.patient_records
-  FOR EACH ROW
-  EXECUTE FUNCTION public.update_updated_at_column();
-
-
--- ===========================================================================
--- MIGRATION 11: 20260123201452 - Transactions Table
--- ===========================================================================
-
--- Create transactions table for payment tracking (Stripe-ready)
 CREATE TABLE public.transactions (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  member_id UUID REFERENCES public.patient_records(id) ON DELETE CASCADE,
-  amount DECIMAL(10,2) NOT NULL,
-  currency TEXT NOT NULL DEFAULT 'PHP',
-  payment_method TEXT NOT NULL DEFAULT 'cash',
-  payment_status TEXT NOT NULL DEFAULT 'completed',
-  stripe_payment_intent_id TEXT,
-  stripe_customer_id TEXT,
-  stripe_charge_id TEXT,
-  description TEXT,
-  transaction_type TEXT NOT NULL DEFAULT 'membership_payment',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id UUID DEFAULT NULL REFERENCES public.members(id) ON DELETE SET NULL,
+    amount NUMERIC NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'PHP',
+    payment_method TEXT NOT NULL DEFAULT 'cash',
+    payment_status TEXT NOT NULL DEFAULT 'completed',
+    stripe_payment_intent_id TEXT DEFAULT NULL,
+    stripe_customer_id TEXT DEFAULT NULL,
+    stripe_charge_id TEXT DEFAULT NULL,
+    stripe_receipt_url TEXT DEFAULT NULL,
+    description TEXT DEFAULT NULL,
+    transaction_type TEXT NOT NULL DEFAULT 'membership_payment',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Enable RLS
+-- Indexes for transactions
+CREATE INDEX idx_transactions_member_id ON public.transactions(member_id);
+CREATE INDEX idx_transactions_payment_status ON public.transactions(payment_status);
+CREATE INDEX idx_transactions_transaction_type ON public.transactions(transaction_type);
+CREATE INDEX idx_transactions_created_at ON public.transactions(created_at);
+
+-- RLS for transactions
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 
--- Create policies for transactions
-CREATE POLICY "Anyone can view transactions"
-ON public.transactions
-FOR SELECT
-USING (true);
+CREATE POLICY "Allow select for anon" ON public.transactions
+    FOR SELECT TO anon USING (true);
 
-CREATE POLICY "Anyone can create transactions"
-ON public.transactions
-FOR INSERT
-WITH CHECK (true);
+CREATE POLICY "Allow all for authenticated" ON public.transactions
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
-CREATE POLICY "Anyone can update transactions"
-ON public.transactions
-FOR UPDATE
-USING (true);
-
--- Create trigger for automatic timestamp updates
+-- Trigger for transactions timestamp
 CREATE TRIGGER update_transactions_updated_at
-BEFORE UPDATE ON public.transactions
-FOR EACH ROW
-EXECUTE FUNCTION public.update_updated_at_column();
-
--- Add payment columns to patient_records
-ALTER TABLE public.patient_records
-ADD COLUMN payment_method TEXT DEFAULT 'cash',
-ADD COLUMN payment_status TEXT DEFAULT 'pending',
-ADD COLUMN amount_paid DECIMAL(10,2);
+    BEFORE UPDATE ON public.transactions
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_updated_at_column();
 
 
 -- ===========================================================================
--- MIGRATION 12: 20260123202002 - Stripe Receipt URL
+-- TABLE 5: MEMBERSHIP_BENEFITS
+-- Defines benefits available for each membership tier
 -- ===========================================================================
-
--- Add Stripe receipt URL to transactions table
-ALTER TABLE public.transactions
-ADD COLUMN stripe_receipt_url TEXT;
-
--- Add Stripe fields to patient_records
-ALTER TABLE public.patient_records
-ADD COLUMN stripe_payment_intent_id TEXT,
-ADD COLUMN stripe_customer_id TEXT,
-ADD COLUMN stripe_receipt_url TEXT;
-
-
--- ===========================================================================
--- MIGRATION 13: 20260123204844 - Core Schema
--- ===========================================================================
-
--- Create bookings table for consultation bookings
-CREATE TABLE public.bookings (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  contact_number TEXT NOT NULL,
-  membership TEXT,
-  preferred_date TEXT NOT NULL,
-  preferred_time TEXT NOT NULL,
-  message TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+CREATE TABLE public.membership_benefits (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    membership_type TEXT NOT NULL,
+    benefit_name TEXT NOT NULL,
+    benefit_type TEXT NOT NULL DEFAULT 'claimable', -- 'inclusion' or 'claimable'
+    total_quantity INTEGER NOT NULL DEFAULT 1,
+    description TEXT DEFAULT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Create patient_records table for tracking patient history
-CREATE TABLE public.patient_records (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  booking_id UUID REFERENCES public.bookings(id) ON DELETE SET NULL,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  contact_number TEXT,
-  membership TEXT,
-  preferred_date TEXT,
-  preferred_time TEXT,
-  message TEXT,
-  notes TEXT,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
+-- Indexes for membership_benefits
+CREATE INDEX idx_membership_benefits_type ON public.membership_benefits(membership_type);
 
--- Create transactions table for payment tracking
-CREATE TABLE public.transactions (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  member_id UUID,
-  amount NUMERIC NOT NULL,
-  type TEXT NOT NULL,
-  description TEXT,
-  payment_method TEXT,
-  status TEXT NOT NULL DEFAULT 'completed',
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
+-- RLS for membership_benefits
+ALTER TABLE public.membership_benefits ENABLE ROW LEVEL SECURITY;
 
--- Enable Row Level Security
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.patient_records ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow select for anon on benefits" ON public.membership_benefits 
+    FOR SELECT USING (true);
+
+CREATE POLICY "Allow all for authenticated on benefits" ON public.membership_benefits 
+    FOR ALL USING (true) WITH CHECK (true);
+
+-- Trigger for membership_benefits timestamp
+CREATE TRIGGER update_membership_benefits_updated_at
+    BEFORE UPDATE ON public.membership_benefits
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_updated_at_column();
 
 
 -- ===========================================================================
--- MIGRATION 14: 20260123205337 - Members Table
+-- TABLE 6: MEMBER_BENEFIT_CLAIMS
+-- Tracks which benefits a member has claimed
 -- ===========================================================================
-
--- Create members table for registered members
-CREATE TABLE public.members (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT,
-  membership_type TEXT NOT NULL DEFAULT 'Green',
-  payment_method TEXT,
-  payment_status TEXT NOT NULL DEFAULT 'paid',
-  amount_paid NUMERIC,
-  referral_code TEXT UNIQUE,
-  referred_by TEXT,
-  referral_count INTEGER NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'active',
-  is_walk_in BOOLEAN NOT NULL DEFAULT false,
-  membership_start_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  membership_expiry_date TIMESTAMP WITH TIME ZONE,
-  stripe_payment_intent_id TEXT,
-  stripe_receipt_url TEXT,
-  stripe_charge_id TEXT,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+CREATE TABLE public.member_benefit_claims (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id UUID NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+    benefit_id UUID NOT NULL REFERENCES public.membership_benefits(id) ON DELETE CASCADE,
+    session_number INTEGER NOT NULL,
+    claimed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    claimed_by TEXT DEFAULT NULL,
+    UNIQUE(member_id, benefit_id, session_number)
 );
 
--- Enable Row Level Security
-ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
+-- Indexes for member_benefit_claims
+CREATE INDEX idx_member_benefit_claims_member ON public.member_benefit_claims(member_id);
+CREATE INDEX idx_member_benefit_claims_benefit ON public.member_benefit_claims(benefit_id);
 
--- Create policies for members
-CREATE POLICY "Anyone can view members" 
-ON public.members 
-FOR SELECT 
-USING (true);
+-- RLS for member_benefit_claims
+ALTER TABLE public.member_benefit_claims ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can create members" 
-ON public.members 
-FOR INSERT 
-WITH CHECK (true);
+CREATE POLICY "Allow select for anon on claims" ON public.member_benefit_claims 
+    FOR SELECT USING (true);
 
-CREATE POLICY "Anyone can update members" 
-ON public.members 
-FOR UPDATE 
-USING (true);
+CREATE POLICY "Allow insert for anon on claims" ON public.member_benefit_claims 
+    FOR INSERT WITH CHECK (true);
 
--- Update transactions table to reference members
-ALTER TABLE public.transactions 
-ADD CONSTRAINT fk_transactions_member 
-FOREIGN KEY (member_id) REFERENCES public.members(id) ON DELETE SET NULL;
+CREATE POLICY "Allow delete for anon on claims" ON public.member_benefit_claims 
+    FOR DELETE USING (true);
 
--- Create trigger for automatic timestamp updates on members
-CREATE TRIGGER update_members_updated_at
-BEFORE UPDATE ON public.members
-FOR EACH ROW
-EXECUTE FUNCTION public.update_updated_at_column();
+CREATE POLICY "Allow all for authenticated on claims" ON public.member_benefit_claims 
+    FOR ALL USING (true) WITH CHECK (true);
 
--- Create function to generate unique referral code
+
+-- ===========================================================================
+-- TABLE 7: REFERRAL_REWARDS
+-- Tracks referral rewards earned by members
+-- ===========================================================================
+CREATE TABLE public.referral_rewards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    member_id UUID NOT NULL REFERENCES public.members(id) ON DELETE CASCADE,
+    reward_name TEXT NOT NULL,
+    claimed BOOLEAN NOT NULL DEFAULT false,
+    claimed_at TIMESTAMPTZ DEFAULT NULL,
+    claimed_by TEXT DEFAULT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Indexes for referral_rewards
+CREATE INDEX idx_referral_rewards_member ON public.referral_rewards(member_id);
+
+-- RLS for referral_rewards
+ALTER TABLE public.referral_rewards ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow select for anon on rewards" ON public.referral_rewards 
+    FOR SELECT USING (true);
+
+CREATE POLICY "Allow insert for anon on rewards" ON public.referral_rewards 
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow update for anon on rewards" ON public.referral_rewards 
+    FOR UPDATE USING (true);
+
+CREATE POLICY "Allow all for authenticated on rewards" ON public.referral_rewards 
+    FOR ALL USING (true) WITH CHECK (true);
+
+-- Trigger for referral_rewards timestamp
+CREATE TRIGGER update_referral_rewards_updated_at
+    BEFORE UPDATE ON public.referral_rewards
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_updated_at_column();
+
+
+-- ===========================================================================
+-- FUNCTION: Generate unique referral code
+-- ===========================================================================
 CREATE OR REPLACE FUNCTION public.generate_referral_code()
 RETURNS TRIGGER AS $$
 DECLARE
   new_code TEXT;
   code_exists BOOLEAN;
 BEGIN
+  IF NEW.referral_code IS NOT NULL THEN
+    RETURN NEW;
+  END IF;
+  
   LOOP
-    -- Generate code from first 4 letters of name + random 2 digits
-    new_code := UPPER(LEFT(REGEXP_REPLACE(NEW.name, '[^a-zA-Z]', '', 'g'), 4)) || LPAD(FLOOR(RANDOM() * 100)::TEXT, 2, '0');
+    -- Generate code: first 4 letters of name + 2 random digits
+    new_code := UPPER(LEFT(REGEXP_REPLACE(COALESCE(NEW.name, 'USER'), '[^a-zA-Z]', '', 'g'), 4));
+    new_code := new_code || LPAD(FLOOR(RANDOM() * 100)::TEXT, 2, '0');
     
-    -- Check if code already exists
     SELECT EXISTS(SELECT 1 FROM public.members WHERE referral_code = new_code) INTO code_exists;
-    
-    -- Exit loop if code is unique
     EXIT WHEN NOT code_exists;
   END LOOP;
   
@@ -751,535 +400,91 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SET search_path = public;
 
--- Create trigger to auto-generate referral code on insert
 CREATE TRIGGER generate_member_referral_code
-BEFORE INSERT ON public.members
-FOR EACH ROW
-WHEN (NEW.referral_code IS NULL)
-EXECUTE FUNCTION public.generate_referral_code();
+    BEFORE INSERT ON public.members
+    FOR EACH ROW
+    EXECUTE FUNCTION public.generate_referral_code();
 
 
 -- ===========================================================================
--- MIGRATION 15: 20260124033117 - Patient Records Enhancement
+-- FUNCTION: Sync member to patient record on activation
 -- ===========================================================================
-
--- Add new fields to patient_records for the enhanced patient profile
-ALTER TABLE public.patient_records
-ADD COLUMN IF NOT EXISTS date_of_birth date,
-ADD COLUMN IF NOT EXISTS age integer,
-ADD COLUMN IF NOT EXISTS gender text,
-ADD COLUMN IF NOT EXISTS emergency_contact text,
-ADD COLUMN IF NOT EXISTS membership_join_date timestamp with time zone,
-ADD COLUMN IF NOT EXISTS membership_expiry_date timestamp with time zone,
-ADD COLUMN IF NOT EXISTS membership_status text DEFAULT 'active',
-ADD COLUMN IF NOT EXISTS medical_records jsonb DEFAULT '[]'::jsonb;
-
-
--- ===========================================================================
--- MIGRATION 16: 20260124142448 - Major Schema Consolidation
--- ===========================================================================
-
--- TABLE 1: MEMBERS (created first - no dependencies)
-CREATE TABLE public.members (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT DEFAULT NULL,
-    membership_type TEXT NOT NULL DEFAULT 'green',
-    membership_start_date TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD'),
-    membership_expiry_date TEXT DEFAULT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    payment_status TEXT NOT NULL DEFAULT 'pending',
-    payment_method TEXT DEFAULT NULL,
-    amount_paid NUMERIC DEFAULT NULL,
-    stripe_payment_intent_id TEXT DEFAULT NULL,
-    stripe_charge_id TEXT DEFAULT NULL,
-    stripe_receipt_url TEXT DEFAULT NULL,
-    is_walk_in BOOLEAN NOT NULL DEFAULT false,
-    referral_code TEXT DEFAULT NULL,
-    referred_by TEXT DEFAULT NULL,
-    referral_count INTEGER NOT NULL DEFAULT 0,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_members_email ON public.members(email);
-
-ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.members
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow insert for anon" ON public.members
-    FOR INSERT TO anon WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.members
-    FOR SELECT TO anon USING (true);
-
--- TABLE 2: PATIENT_RECORDS (depends on members)
-CREATE TABLE public.patient_records (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    contact_number TEXT DEFAULT NULL,
-    date_of_birth TEXT DEFAULT NULL,
-    age INTEGER DEFAULT NULL,
-    gender TEXT DEFAULT NULL,
-    emergency_contact TEXT DEFAULT NULL,
-    membership TEXT DEFAULT NULL,
-    membership_join_date TEXT DEFAULT NULL,
-    membership_expiry_date TEXT DEFAULT NULL,
-    membership_status TEXT DEFAULT NULL,
-    member_id UUID DEFAULT NULL REFERENCES public.members(id),
-    booking_id UUID DEFAULT NULL,
-    source TEXT DEFAULT 'manual',
-    preferred_date TEXT DEFAULT NULL,
-    preferred_time TEXT DEFAULT NULL,
-    message TEXT DEFAULT NULL,
-    notes TEXT DEFAULT NULL,
-    medical_records JSONB DEFAULT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_patient_records_member_id ON public.patient_records(member_id);
-CREATE INDEX idx_patient_records_email ON public.patient_records(email);
-
-ALTER TABLE public.patient_records ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.patient_records
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow insert for anon" ON public.patient_records
-    FOR INSERT TO anon WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.patient_records
-    FOR SELECT TO anon USING (true);
-
--- TABLE 3: BOOKINGS (depends on members and patient_records)
-CREATE TABLE public.bookings (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    contact_number TEXT NOT NULL,
-    preferred_date TEXT NOT NULL,
-    preferred_time TEXT NOT NULL,
-    membership TEXT DEFAULT NULL,
-    message TEXT DEFAULT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    patient_id UUID DEFAULT NULL REFERENCES public.patient_records(id),
-    member_id UUID DEFAULT NULL REFERENCES public.members(id),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_bookings_patient_id ON public.bookings(patient_id);
-CREATE INDEX idx_bookings_member_id ON public.bookings(member_id);
-CREATE INDEX idx_bookings_email ON public.bookings(email);
-
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.bookings
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow insert for anon" ON public.bookings
-    FOR INSERT TO anon WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.bookings
-    FOR SELECT TO anon USING (true);
-
--- Add FK from patient_records to bookings
-ALTER TABLE public.patient_records 
-    ADD CONSTRAINT patient_records_booking_id_fkey 
-    FOREIGN KEY (booking_id) REFERENCES public.bookings(id);
-
--- TABLE 4: TRANSACTIONS (depends on members)
-CREATE TABLE public.transactions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    member_id UUID DEFAULT NULL REFERENCES public.members(id),
-    type TEXT NOT NULL,
-    amount NUMERIC NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    payment_method TEXT DEFAULT NULL,
-    description TEXT DEFAULT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.transactions
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.transactions
-    FOR SELECT TO anon USING (true);
-
--- FUNCTIONS
-CREATE OR REPLACE FUNCTION public.update_updated_at_column()
-RETURNS trigger
-LANGUAGE plpgsql
-SET search_path = public
-AS $function$
+CREATE OR REPLACE FUNCTION public.sync_member_to_patient()
+RETURNS TRIGGER AS $$
 BEGIN
-    NEW.updated_at = now();
-    RETURN NEW;
-END;
-$function$;
-
-CREATE OR REPLACE FUNCTION public.sync_member_to_patient_record()
-RETURNS trigger
-LANGUAGE plpgsql
-SET search_path = public
-AS $function$
-BEGIN
-    IF NEW.status = 'active' AND (OLD.status IS NULL OR OLD.status != 'active') THEN
-        INSERT INTO public.patient_records (
-            name,
-            email,
-            contact_number,
-            membership,
-            membership_join_date,
-            membership_expiry_date,
-            membership_status,
-            member_id,
-            source
-        )
-        VALUES (
-            NEW.name,
-            NEW.email,
-            NEW.phone,
-            NEW.membership_type,
-            NEW.membership_start_date,
-            NEW.membership_expiry_date,
-            NEW.status,
-            NEW.id,
-            'membership_purchase'
-        )
-        ON CONFLICT (email) DO UPDATE SET
-            name = EXCLUDED.name,
-            contact_number = EXCLUDED.contact_number,
-            membership = EXCLUDED.membership,
-            membership_join_date = EXCLUDED.membership_join_date,
-            membership_expiry_date = EXCLUDED.membership_expiry_date,
-            membership_status = EXCLUDED.membership_status,
-            member_id = EXCLUDED.member_id,
-            source = COALESCE(patient_records.source, EXCLUDED.source),
-            updated_at = now();
+  -- Only create/link patient record when member becomes active
+  IF NEW.status = 'active' AND (OLD IS NULL OR OLD.status != 'active') THEN
+    -- Check if patient record exists for this email
+    IF NOT EXISTS (SELECT 1 FROM public.patient_records WHERE email = NEW.email) THEN
+      -- Create patient record from member data
+      INSERT INTO public.patient_records (
+        name, email, contact_number, membership, 
+        membership_join_date, membership_expiry_date, membership_status,
+        member_id, source
+      ) VALUES (
+        NEW.name, NEW.email, NEW.phone, NEW.membership_type,
+        NEW.membership_start_date, NEW.membership_expiry_date, NEW.status,
+        NEW.id, 'membership'
+      );
+    ELSE
+      -- Update existing patient record with member link
+      UPDATE public.patient_records
+      SET member_id = NEW.id,
+          membership = NEW.membership_type,
+          membership_join_date = NEW.membership_start_date,
+          membership_expiry_date = NEW.membership_expiry_date,
+          membership_status = NEW.status,
+          updated_at = now()
+      WHERE email = NEW.email AND member_id IS NULL;
     END IF;
-    RETURN NEW;
+  END IF;
+  
+  RETURN NEW;
 END;
-$function$;
+$$ LANGUAGE plpgsql SET search_path = public;
 
--- TRIGGERS
-CREATE TRIGGER update_bookings_updated_at
-    BEFORE UPDATE ON public.bookings
+CREATE TRIGGER trigger_sync_member_to_patient
+    AFTER UPDATE ON public.members
     FOR EACH ROW
-    EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_members_updated_at
-    BEFORE UPDATE ON public.members
-    FOR EACH ROW
-    EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_patient_records_updated_at
-    BEFORE UPDATE ON public.patient_records
-    FOR EACH ROW
-    EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER sync_member_to_patient
-    AFTER INSERT OR UPDATE ON public.members
-    FOR EACH ROW
-    EXECUTE FUNCTION public.sync_member_to_patient_record();
+    EXECUTE FUNCTION public.sync_member_to_patient();
 
 
 -- ===========================================================================
--- MIGRATION 17: 20260124144254 - Additional RLS Policies
+-- SEED DATA: Default Membership Benefits
 -- ===========================================================================
-
--- Add SELECT policy for anon on bookings
-CREATE POLICY "Allow select for anon" ON public.bookings
-    FOR SELECT TO anon USING (true);
-
--- Add SELECT policy for anon on members
-CREATE POLICY "Allow select for anon" ON public.members
-    FOR SELECT TO anon USING (true);
-
--- Add SELECT and INSERT policies for anon on patient_records
-CREATE POLICY "Allow select for anon" ON public.patient_records
-    FOR SELECT TO anon USING (true);
-
-CREATE POLICY "Allow insert for anon" ON public.patient_records
-    FOR INSERT TO anon WITH CHECK (true);
-
--- Add SELECT policy for anon on transactions
-CREATE POLICY "Allow select for anon" ON public.transactions
-    FOR SELECT TO anon USING (true);
-
-
--- ===========================================================================
--- MIGRATION 18: 20260124151751 - Booking and Patient Record Relationships
--- ===========================================================================
-
--- Add patient_id to bookings (link booking to patient record)
-ALTER TABLE public.bookings 
-ADD COLUMN IF NOT EXISTS patient_id UUID REFERENCES public.patient_records(id);
-
--- Add member_id to bookings (link booking to member for badge display)
-ALTER TABLE public.bookings 
-ADD COLUMN IF NOT EXISTS member_id UUID REFERENCES public.members(id);
-
--- Add member_id to patient_records (link patient to their membership)
-ALTER TABLE public.patient_records 
-ADD COLUMN IF NOT EXISTS member_id UUID REFERENCES public.members(id);
-
--- Add source to patient_records (track where record came from)
-ALTER TABLE public.patient_records 
-ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'manual';
-
--- Create indexes for faster lookups
-CREATE INDEX IF NOT EXISTS idx_bookings_patient_id ON public.bookings(patient_id);
-CREATE INDEX IF NOT EXISTS idx_bookings_member_id ON public.bookings(member_id);
-CREATE INDEX IF NOT EXISTS idx_patient_records_member_id ON public.patient_records(member_id);
-CREATE INDEX IF NOT EXISTS idx_bookings_email ON public.bookings(email);
-CREATE INDEX IF NOT EXISTS idx_patient_records_email ON public.patient_records(email);
-CREATE INDEX IF NOT EXISTS idx_members_email ON public.members(email);
+INSERT INTO public.membership_benefits (membership_type, benefit_name, benefit_type, total_quantity, description) VALUES
+-- Green membership
+('Green', 'Discount on all services', 'inclusion', 1, '10% discount on all services'),
+('Green', 'Priority booking', 'inclusion', 1, 'Priority booking for appointments'),
+('Green', 'Free Facial', 'claimable', 2, 'Free facial treatment sessions'),
+('Green', 'Free Consultation', 'claimable', 4, 'Free consultation sessions'),
+('Green', 'Celebrity Drip', 'claimable', 1, 'Free Celebrity Drip session'),
+-- Gold membership
+('Gold', 'Discount on all services', 'inclusion', 1, '15% discount on all services'),
+('Gold', 'Priority booking', 'inclusion', 1, 'Priority booking for appointments'),
+('Gold', 'Free Facial', 'claimable', 4, 'Free facial treatment sessions'),
+('Gold', 'Free Consultation', 'claimable', 6, 'Free consultation sessions'),
+('Gold', 'Free Diamond Peel', 'claimable', 2, 'Free diamond peel sessions'),
+-- Platinum membership
+('Platinum', 'Discount on all services', 'inclusion', 1, '20% discount on all services'),
+('Platinum', 'Priority booking', 'inclusion', 1, 'Priority booking for appointments'),
+('Platinum', 'VIP lounge access', 'inclusion', 1, 'Access to VIP lounge'),
+('Platinum', 'Free Facial', 'claimable', 6, 'Free facial treatment sessions'),
+('Platinum', 'Free Consultation', 'claimable', 12, 'Free consultation sessions'),
+('Platinum', 'Free Diamond Peel', 'claimable', 4, 'Free diamond peel sessions'),
+('Platinum', 'Free Slimming Session', 'claimable', 2, 'Free body slimming sessions');
 
 
 -- ===========================================================================
--- MIGRATION 19: 20260124155959 - Final Schema Consolidation
+-- RELATIONSHIPS SUMMARY
 -- ===========================================================================
-
--- TABLE 1: MEMBERS (created first - no dependencies)
-CREATE TABLE public.members (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT DEFAULT NULL,
-    membership_type TEXT NOT NULL DEFAULT 'green',
-    membership_start_date TEXT NOT NULL DEFAULT to_char(now(), 'YYYY-MM-DD'),
-    membership_expiry_date TEXT DEFAULT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    payment_status TEXT NOT NULL DEFAULT 'pending',
-    payment_method TEXT DEFAULT NULL,
-    amount_paid NUMERIC DEFAULT NULL,
-    stripe_payment_intent_id TEXT DEFAULT NULL,
-    stripe_charge_id TEXT DEFAULT NULL,
-    stripe_receipt_url TEXT DEFAULT NULL,
-    is_walk_in BOOLEAN NOT NULL DEFAULT false,
-    referral_code TEXT DEFAULT NULL,
-    referred_by TEXT DEFAULT NULL,
-    referral_count INTEGER NOT NULL DEFAULT 0,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_members_email ON public.members(email);
-
-ALTER TABLE public.members ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.members
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow insert for anon" ON public.members
-    FOR INSERT TO anon WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.members
-    FOR SELECT TO anon USING (true);
-
--- TABLE 2: PATIENT_RECORDS (depends on members)
-CREATE TABLE public.patient_records (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    contact_number TEXT DEFAULT NULL,
-    date_of_birth TEXT DEFAULT NULL,
-    age INTEGER DEFAULT NULL,
-    gender TEXT DEFAULT NULL,
-    emergency_contact TEXT DEFAULT NULL,
-    membership TEXT DEFAULT NULL,
-    membership_join_date TEXT DEFAULT NULL,
-    membership_expiry_date TEXT DEFAULT NULL,
-    membership_status TEXT DEFAULT NULL,
-    member_id UUID DEFAULT NULL REFERENCES public.members(id),
-    booking_id UUID DEFAULT NULL,
-    source TEXT DEFAULT 'manual',
-    preferred_date TEXT DEFAULT NULL,
-    preferred_time TEXT DEFAULT NULL,
-    message TEXT DEFAULT NULL,
-    notes TEXT DEFAULT NULL,
-    medical_records JSONB DEFAULT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_patient_records_member_id ON public.patient_records(member_id);
-CREATE INDEX idx_patient_records_email ON public.patient_records(email);
-
-ALTER TABLE public.patient_records ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.patient_records
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow insert for anon" ON public.patient_records
-    FOR INSERT TO anon WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.patient_records
-    FOR SELECT TO anon USING (true);
-
--- TABLE 3: BOOKINGS (depends on members and patient_records)
-CREATE TABLE public.bookings (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    contact_number TEXT NOT NULL,
-    preferred_date TEXT NOT NULL,
-    preferred_time TEXT NOT NULL,
-    membership TEXT DEFAULT NULL,
-    message TEXT DEFAULT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    patient_id UUID DEFAULT NULL REFERENCES public.patient_records(id),
-    member_id UUID DEFAULT NULL REFERENCES public.members(id),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_bookings_patient_id ON public.bookings(patient_id);
-CREATE INDEX idx_bookings_member_id ON public.bookings(member_id);
-CREATE INDEX idx_bookings_email ON public.bookings(email);
-
-ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.bookings
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow insert for anon" ON public.bookings
-    FOR INSERT TO anon WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.bookings
-    FOR SELECT TO anon USING (true);
-
--- Add FK from patient_records to bookings
-ALTER TABLE public.patient_records 
-    ADD CONSTRAINT patient_records_booking_id_fkey 
-    FOREIGN KEY (booking_id) REFERENCES public.bookings(id);
-
--- TABLE 4: TRANSACTIONS (depends on members)
-CREATE TABLE public.transactions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    member_id UUID DEFAULT NULL REFERENCES public.members(id),
-    type TEXT NOT NULL,
-    amount NUMERIC NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    payment_method TEXT DEFAULT NULL,
-    description TEXT DEFAULT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all for authenticated" ON public.transactions
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow select for anon" ON public.transactions
-    FOR SELECT TO anon USING (true);
-
--- FUNCTIONS
-CREATE OR REPLACE FUNCTION public.update_updated_at_column()
-RETURNS trigger
-LANGUAGE plpgsql
-SET search_path = public
-AS $function$
-BEGIN
-    NEW.updated_at = now();
-    RETURN NEW;
-END;
-$function$;
-
-CREATE OR REPLACE FUNCTION public.sync_member_to_patient_record()
-RETURNS trigger
-LANGUAGE plpgsql
-SET search_path = public
-AS $function$
-BEGIN
-    IF NEW.status = 'active' AND (OLD.status IS NULL OR OLD.status != 'active') THEN
-        INSERT INTO public.patient_records (
-            name,
-            email,
-            contact_number,
-            membership,
-            membership_join_date,
-            membership_expiry_date,
-            membership_status,
-            member_id,
-            source
-        )
-        VALUES (
-            NEW.name,
-            NEW.email,
-            NEW.phone,
-            NEW.membership_type,
-            NEW.membership_start_date,
-            NEW.membership_expiry_date,
-            NEW.status,
-            NEW.id,
-            'membership_purchase'
-        )
-        ON CONFLICT (email) DO UPDATE SET
-            name = EXCLUDED.name,
-            contact_number = EXCLUDED.contact_number,
-            membership = EXCLUDED.membership,
-            membership_join_date = EXCLUDED.membership_join_date,
-            membership_expiry_date = EXCLUDED.membership_expiry_date,
-            membership_status = EXCLUDED.membership_status,
-            member_id = EXCLUDED.member_id,
-            source = COALESCE(patient_records.source, EXCLUDED.source),
-            updated_at = now();
-    END IF;
-    RETURN NEW;
-END;
-$function$;
-
--- TRIGGERS
-CREATE TRIGGER update_bookings_updated_at
-    BEFORE UPDATE ON public.bookings
-    FOR EACH ROW
-    EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_members_updated_at
-    BEFORE UPDATE ON public.members
-    FOR EACH ROW
-    EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_patient_records_updated_at
-    BEFORE UPDATE ON public.patient_records
-    FOR EACH ROW
-    EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER sync_member_to_patient
-    AFTER INSERT OR UPDATE ON public.members
-    FOR EACH ROW
-    EXECUTE FUNCTION public.sync_member_to_patient_record();
-
-
--- ===========================================================================
--- MIGRATION 20: 20260124162402 - Anon Update/Delete Policies
--- ===========================================================================
-
--- Add UPDATE and DELETE policies for anon users on members table
--- This allows the admin dashboard to work without authentication
-CREATE POLICY "Allow update for anon" ON public.members
-    FOR UPDATE TO anon USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow delete for anon" ON public.members
-    FOR DELETE TO anon USING (true);
-
--- Same for patient_records
-CREATE POLICY "Allow update for anon" ON public.patient_records
-    FOR UPDATE TO anon USING (true) WITH CHECK (true);
-
-CREATE POLICY "Allow delete for anon" ON public.patient_records
-    FOR DELETE TO anon USING (true);
-
-
--- ===========================================================================
--- END OF CONSOLIDATED SCHEMA
+-- members.referral_code -> UNIQUE (for referral tracking)
+-- bookings.patient_id -> patient_records.id (link booking to patient)
+-- bookings.member_id -> members.id (link booking to member)
+-- patient_records.member_id -> members.id (link patient to membership)
+-- patient_records.booking_id -> bookings.id (original booking reference)
+-- transactions.member_id -> members.id (link transaction to member)
+-- member_benefit_claims.member_id -> members.id (track claims per member)
+-- member_benefit_claims.benefit_id -> membership_benefits.id (what was claimed)
+-- referral_rewards.member_id -> members.id (rewards earned from referrals)
 -- ===========================================================================
