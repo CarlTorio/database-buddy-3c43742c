@@ -1517,12 +1517,12 @@ const HilomeAdminDashboard = () => {
       </Card>
 
       <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
-        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display text-xl">Member Details</DialogTitle>
           </DialogHeader>
           {selectedMember && (
-            <div className="grid grid-cols-2 gap-4 py-4">
+            <div className="grid grid-cols-4 gap-4 py-4">
               <div>
                 <p className="text-xs text-muted-foreground">Full Name</p>
                 <p className="font-medium">{selectedMember.name}</p>
@@ -1577,7 +1577,7 @@ const HilomeAdminDashboard = () => {
               />
 
               {/* Referral Section */}
-              <div className="col-span-2 border-t border-border pt-4 mt-2">
+              <div className="col-span-4 border-t border-border pt-4 mt-2">
                 <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
                   <Gift className="h-3 w-3" /> Referral Information
                 </p>
@@ -1608,7 +1608,7 @@ const HilomeAdminDashboard = () => {
               </div>
 
               {/* Payment Section */}
-              <div className="col-span-2 border-t border-border pt-4 mt-2">
+              <div className="col-span-4 border-t border-border pt-4 mt-2">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <CreditCard className="h-3 w-3" /> Payment Information

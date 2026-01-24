@@ -226,7 +226,7 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
 
   if (isLoading) {
     return (
-      <div className="col-span-2 border-t border-border pt-4 mt-2">
+        <div className="col-span-4 border-t border-border pt-4 mt-2">
         <p className="text-xs text-muted-foreground">Loading benefits...</p>
       </div>
     );
@@ -236,7 +236,7 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
     <>
       {/* Membership Inclusions - Simple badges, no checkboxes */}
       {inclusionBenefits.length > 0 && (
-        <div className="col-span-2 border-t border-border pt-4 mt-2">
+        <div className="col-span-4 border-t border-border pt-4 mt-2">
           <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
             <Sparkles className="h-3 w-3" /> Membership Inclusions (1 Year)
           </p>
@@ -257,7 +257,7 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
 
       {/* Claimable Benefits - With numbered checkboxes */}
       {claimableBenefits.length > 0 && (
-        <div className="col-span-2 border-t border-border pt-4 mt-2">
+      <div className="col-span-4 border-t border-border pt-4 mt-2">
           <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
             <Gift className="h-3 w-3" /> Claimable Benefits
           </p>
