@@ -20,9 +20,11 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          member_id: string | null
           membership: string | null
           message: string | null
           name: string
+          patient_id: string | null
           preferred_date: string
           preferred_time: string
           status: string
@@ -33,9 +35,11 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          member_id?: string | null
           membership?: string | null
           message?: string | null
           name: string
+          patient_id?: string | null
           preferred_date: string
           preferred_time: string
           status?: string
@@ -46,15 +50,32 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          member_id?: string | null
           membership?: string | null
           message?: string | null
           name?: string
+          patient_id?: string | null
           preferred_date?: string
           preferred_time?: string
           status?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bookings_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_records"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       members: {
         Row: {
@@ -137,6 +158,7 @@ export type Database = {
           gender: string | null
           id: string
           medical_records: Json | null
+          member_id: string | null
           membership: string | null
           membership_expiry_date: string | null
           membership_join_date: string | null
@@ -146,6 +168,7 @@ export type Database = {
           notes: string | null
           preferred_date: string | null
           preferred_time: string | null
+          source: string | null
           updated_at: string
         }
         Insert: {
@@ -159,6 +182,7 @@ export type Database = {
           gender?: string | null
           id?: string
           medical_records?: Json | null
+          member_id?: string | null
           membership?: string | null
           membership_expiry_date?: string | null
           membership_join_date?: string | null
@@ -168,6 +192,7 @@ export type Database = {
           notes?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
+          source?: string | null
           updated_at?: string
         }
         Update: {
@@ -181,6 +206,7 @@ export type Database = {
           gender?: string | null
           id?: string
           medical_records?: Json | null
+          member_id?: string | null
           membership?: string | null
           membership_expiry_date?: string | null
           membership_join_date?: string | null
@@ -190,6 +216,7 @@ export type Database = {
           notes?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
+          source?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -198,6 +225,13 @@ export type Database = {
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_records_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
             referencedColumns: ["id"]
           },
         ]

@@ -47,16 +47,35 @@ const BookConsultation = () => {
     if (formData.name && formData.email && formData.contactNumber && formData.preferredBranch && formData.date && formData.time) {
       setIsSubmitting(true);
       try {
-        // Save booking to database
+        // Check if the booker is a member (by email)
+        const { data: existingMember } = await supabase
+          .from('members')
+          .select('id, membership_type, status')
+          .eq('email', formData.email.toLowerCase().trim())
+          .eq('status', 'active')
+          .maybeSingle();
+
+        // Determine membership info from member lookup or form selection
+        let membershipTier = formData.preferredBranch;
+        let memberId = null;
+        
+        if (existingMember) {
+          // Auto-fill from member data
+          membershipTier = existingMember.membership_type + ' Member';
+          memberId = existingMember.id;
+        }
+
+        // Save booking to database with member link if found
         const { error } = await supabase.from('bookings').insert({
           name: formData.name,
-          email: formData.email,
+          email: formData.email.toLowerCase().trim(),
           contact_number: formData.contactNumber,
-          membership: formData.preferredBranch,
+          membership: membershipTier,
           preferred_date: formData.date,
           preferred_time: formData.time,
           message: formData.message || null,
-          status: 'pending'
+          status: 'pending',
+          member_id: memberId,
         });
 
         if (error) throw error;
@@ -68,7 +87,7 @@ const BookConsultation = () => {
               name: formData.name,
               email: formData.email,
               contactNumber: formData.contactNumber,
-              membership: formData.preferredBranch,
+              membership: membershipTier,
               date: formData.date,
               time: formData.time,
               message: formData.message || undefined
@@ -90,7 +109,7 @@ const BookConsultation = () => {
             name: formData.name,
             email: formData.email,
             contactNumber: formData.contactNumber,
-            membership: formData.preferredBranch,
+            membership: membershipTier,
             date: formData.date,
             time: formData.time,
             message: formData.message || undefined

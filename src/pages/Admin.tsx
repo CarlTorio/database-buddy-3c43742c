@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare, RefreshCw, Receipt, ExternalLink, UserPlus, Banknote } from 'lucide-react';
+import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare, RefreshCw, Receipt, ExternalLink, UserPlus, Banknote, Link2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import BookingHistory from '@/components/BookingHistory';
 import PatientRecords from '@/components/PatientRecords';
 import AddBookingDialog from '@/components/AddBookingDialog';
+import LinkToPatientDialog from '@/components/LinkToPatientDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -61,6 +62,8 @@ const HilomeAdminDashboard = () => {
     message: string | null;
     created_at: string;
     updated_at: string;
+    patient_id: string | null;
+    member_id: string | null;
   }
 
   // Helper to calculate days left until expiry
@@ -81,6 +84,8 @@ const HilomeAdminDashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [addedToRecord, setAddedToRecord] = useState<Set<string>>(new Set());
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [selectedBookingForLink, setSelectedBookingForLink] = useState<Booking | null>(null);
 
   // Fetch data from database
   const fetchData = async () => {
@@ -230,11 +235,11 @@ const HilomeAdminDashboard = () => {
       }
 
       // Insert the new member
-      const { error } = await supabase
+      const { data: newMember, error } = await supabase
         .from('members')
         .insert({
           name: registerFormData.name,
-          email: registerFormData.email,
+          email: registerFormData.email.toLowerCase().trim(),
           phone: registerFormData.phone,
           membership_type: registerFormData.membership_type,
           payment_method: registerFormData.payment_method,
@@ -244,18 +249,25 @@ const HilomeAdminDashboard = () => {
           status: 'active',
           is_walk_in: true,
           membership_expiry_date: expiryDate.toISOString()
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 
-      // Automatically create patient record for the walk-in member
+      // Automatically create patient record for the walk-in member with member_id link
       const { error: patientError } = await supabase
         .from('patient_records')
         .insert({
           name: registerFormData.name,
-          email: registerFormData.email,
+          email: registerFormData.email.toLowerCase().trim(),
           contact_number: registerFormData.phone || null,
           membership: registerFormData.membership_type,
+          member_id: newMember?.id || null,
+          source: 'membership',
+          membership_join_date: new Date().toISOString().split('T')[0],
+          membership_expiry_date: expiryDate.toISOString().split('T')[0],
+          membership_status: 'active',
         });
 
       if (patientError) {
@@ -368,19 +380,46 @@ const HilomeAdminDashboard = () => {
         }
       }
 
-      // Automatically create patient record for the confirmed member
+      // Automatically create patient record for the confirmed member with member_id link
       if (member) {
-        const { error: patientError } = await supabase
+        // First check if patient with this email already exists
+        const { data: existingPatient } = await supabase
           .from('patient_records')
-          .insert({
-            name: member.name,
-            email: member.email,
-            contact_number: member.phone || null,
-            membership: member.membership_type,
-          });
+          .select('id')
+          .eq('email', member.email.toLowerCase().trim())
+          .maybeSingle();
 
-        if (patientError) {
-          console.error('Error creating patient record:', patientError);
+        if (existingPatient) {
+          // Update existing patient with member link
+          await supabase
+            .from('patient_records')
+            .update({
+              member_id: id,
+              membership: member.membership_type,
+              membership_join_date: new Date().toISOString().split('T')[0],
+              membership_expiry_date: expiryDate.toISOString().split('T')[0],
+              membership_status: 'active',
+            })
+            .eq('id', existingPatient.id);
+        } else {
+          // Create new patient record
+          const { error: patientError } = await supabase
+            .from('patient_records')
+            .insert({
+              name: member.name,
+              email: member.email.toLowerCase().trim(),
+              contact_number: member.phone || null,
+              membership: member.membership_type,
+              member_id: id,
+              source: 'membership',
+              membership_join_date: new Date().toISOString().split('T')[0],
+              membership_expiry_date: expiryDate.toISOString().split('T')[0],
+              membership_status: 'active',
+            });
+
+          if (patientError) {
+            console.error('Error creating patient record:', patientError);
+          }
         }
       }
 
@@ -434,46 +473,15 @@ const HilomeAdminDashboard = () => {
     }
   };
 
-  // Add booking to patient_records table
-  const handleAddToRecord = async (booking: Booking) => {
-    try {
-      // Check if this booking is already in patient_records
-      const { data: existing, error: checkError } = await supabase
-        .from('patient_records')
-        .select('id')
-        .eq('booking_id', booking.id)
-        .maybeSingle();
+  // Open link dialog for a booking
+  const handleAddToRecord = (booking: Booking) => {
+    setSelectedBookingForLink(booking);
+    setLinkDialogOpen(true);
+  };
 
-      if (checkError) throw checkError;
-
-      if (existing) {
-        toast.info(`${booking.name} is already in patient records`);
-        setAddedToRecord(prev => new Set(prev).add(booking.id));
-        return;
-      }
-
-      // Insert into patient_records
-      const { error: insertError } = await supabase
-        .from('patient_records')
-        .insert({
-          booking_id: booking.id,
-          name: booking.name,
-          email: booking.email,
-          contact_number: booking.contact_number,
-          membership: booking.membership,
-          preferred_date: booking.preferred_date,
-          preferred_time: booking.preferred_time,
-          message: booking.message,
-        });
-
-      if (insertError) throw insertError;
-
-      toast.success(`${booking.name} added to patient records`);
-      setAddedToRecord(prev => new Set(prev).add(booking.id));
-    } catch (error) {
-      console.error('Error adding to patient records:', error);
-      toast.error('Failed to add to patient records');
-    }
+  // Called when a booking is successfully linked
+  const handleBookingLinked = () => {
+    fetchData(); // Refresh bookings to get updated patient_id
   };
 
 
@@ -615,6 +623,12 @@ const HilomeAdminDashboard = () => {
       </div>
       
       <BookingHistory open={showBookingHistory} onOpenChange={setShowBookingHistory} />
+      <LinkToPatientDialog 
+        open={linkDialogOpen} 
+        onOpenChange={setLinkDialogOpen} 
+        booking={selectedBookingForLink} 
+        onLinked={handleBookingLinked} 
+      />
 
       <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
         <CardContent className="p-6">
@@ -709,16 +723,22 @@ const HilomeAdminDashboard = () => {
                             Call
                           </a>
                         </Button>
-                        <Button
-                          variant={addedToRecord.has(booking.id) ? "secondary" : "outline"}
-                          size="sm"
-                          className="gap-2"
-                          onClick={() => handleAddToRecord(booking)}
-                          disabled={addedToRecord.has(booking.id)}
-                        >
-                          <FileText className="h-4 w-4" />
-                          {addedToRecord.has(booking.id) ? "Added to Record" : "Add to Record"}
-                        </Button>
+                        {booking.patient_id ? (
+                          <Badge variant="secondary" className="gap-1 text-green-700 bg-green-100 hover:bg-green-100">
+                            <CheckCircle2 className="h-3 w-3" />
+                            Linked
+                          </Badge>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() => handleAddToRecord(booking)}
+                          >
+                            <FileText className="h-4 w-4" />
+                            Add to Record
+                          </Button>
+                        )}
                         {booking.message && (
                           <Button
                             variant="outline"
