@@ -86,27 +86,95 @@ const HilomeAdminDashboard = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [addedToRecord, setAddedToRecord] = useState<Set<string>>(new Set());
+  const [existingPatientEmails, setExistingPatientEmails] = useState<Set<string>>(new Set());
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [selectedBookingForLink, setSelectedBookingForLink] = useState<Booking | null>(null);
 
-  // Fetch data from database
+  // Fetch existing patient emails
+  const fetchExistingPatientEmails = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('patient_records')
+        .select('email');
+
+      if (error) throw error;
+
+      const emails = new Set((data || []).map(p => p.email.toLowerCase().trim()));
+      setExistingPatientEmails(emails);
+    } catch (error) {
+      console.error('Error fetching patient emails:', error);
+    }
+  };
+
+  // Fetch data from database - only pending bookings, sorted by nearest date
   const fetchData = async () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('bookings')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('status', 'pending')
+        .order('preferred_date', { ascending: true });
 
       if (error) throw error;
 
       setBookings(data || []);
+      await fetchExistingPatientEmails();
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to load data');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Add booking to patient records
+  const handleAddToPatientRecord = async (booking: Booking) => {
+    try {
+      const { error } = await supabase
+        .from('patient_records')
+        .insert({
+          name: booking.name,
+          email: booking.email.toLowerCase().trim(),
+          contact_number: booking.contact_number,
+          booking_id: booking.id,
+          preferred_date: booking.preferred_date,
+          preferred_time: booking.preferred_time,
+          message: booking.message,
+          source: 'booking'
+        });
+
+      if (error) throw error;
+
+      // Update local state
+      setAddedToRecord(prev => new Set([...prev, booking.id]));
+      setExistingPatientEmails(prev => new Set([...prev, booking.email.toLowerCase().trim()]));
+      
+      // Update booking with patient link
+      const { data: patientData } = await supabase
+        .from('patient_records')
+        .select('id')
+        .eq('email', booking.email.toLowerCase().trim())
+        .maybeSingle();
+
+      if (patientData) {
+        await supabase
+          .from('bookings')
+          .update({ patient_id: patientData.id })
+          .eq('id', booking.id);
+      }
+
+      toast.success(`${booking.name} added to patient records!`);
+      fetchData();
+    } catch (error) {
+      console.error('Error adding to patient record:', error);
+      toast.error('Failed to add to patient records');
+    }
+  };
+
+  // Check if email already has a patient record
+  const hasPatientRecord = (email: string) => {
+    return existingPatientEmails.has(email.toLowerCase().trim());
   };
 
   useEffect(() => {
@@ -493,10 +561,9 @@ const HilomeAdminDashboard = () => {
     }
   };
 
-  // Open link dialog for a booking
+  // Open link dialog for a booking (legacy - now redirects to new function)
   const handleAddToRecord = (booking: Booking) => {
-    setSelectedBookingForLink(booking);
-    setLinkDialogOpen(true);
+    handleAddToPatientRecord(booking);
   };
 
   // Called when a booking is successfully linked
@@ -737,17 +804,22 @@ const HilomeAdminDashboard = () => {
                             Call
                           </a>
                         </Button>
-                        {booking.patient_id ? (
+                        {booking.patient_id || addedToRecord.has(booking.id) ? (
                           <Badge variant="secondary" className="gap-1 text-green-700 bg-green-100 hover:bg-green-100">
                             <CheckCircle2 className="h-3 w-3" />
-                            Linked
+                            Added
+                          </Badge>
+                        ) : hasPatientRecord(booking.email) ? (
+                          <Badge variant="secondary" className="gap-1 text-muted-foreground bg-muted hover:bg-muted">
+                            <CheckCircle2 className="h-3 w-3" />
+                            Has Record
                           </Badge>
                         ) : (
                           <Button
                             variant="outline"
                             size="sm"
                             className="gap-2"
-                            onClick={() => handleAddToRecord(booking)}
+                            onClick={() => handleAddToPatientRecord(booking)}
                           >
                             <FileText className="h-4 w-4" />
                             Add to Record

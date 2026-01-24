@@ -1,35 +1,72 @@
-import React, { useState } from 'react';
-import { Search, Download, Calendar, Clock, User, Mail, Phone, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Download, Calendar, User, Mail, Phone, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface BookingHistoryProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+interface Booking {
+  id: string;
+  name: string;
+  email: string;
+  contact_number: string;
+  preferred_date: string;
+  preferred_time: string;
+  status: string;
+  updated_at: string;
+}
+
 const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterDate, setFilterDate] = useState('all');
+  const [bookingHistory, setBookingHistory] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Historical bookings data - empty by default
-  const [bookingHistory] = useState<any[]>([]);
+  // Fetch completed/cancelled/no-show bookings
+  const fetchBookingHistory = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .in('status', ['completed', 'cancelled', 'no-show'])
+        .order('updated_at', { ascending: false });
+
+      if (error) throw error;
+      setBookingHistory(data || []);
+    } catch (error) {
+      console.error('Error fetching booking history:', error);
+      toast.error('Failed to load booking history');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      fetchBookingHistory();
+    }
+  }, [open]);
 
   // Filter bookings
   const filteredBookings = bookingHistory.filter(booking => {
     const matchesSearch = booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         booking.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         booking.service.toLowerCase().includes(searchTerm.toLowerCase());
+                         booking.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || booking.status === filterStatus;
     
     let matchesDate = true;
     if (filterDate !== 'all') {
-      const bookingDate = new Date(booking.date);
+      const bookingDate = new Date(booking.preferred_date);
       const today = new Date();
       const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
       const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -42,19 +79,9 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
   });
 
   // Stats
-  const totalBookings = bookingHistory.length;
   const completedBookings = bookingHistory.filter(b => b.status === 'completed').length;
   const cancelledBookings = bookingHistory.filter(b => b.status === 'cancelled').length;
   const noShowBookings = bookingHistory.filter(b => b.status === 'no-show').length;
-
-  const getMembershipColor = (membership: string) => {
-    switch (membership) {
-      case 'Green': return 'bg-green-500/20 text-green-700 border-green-500/30';
-      case 'Gold': return 'bg-accent/20 text-accent border-accent/30';
-      case 'Platinum': return 'bg-muted text-muted-foreground border-muted-foreground/30';
-      default: return 'bg-muted text-muted-foreground';
-    }
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -70,9 +97,30 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">Booking History</DialogTitle>
-          <p className="text-muted-foreground text-sm">View and manage past bookings</p>
+          <p className="text-muted-foreground text-sm">View past bookings (completed, cancelled, no-show)</p>
         </DialogHeader>
 
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 mt-4">
+          <Card className="border-border/50">
+            <CardContent className="p-4 text-center">
+              <p className="text-2xl font-bold text-green-700">{completedBookings}</p>
+              <p className="text-xs text-muted-foreground">Completed</p>
+            </CardContent>
+          </Card>
+          <Card className="border-border/50">
+            <CardContent className="p-4 text-center">
+              <p className="text-2xl font-bold text-destructive">{cancelledBookings}</p>
+              <p className="text-xs text-muted-foreground">Cancelled</p>
+            </CardContent>
+          </Card>
+          <Card className="border-border/50">
+            <CardContent className="p-4 text-center">
+              <p className="text-2xl font-bold text-amber-700">{noShowBookings}</p>
+              <p className="text-xs text-muted-foreground">No Show</p>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Filters */}
         <Card className="border-border/50 mt-4">
@@ -81,7 +129,7 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name, email, or service..."
+                  placeholder="Search by name or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -110,6 +158,10 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
                   <SelectItem value="month">Last 30 Days</SelectItem>
                 </SelectContent>
               </Select>
+
+              <Button variant="outline" size="icon" onClick={fetchBookingHistory} disabled={isLoading}>
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -123,7 +175,6 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
                   <tr className="border-b border-border bg-muted/30">
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Client</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Appointment</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Membership</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Action</th>
                   </tr>
@@ -144,7 +195,7 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
                             </div>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Phone className="h-3 w-3" />
-                              {booking.phone}
+                              {booking.contact_number}
                             </div>
                           </div>
                         </div>
@@ -153,15 +204,10 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
                           <div>
-                            <p className="font-medium text-foreground">{booking.date}</p>
-                            <p className="text-xs text-muted-foreground">{booking.time}</p>
+                            <p className="font-medium text-foreground">{booking.preferred_date}</p>
+                            <p className="text-xs text-muted-foreground">{booking.preferred_time}</p>
                           </div>
                         </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <Badge variant="outline" className={getMembershipColor(booking.membership)}>
-                          {booking.membership}
-                        </Badge>
                       </td>
                       <td className="py-4 px-4">
                         <Badge className={getStatusColor(booking.status)}>
@@ -175,7 +221,7 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
                           className="gap-2"
                           asChild
                         >
-                          <a href={`tel:${booking.phone.replace(/-/g, '')}`}>
+                          <a href={`tel:${booking.contact_number.replace(/-/g, '')}`}>
                             <Phone className="h-4 w-4" />
                             Call
                           </a>
@@ -191,7 +237,9 @@ const BookingHistory = ({ open, onOpenChange }: BookingHistoryProps) => {
               <div className="p-12 text-center">
                 <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground font-medium">No booking history found</p>
-                <p className="text-sm text-muted-foreground">Try adjusting your filters</p>
+                <p className="text-sm text-muted-foreground">
+                  {isLoading ? 'Loading...' : 'Bookings will appear here when marked as completed, cancelled, or no-show'}
+                </p>
               </div>
             )}
           </CardContent>
