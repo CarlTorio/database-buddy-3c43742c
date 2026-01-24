@@ -321,6 +321,9 @@ const HilomeAdminDashboard = () => {
         referrerId = referrer.id;
       }
 
+      // Generate referral code for the new member
+      const referralCode = generateReferralCode(registerFormData.name);
+      
       // Insert the new member
       const { data: newMember, error } = await supabase
         .from('members')
@@ -335,7 +338,8 @@ const HilomeAdminDashboard = () => {
           referred_by: registerFormData.referral_code?.toUpperCase() || null,
           status: 'active',
           is_walk_in: true,
-          membership_expiry_date: expiryDate.toISOString()
+          membership_expiry_date: expiryDate.toISOString(),
+          referral_code: referralCode
         })
         .select('id')
         .single();
@@ -440,12 +444,15 @@ const HilomeAdminDashboard = () => {
       const expiryDate = new Date();
       expiryDate.setFullYear(expiryDate.getFullYear() + 1);
 
+      const referralCode = member ? generateReferralCode(member.name) : generateReferralCode('MEM');
+      
       const { error } = await supabase
         .from('members')
         .update({ 
           status: 'active',
           membership_start_date: new Date().toISOString(),
-          membership_expiry_date: expiryDate.toISOString()
+          membership_expiry_date: expiryDate.toISOString(),
+          referral_code: referralCode
         })
         .eq('id', id);
 
@@ -584,14 +591,21 @@ const HilomeAdminDashboard = () => {
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'completed': return 'text-green-700';
-      case 'confirmed':
-      case 'active': return 'bg-transparent text-blue-700';
+      case 'confirmed': return 'bg-transparent text-blue-700';
+      case 'active': return 'bg-green-100 text-green-700 border-green-300';
       case 'pending': return 'text-muted-foreground';
       case 'cancelled': return 'text-destructive';
       case 'no-show': return 'text-orange-700';
       case 'expiring': return 'text-destructive';
       default: return 'text-muted-foreground';
     }
+  };
+
+  // Generate a unique referral code
+  const generateReferralCode = (name: string) => {
+    const prefix = name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
+    const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `${prefix}${randomPart}`;
   };
 
   const StatCard = ({ icon: Icon, title, value, subtitle, gradient }: any) => (
