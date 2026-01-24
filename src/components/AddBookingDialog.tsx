@@ -185,21 +185,6 @@ const AddBookingDialog = ({ onBookingAdded }: AddBookingDialogProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="membership">Membership</Label>
-            <Select value={formData.membership} onValueChange={(value) => setFormData({ ...formData, membership: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select membership (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                <SelectItem value="Green">Green</SelectItem>
-                <SelectItem value="Gold">Gold</SelectItem>
-                <SelectItem value="Platinum">Platinum</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="message">Notes</Label>
             <Textarea
               id="message"
