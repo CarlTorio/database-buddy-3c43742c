@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Check, Plus, Gift, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -217,8 +218,9 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
     }
   };
 
-  // All benefits are now claimable with checkboxes
-  const allBenefits = benefits;
+  // Separate benefits: inclusions (no numbers needed) vs claimable (with checkboxes)
+  const inclusionBenefits = benefits.filter(b => b.benefit_type === 'inclusion');
+  const claimableBenefits = benefits.filter(b => b.benefit_type === 'claimable');
   const claimedRewardsCount = referralRewards.filter(r => r.claimed).length;
   const availableRewardSlots = referralCount - referralRewards.length;
 
@@ -232,21 +234,44 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
 
   return (
     <>
-      {/* Membership Benefits (All with checkboxes) */}
-      {allBenefits.length > 0 && (
+      {/* Membership Inclusions - Simple badges, no checkboxes */}
+      {inclusionBenefits.length > 0 && (
         <div className="col-span-2 border-t border-border pt-4 mt-2">
           <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
-            <Sparkles className="h-3 w-3" /> Membership Benefits
+            <Sparkles className="h-3 w-3" /> Membership Inclusions (1 Year)
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {inclusionBenefits.map(benefit => (
+              <Badge 
+                key={benefit.id} 
+                variant="secondary"
+                className="bg-accent/10 text-accent border-accent/30"
+              >
+                <Check className="h-3 w-3 mr-1" />
+                {benefit.benefit_name}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Claimable Benefits - With numbered checkboxes */}
+      {claimableBenefits.length > 0 && (
+        <div className="col-span-2 border-t border-border pt-4 mt-2">
+          <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
+            <Gift className="h-3 w-3" /> Claimable Benefits
           </p>
           <div className="space-y-3">
-            {allBenefits.map(benefit => {
+            {claimableBenefits.map(benefit => {
               const claimedCount = getClaimedCount(benefit.id);
               const sessions = Array.from({ length: benefit.total_quantity }, (_, i) => i + 1);
               
               return (
                 <div key={benefit.id} className="bg-muted/30 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">{benefit.benefit_name}</span>
+                    <span className="text-sm font-medium">
+                      Free ({benefit.total_quantity}) {benefit.benefit_name}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {claimedCount}/{benefit.total_quantity} claimed
                     </span>
@@ -292,7 +317,7 @@ const MemberBenefitsSection: React.FC<MemberBenefitsSectionProps> = ({
           </p>
           <div className="flex items-center gap-3 text-xs">
             <span className="text-muted-foreground">
-              Total: <span className="font-medium text-foreground">{referralCount}</span>
+              Total Referrals: <span className="font-medium text-foreground">{referralCount}</span>
             </span>
             <span className="text-muted-foreground">
               Claimed: <span className="font-medium text-green-600">{claimedRewardsCount}</span>
