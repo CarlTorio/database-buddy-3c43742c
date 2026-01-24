@@ -14,6 +14,7 @@ import PatientRecords from '@/components/PatientRecords';
 import AddBookingDialog from '@/components/AddBookingDialog';
 import LinkToPatientDialog from '@/components/LinkToPatientDialog';
 import MemberBenefitsSection from '@/components/MemberBenefitsSection';
+import MemberDetailsView from '@/components/MemberDetailsView';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -880,7 +881,25 @@ const HilomeAdminDashboard = () => {
   );
 
 
-  const renderMembers = () => (
+  const renderMembers = () => {
+    // If a member is selected, show full-page detail view
+    if (selectedMember) {
+      return (
+        <MemberDetailsView
+          member={selectedMember}
+          onBack={() => setSelectedMember(null)}
+          onViewTransactions={fetchTransactionHistory}
+          membershipPrices={membershipPrices}
+          getMembershipColor={getMembershipColor}
+          getStatusColor={getStatusColor}
+          getPaymentMethodIcon={getPaymentMethodIcon}
+          getPaymentMethodLabel={getPaymentMethodLabel}
+          onUpdate={fetchMembers}
+        />
+      );
+    }
+
+    return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h2 className="font-display text-2xl font-semibold text-foreground">Members Database</h2>
@@ -1516,155 +1535,6 @@ const HilomeAdminDashboard = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="font-display text-xl">Member Details</DialogTitle>
-          </DialogHeader>
-          {selectedMember && (
-            <div className="grid grid-cols-4 gap-4 py-4">
-              <div>
-                <p className="text-xs text-muted-foreground">Full Name</p>
-                <p className="font-medium">{selectedMember.name}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Membership Type</p>
-                <Badge variant="outline" className={getMembershipColor(selectedMember.membership_type)}>
-                  {selectedMember.membership_type}
-                </Badge>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Email</p>
-                <p className="text-sm">{selectedMember.email}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Phone</p>
-                <p className="text-sm">{selectedMember.phone || '—'}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Membership Start</p>
-                <p className="text-sm">
-                  {selectedMember.membership_start_date 
-                    ? new Date(selectedMember.membership_start_date).toLocaleDateString() 
-                    : new Date(selectedMember.created_at).toLocaleDateString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Membership Expiry</p>
-                <p className="text-sm">
-                  {selectedMember.membership_expiry_date 
-                    ? new Date(selectedMember.membership_expiry_date).toLocaleDateString() 
-                    : '—'}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Status</p>
-                <Badge className={getStatusColor(selectedMember.status)}>
-                  {selectedMember.status}
-                </Badge>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Membership Fee</p>
-                <p className="font-medium">₱{(membershipPrices[selectedMember.membership_type] || 0).toLocaleString()}</p>
-              </div>
-
-              {/* Membership Benefits Section */}
-              <MemberBenefitsSection
-                memberId={selectedMember.id}
-                membershipType={selectedMember.membership_type}
-                referralCount={selectedMember.referral_count || 0}
-                onUpdate={() => fetchMembers()}
-              />
-
-              {/* Referral Section */}
-              <div className="col-span-4 border-t border-border pt-4 mt-2">
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                  <Gift className="h-3 w-3" /> Referral Information
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Referral Code</p>
-                    {selectedMember.referral_code ? (
-                      <div className="flex items-center gap-2">
-                        <code className="font-mono font-medium bg-muted px-2 py-1 rounded text-sm">{selectedMember.referral_code}</code>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6"
-                          onClick={() => copyToClipboard(selectedMember.referral_code)}
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <p className="text-sm">—</p>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Total Referrals</p>
-                    <p className="font-medium text-accent">{selectedMember.referral_count || 0}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment Section */}
-              <div className="col-span-4 border-t border-border pt-4 mt-2">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <CreditCard className="h-3 w-3" /> Payment Information
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1 h-7 text-xs"
-                    onClick={() => fetchTransactionHistory(selectedMember.id, selectedMember.name)}
-                  >
-                    <History className="h-3 w-3" />
-                    View History
-                  </Button>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Payment Method</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      {getPaymentMethodIcon(selectedMember.payment_method || selectedMember.payment_method_type)}
-                      <p className="font-medium capitalize">
-                        {getPaymentMethodLabel(selectedMember.payment_method || selectedMember.payment_method_type)}
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Payment Status</p>
-                    <Badge 
-                      variant="outline" 
-                      className={`mt-1 ${selectedMember.payment_status === 'paid' || selectedMember.payment_status === 'completed' ? 'bg-green-500/10 text-green-600 border-green-500/30' : 'bg-amber-500/10 text-amber-600 border-amber-500/30'}`}
-                    >
-                      {selectedMember.payment_status === 'paid' || selectedMember.payment_status === 'completed' ? 'Paid' : selectedMember.payment_status || 'Pending'}
-                    </Badge>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Amount Paid</p>
-                    <p className="font-medium">
-                      {selectedMember.amount_paid ? `₱${Number(selectedMember.amount_paid).toLocaleString()}` : '—'}
-                    </p>
-                  </div>
-                  {(selectedMember.stripe_payment_intent_id || selectedMember.stripe_customer_id) && (
-                    <div className="col-span-2 bg-muted/30 rounded-lg p-2">
-                      <p className="text-xs text-muted-foreground mb-1">Stripe Integration (Ready)</p>
-                      {selectedMember.stripe_payment_intent_id && (
-                        <p className="text-xs font-mono text-muted-foreground">Intent: {selectedMember.stripe_payment_intent_id}</p>
-                      )}
-                      {selectedMember.stripe_customer_id && (
-                        <p className="text-xs font-mono text-muted-foreground">Customer: {selectedMember.stripe_customer_id}</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
       {/* Transaction History Dialog */}
       <Dialog open={showTransactionHistory} onOpenChange={setShowTransactionHistory}>
@@ -1736,7 +1606,8 @@ const HilomeAdminDashboard = () => {
         </DialogContent>
       </Dialog>
     </div>
-  );
+    );
+  };
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard' },
