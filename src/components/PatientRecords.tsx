@@ -37,6 +37,7 @@ interface Patient {
   membership_expiry_date: string | null;
   membership_status: string | null;
   medical_records: MedicalRecord[];
+  is_member: boolean;
 }
 
 const PatientRecords = () => {
@@ -53,36 +54,57 @@ const PatientRecords = () => {
   const fetchPatients = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      // Fetch patient records
+      const { data: patientData, error: patientError } = await supabase
         .from('patient_records')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (patientError) throw patientError;
+
+      // Fetch all active members to check membership by email
+      const { data: membersData, error: membersError } = await supabase
+        .from('members')
+        .select('email, membership_type, membership_expiry_date, status')
+        .eq('status', 'active');
+
+      if (membersError) throw membersError;
+
+      // Create a map of member emails for quick lookup
+      const memberEmailMap = new Map(
+        (membersData || []).map(m => [m.email.toLowerCase().trim(), m])
+      );
       
-      const patientRecords: Patient[] = (data || []).map(record => ({
-        id: record.id,
-        name: record.name,
-        email: record.email,
-        contact_number: record.contact_number || '',
-        membership: record.membership || '',
-        status: 'active',
-        preferred_date: record.preferred_date || '',
-        preferred_time: record.preferred_time || '',
-        message: record.message,
-        created_at: record.created_at,
-        updated_at: record.updated_at,
-        date_of_birth: record.date_of_birth,
-        age: record.age,
-        gender: record.gender,
-        emergency_contact: record.emergency_contact,
-        membership_join_date: record.membership_join_date,
-        membership_expiry_date: record.membership_expiry_date,
-        membership_status: record.membership_status,
-        medical_records: Array.isArray(record.medical_records) 
-          ? (record.medical_records as unknown as MedicalRecord[]) 
-          : [],
-      }));
+      const patientRecords: Patient[] = (patientData || []).map(record => {
+        // Check if this patient has a matching active member
+        const matchedMember = memberEmailMap.get(record.email.toLowerCase().trim());
+        const isMember = !!matchedMember;
+        
+        return {
+          id: record.id,
+          name: record.name,
+          email: record.email,
+          contact_number: record.contact_number || '',
+          membership: isMember ? matchedMember.membership_type : record.membership || '',
+          status: 'active',
+          preferred_date: record.preferred_date || '',
+          preferred_time: record.preferred_time || '',
+          message: record.message,
+          created_at: record.created_at,
+          updated_at: record.updated_at,
+          date_of_birth: record.date_of_birth,
+          age: record.age,
+          gender: record.gender,
+          emergency_contact: record.emergency_contact,
+          membership_join_date: record.membership_join_date,
+          membership_expiry_date: isMember ? matchedMember.membership_expiry_date : record.membership_expiry_date,
+          membership_status: isMember ? 'active' : record.membership_status,
+          medical_records: Array.isArray(record.medical_records) 
+            ? (record.medical_records as unknown as MedicalRecord[]) 
+            : [],
+          is_member: isMember,
+        };
+      });
       
       setPatients(patientRecords);
     } catch (error) {
@@ -439,7 +461,7 @@ const PatientRecords = () => {
             {/* Membership Section */}
             <div className="mb-6">
               <h3 className="font-medium text-foreground mb-4 text-center">Membership</h3>
-              {editedPatient.membership ? (
+              {editedPatient.is_member && editedPatient.membership ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -512,7 +534,11 @@ const PatientRecords = () => {
                   </table>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No membership</p>
+                <div className="text-center py-4">
+                  <Badge variant="outline" className="bg-muted text-muted-foreground border-muted-foreground/30">
+                    Non-member
+                  </Badge>
+                </div>
               )}
             </div>
 
@@ -623,7 +649,6 @@ const PatientRecords = () => {
                   <tr className="border-b border-border">
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Name</th>
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Contact</th>
-                    <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Membership</th>
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Last Visit</th>
                     <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Action</th>
                   </tr>
@@ -636,15 +661,6 @@ const PatientRecords = () => {
                         <p className="text-xs text-muted-foreground">{patient.email}</p>
                       </td>
                       <td className="py-4 px-2 text-sm">{patient.contact_number}</td>
-                      <td className="py-4 px-2">
-                        {patient.membership ? (
-                          <Badge className={getMembershipColor(patient.membership)}>
-                            {patient.membership}
-                          </Badge>
-                        ) : (
-                          <span className="text-sm text-muted-foreground">—</span>
-                        )}
-                      </td>
                       <td className="py-4 px-2 text-sm">
                         {patient.medical_records.length > 0
                           ? formatDate(patient.medical_records[patient.medical_records.length - 1]?.date)

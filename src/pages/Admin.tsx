@@ -683,7 +683,6 @@ const HilomeAdminDashboard = () => {
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Name</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Contact</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Date & Time</th>
-                  <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Membership</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Status</th>
                   <th className="text-left py-4 px-2 text-sm font-medium text-muted-foreground">Action</th>
                 </tr>
@@ -706,11 +705,6 @@ const HilomeAdminDashboard = () => {
                     <td className="py-4 px-2">
                       <p className="text-sm">{booking.preferred_date}</p>
                       <p className="text-xs text-muted-foreground">{booking.preferred_time}</p>
-                    </td>
-                    <td className="py-4 px-2">
-                      <Badge variant="outline" className={getMembershipColor(booking.membership)}>
-                        {booking.membership}
-                      </Badge>
                     </td>
                     <td className="py-4 px-2">
                       <Select 

@@ -16,7 +16,6 @@ const BookConsultation = () => {
     name: "",
     email: "",
     contactNumber: "",
-    preferredBranch: "",
     date: "",
     time: "",
     message: ""
@@ -30,7 +29,7 @@ const BookConsultation = () => {
       time
     }));
   };
-  const memberships = ["Non-member", "Green Member", "Gold Member", "Platinum Member"];
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const {
       name,
@@ -44,7 +43,7 @@ const BookConsultation = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (formData.name && formData.email && formData.contactNumber && formData.preferredBranch && formData.date && formData.time) {
+    if (formData.name && formData.email && formData.contactNumber && formData.date && formData.time) {
       setIsSubmitting(true);
       try {
         // Check if the booker is a member (by email)
@@ -55,15 +54,9 @@ const BookConsultation = () => {
           .eq('status', 'active')
           .maybeSingle();
 
-        // Determine membership info from member lookup or form selection
-        let membershipTier = formData.preferredBranch;
-        let memberId = null;
-        
-        if (existingMember) {
-          // Auto-fill from member data
-          membershipTier = existingMember.membership_type + ' Member';
-          memberId = existingMember.id;
-        }
+        // Determine membership info from member lookup
+        let membershipTier = existingMember ? existingMember.membership_type : null;
+        let memberId = existingMember ? existingMember.id : null;
 
         // Save booking to database with member link if found
         const { error } = await supabase.from('bookings').insert({
@@ -249,23 +242,6 @@ const BookConsultation = () => {
                       <input type="tel" name="contactNumber" placeholder="Contact Number" value={formData.contactNumber} onChange={handleChange} className="flex-1 bg-transparent text-primary-foreground placeholder-primary-foreground/50 py-2 px-0 focus:outline-none text-sm" />
                     </div>
                   </div>
-                </div>
-
-                {/* Membership */}
-                <div>
-                  <label className="block text-primary-foreground font-semibold text-sm mb-1">
-                    Membership <span className="text-red-300">*</span>
-                  </label>
-                  <select name="preferredBranch" value={formData.preferredBranch} onChange={handleChange} className="w-full bg-transparent border-b-2 border-primary-foreground/50 text-primary-foreground py-2 px-0 focus:outline-none focus:border-accent transition-colors cursor-pointer text-sm" style={{
-                  color: formData.preferredBranch ? "hsl(var(--primary-foreground))" : "hsl(var(--primary-foreground) / 0.5)"
-                }}>
-                    <option value="" disabled className="bg-primary text-primary-foreground/50">
-                      Select membership status
-                    </option>
-                    {memberships.map((membership, index) => <option key={index} value={membership} className="bg-primary text-primary-foreground">
-                        {membership}
-                      </option>)}
-                  </select>
                 </div>
 
                 {/* Preferred Schedule */}
