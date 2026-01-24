@@ -85,7 +85,7 @@ const AddBookingDialog = ({ onBookingAdded }: AddBookingDialogProps) => {
           preferred_time: formData.preferred_time,
           membership: formData.membership || null,
           message: formData.message.trim() || null,
-          status: 'confirmed', // Walk-in bookings are auto-confirmed
+          status: 'pending', // Bookings start as pending
         });
 
       if (error) throw error;
