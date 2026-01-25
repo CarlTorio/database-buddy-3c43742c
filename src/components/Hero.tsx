@@ -5,39 +5,70 @@ import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Hero = () => {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [animationStage, setAnimationStage] = useState('initial');
+  const [whiteOpacity, setWhiteOpacity] = useState(0);
+  const [textOpacity, setTextOpacity] = useState(0);
+  const [buttonsVisible, setButtonsVisible] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerWidth < 768) {
-        const scrolled = window.scrollY;
-        const maxScroll = 250;
-        const progress = Math.min(scrolled / maxScroll, 1);
-        setScrollProgress(progress);
-      } else {
-        setScrollProgress(1);
-      }
-    };
+    // Only run cinematic intro on mobile
+    if (window.innerWidth < 768) {
+      // Lock scroll initially
+      document.body.style.overflow = 'hidden';
 
-    // Lock scroll on mobile until reveal completes
-    const preventScroll = (e: TouchEvent) => {
-      if (window.innerWidth < 768 && scrollProgress < 1) {
-        // Allow scrolling but with resistance
-      }
-    };
+      // Stage 1: Wait 1.5s with background visible
+      const stage1Timer = setTimeout(() => {
+        setAnimationStage('white-fading');
+        
+        // Animate white overlay and text together over 1 second
+        const startTime = Date.now();
+        const duration = 1000;
+        
+        const animateFadeIn = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          setWhiteOpacity(progress * 0.7); // 0 to 0.7
+          setTextOpacity(progress); // 0 to 1
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateFadeIn);
+          } else {
+            // Stage 2: Show buttons after text is visible
+            setAnimationStage('buttons-sliding');
+            setTimeout(() => {
+              setButtonsVisible(true);
+              
+              // Stage 3: Complete - unlock scroll after buttons appear
+              setTimeout(() => {
+                setAnimationStage('complete');
+                document.body.style.overflow = 'auto';
+              }, 500);
+            }, 100);
+          }
+        };
+        
+        requestAnimationFrame(animateFadeIn);
+      }, 1500);
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [scrollProgress]);
+      return () => {
+        clearTimeout(stage1Timer);
+        document.body.style.overflow = 'auto';
+      };
+    } else {
+      // Desktop: show everything immediately
+      setWhiteOpacity(0);
+      setTextOpacity(1);
+      setButtonsVisible(true);
+      setAnimationStage('complete');
+    }
+  }, []);
 
-  // Calculate opacities based on scroll (mobile only)
-  const whiteOverlayOpacity = isMobile ? 0.7 - (scrollProgress * 0.7) : 0;
-  const textOpacity = isMobile ? 1 - scrollProgress : 1;
+  // Desktop always shows content
+  const displayWhiteOpacity = isMobile ? whiteOpacity : 0;
+  const displayTextOpacity = isMobile ? textOpacity : 1;
+  const displayButtonsVisible = isMobile ? buttonsVisible : true;
 
   return <section className="relative min-h-[60vh] md:min-h-[85vh] flex items-center overflow-hidden pt-8 md:pt-0">
       {/* Background Image with Parallax */}
@@ -57,22 +88,27 @@ const Hero = () => {
         />
       </motion.div>
 
-      {/* White Overlay - Fades out on scroll (mobile only) */}
+      {/* White Overlay - Fades IN during cinematic intro (mobile only) */}
       <div 
-        className="absolute inset-0 z-[5] bg-white md:hidden transition-opacity duration-300 pointer-events-none"
-        style={{ opacity: whiteOverlayOpacity }}
+        className="absolute inset-0 z-[5] bg-white md:hidden pointer-events-none"
+        style={{ 
+          opacity: displayWhiteOpacity,
+          transition: 'opacity 0.1s ease-out'
+        }}
       />
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-20">
         <div className="max-w-xl ml-4 md:ml-12">
-          {/* Text content that fades on mobile scroll */}
+          {/* Text content that fades IN on mobile */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="transition-opacity duration-300"
-            style={{ opacity: textOpacity }}
+            style={{ 
+              opacity: displayTextOpacity,
+              transition: 'opacity 0.1s ease-out'
+            }}
           >
             <h1 className="font-script text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-2">
               <span className="non-italic font-sans font-semibold">​The Wellness Escape</span>
@@ -86,18 +122,25 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.5 }} 
-            className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed lg:text-xl transition-opacity duration-300"
-            style={{ opacity: textOpacity }}
+            className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed lg:text-xl"
+            style={{ 
+              opacity: displayTextOpacity,
+              transition: 'opacity 0.1s ease-out'
+            }}
           >
             Your destination for advanced skincare and aesthetic treatments. Elevate your beauty and well-being with us.
           </motion.p>
 
-          {/* Buttons - Always visible, no fade */}
+          {/* Buttons - Slide up from bottom on mobile */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.7 }} 
-            className="flex flex-wrap gap-3"
+            className={`flex flex-wrap gap-3 transition-all duration-500 ease-out ${
+              displayButtonsVisible 
+                ? 'translate-y-0 opacity-100' 
+                : 'translate-y-8 opacity-0 md:translate-y-0 md:opacity-100'
+            }`}
           >
             <Button asChild size="default" className="gradient-accent text-accent-foreground hover:opacity-90 transition-all duration-300 hover:scale-105 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
               <Link to="/book-consultation">Book Consultation</Link>
@@ -109,30 +152,32 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Decorative Elements */}
-      <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20" initial={{
-      opacity: 0
-    }} animate={{
-      opacity: 1
-    }} transition={{
-      delay: 1.2
-    }}>
-        <motion.div animate={{
-        y: [0, 10, 0]
-      }} transition={{
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }} className="w-6 h-10 border-2 border-foreground/30 rounded-full flex items-start justify-center p-2">
-          <motion.div animate={{
-          y: [0, 8, 0]
+      {/* Decorative scroll indicator - shows after animation completes on mobile */}
+      {(animationStage === 'complete' || !isMobile) && (
+        <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20" initial={{
+          opacity: 0
+        }} animate={{
+          opacity: 1
         }} transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }} className="w-1.5 h-3 bg-foreground/50 rounded-full" />
+          delay: isMobile ? 0 : 1.2
+        }}>
+          <motion.div animate={{
+            y: [0, 10, 0]
+          }} transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }} className="w-6 h-10 border-2 border-foreground/30 rounded-full flex items-start justify-center p-2">
+            <motion.div animate={{
+              y: [0, 8, 0]
+            }} transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }} className="w-1.5 h-3 bg-foreground/50 rounded-full" />
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </section>;
 };
 export default Hero;
