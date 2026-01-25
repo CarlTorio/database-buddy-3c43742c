@@ -268,21 +268,42 @@ const MembershipPlans = () => {
                 {/* Mobile: Collapsible Benefits */}
                 <div className="md:hidden">
                   <Collapsible>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5 text-[10px] font-medium text-foreground border-t border-border/30">
+                    <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5 text-[10px] font-medium text-foreground border-t border-border/30 group">
                       <span>View Benefits ({tier.benefits.length})</span>
-                      <ChevronDown className="w-3 h-3 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+                      <motion.div
+                        initial={false}
+                        className="group-data-[state=open]:rotate-180 transition-transform duration-300"
+                      >
+                        <ChevronDown className="w-3 h-3" />
+                      </motion.div>
                     </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <ul className="space-y-1 pt-1.5">
+                    <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                      <motion.ul 
+                        className="space-y-1 pt-1.5"
+                        initial="collapsed"
+                        animate="open"
+                        variants={{
+                          open: { transition: { staggerChildren: 0.05 } },
+                          collapsed: {}
+                        }}
+                      >
                         {tier.benefits.map((benefit, benefitIndex) => (
-                          <li key={benefitIndex} className="flex items-start gap-1">
+                          <motion.li 
+                            key={benefitIndex} 
+                            className="flex items-start gap-1"
+                            variants={{
+                              open: { opacity: 1, x: 0 },
+                              collapsed: { opacity: 0, x: -10 }
+                            }}
+                            transition={{ duration: 0.2 }}
+                          >
                             <Check className="w-2.5 h-2.5 text-accent flex-shrink-0 mt-0.5" />
                             <span className="text-[9px] text-muted-foreground leading-snug">
                               {benefit}
                             </span>
-                          </li>
+                          </motion.li>
                         ))}
-                      </ul>
+                      </motion.ul>
                     </CollapsibleContent>
                   </Collapsible>
                 </div>
