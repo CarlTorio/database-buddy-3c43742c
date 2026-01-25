@@ -248,14 +248,14 @@ const Membership = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
-            className="mb-4"
+            className="mb-4 md:mb-6"
           >
             <Button
               variant="ghost"
               onClick={() => navigate(-1)}
-              className="text-muted-foreground hover:text-foreground gap-2"
+              className="text-muted-foreground hover:text-foreground gap-2 h-10 px-3 text-sm md:text-base"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
               Back
             </Button>
           </motion.div>
@@ -265,20 +265,20 @@ const Membership = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-xl mx-auto mb-6"
+            className="text-center max-w-xl mx-auto mb-6 md:mb-8"
           >
-            <div className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/20 rounded-full px-2.5 py-0.5 mb-3">
-              <Sparkles className="w-2.5 h-2.5 text-accent" />
-              <span className="text-accent font-medium text-[10px] uppercase tracking-wider">
+            <div className="inline-flex items-center gap-1.5 bg-accent/10 border border-accent/20 rounded-full px-3 py-1 mb-3">
+              <Sparkles className="w-3 h-3 text-accent" />
+              <span className="text-accent font-medium text-xs uppercase tracking-wider">
                 Secure Checkout
               </span>
-              <Sparkles className="w-2.5 h-2.5 text-accent" />
+              <Sparkles className="w-3 h-3 text-accent" />
             </div>
             
-            <h1 className="font-display text-xl md:text-2xl lg:text-3xl font-semibold text-foreground mb-2">
+            <h1 className="font-display text-2xl md:text-2xl lg:text-3xl font-semibold text-foreground mb-2">
               Membership Purchase
             </h1>
-            <p className="text-muted-foreground text-xs md:text-sm">
+            <p className="text-muted-foreground text-sm md:text-sm">
               Select your membership tier and complete your purchase securely
             </p>
           </motion.div>
@@ -292,15 +292,15 @@ const Membership = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
-                  className="bg-card rounded-lg p-4 shadow-md border border-border/50"
+                  className="bg-card rounded-lg p-4 md:p-5 shadow-md border border-border/50"
                 >
-                  <h2 className="font-display text-sm font-semibold text-foreground mb-3">
+                  <h2 className="font-display text-base font-semibold text-foreground mb-4">
                     Personal Information
                   </h2>
                   
-                  <div className="grid md:grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <Label htmlFor="name" className="text-xs font-medium">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="name" className="text-sm font-medium">
                         Full Name <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -309,13 +309,13 @@ const Membership = () => {
                         placeholder="Enter your full name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className={`h-9 text-sm ${errors.name ? "border-destructive" : ""}`}
+                        className={`h-11 text-base ${errors.name ? "border-destructive" : ""}`}
                       />
-                      {errors.name && <p className="text-[10px] text-destructive">{errors.name}</p>}
+                      {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                     </div>
                     
-                    <div className="space-y-1">
-                      <Label htmlFor="contact" className="text-xs font-medium">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="contact" className="text-sm font-medium">
                         Contact Number <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -324,13 +324,13 @@ const Membership = () => {
                         placeholder="Enter your contact number"
                         value={formData.contact}
                         onChange={handleInputChange}
-                        className={`h-9 text-sm ${errors.contact ? "border-destructive" : ""}`}
+                        className={`h-11 text-base ${errors.contact ? "border-destructive" : ""}`}
                       />
-                      {errors.contact && <p className="text-[10px] text-destructive">{errors.contact}</p>}
+                      {errors.contact && <p className="text-xs text-destructive">{errors.contact}</p>}
                     </div>
                     
-                    <div className="space-y-1 md:col-span-2">
-                      <Label htmlFor="email" className="text-xs font-medium">
+                    <div className="space-y-1.5 md:col-span-2">
+                      <Label htmlFor="email" className="text-sm font-medium">
                         Email Address <span className="text-destructive">*</span>
                       </Label>
                       <Input
@@ -340,16 +340,16 @@ const Membership = () => {
                         placeholder="Enter your email address"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`h-9 text-sm ${errors.email ? "border-destructive" : ""}`}
+                        className={`h-11 text-base ${errors.email ? "border-destructive" : ""}`}
                       />
-                      {errors.email && <p className="text-[10px] text-destructive">{errors.email}</p>}
-                      <p className="text-[10px] text-muted-foreground">Confirmation will be sent to this email</p>
+                      {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+                      <p className="text-xs text-muted-foreground">Confirmation will be sent to this email</p>
                     </div>
                     
                     {/* Referral Code */}
-                    <div className="space-y-1 md:col-span-2">
-                      <Label htmlFor="referralCode" className="text-xs font-medium flex items-center gap-1.5">
-                        <Gift className="w-3 h-3 text-accent" />
+                    <div className="space-y-1.5 md:col-span-2">
+                      <Label htmlFor="referralCode" className="text-sm font-medium flex items-center gap-2">
+                        <Gift className="w-4 h-4 text-accent" />
                         Referral Code <span className="text-muted-foreground">(optional)</span>
                       </Label>
                       <Input
@@ -359,10 +359,10 @@ const Membership = () => {
                         value={formData.referralCode}
                         onChange={handleInputChange}
                         maxLength={6}
-                        className={`h-9 text-sm uppercase ${errors.referralCode ? "border-destructive" : ""}`}
+                        className={`h-11 text-base uppercase ${errors.referralCode ? "border-destructive" : ""}`}
                       />
-                      {errors.referralCode && <p className="text-[10px] text-destructive">{errors.referralCode}</p>}
-                      <p className="text-[10px] text-muted-foreground">Get this code from an existing Hilomè member</p>
+                      {errors.referralCode && <p className="text-xs text-destructive">{errors.referralCode}</p>}
+                      <p className="text-xs text-muted-foreground">Get this code from an existing Hilomè member</p>
                     </div>
                   </div>
                 </motion.div>
@@ -469,19 +469,19 @@ const Membership = () => {
                   <Button
                     type="submit"
                     disabled={isProcessing || !selectedMembership}
-                    className="w-full gradient-accent text-accent-foreground rounded-full py-3 text-sm font-semibold disabled:opacity-50 gap-2"
+                    className="w-full gradient-accent text-accent-foreground rounded-full h-12 text-base font-semibold disabled:opacity-50 gap-2"
                   >
                     {isProcessing ? (
                       <>Processing...</>
                     ) : (
                       <>
-                        <CreditCard className="w-4 h-4" />
+                        <CreditCard className="w-5 h-5" />
                         Pay Now {selectedPlan && `- ${selectedPlan.priceDisplay}`}
                       </>
                     )}
                   </Button>
-                  <div className="flex items-center justify-center gap-2 mt-3 text-xs text-muted-foreground">
-                    <Lock className="w-3 h-3" />
+                  <div className="flex items-center justify-center gap-2 mt-4 text-sm text-muted-foreground">
+                    <Lock className="w-4 h-4" />
                     <span>Secured by Stripe</span>
                   </div>
                 </motion.div>
