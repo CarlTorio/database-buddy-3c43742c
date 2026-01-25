@@ -23,7 +23,7 @@ const duplicatedServices = [...services, ...services, ...services];
 const FeaturedServices = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, {
-    once: true,
+    once: false,
     amount: 0.3
   });
   const isMobile = useIsMobile();

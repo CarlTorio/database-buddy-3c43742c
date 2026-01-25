@@ -4,7 +4,7 @@ import { Instagram, Facebook, Mail, Phone, MapPin, Clock } from "lucide-react";
 
 const ContactSection = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref, { once: false, margin: "-50px" });
 
   return (
     <section className="py-6 md:py-8 bg-cream" ref={ref} id="contact">

@@ -14,7 +14,7 @@ const allServices = [
 
 const ServicesGrid = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isInView = useInView(ref, { once: false, amount: 0.2 });
 
   return (
     <section id="services" className="py-10 md:py-14 bg-cream scroll-mt-24" ref={ref}>

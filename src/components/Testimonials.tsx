@@ -35,7 +35,7 @@ const duplicatedTestimonials = [...testimonials, ...testimonials];
 
 const Testimonials = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: false, margin: "-100px" });
 
   return (
     <section className="py-10 md:py-14 bg-background overflow-hidden" ref={ref}>
