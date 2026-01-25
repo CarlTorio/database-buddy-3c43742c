@@ -1,42 +1,96 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Hero = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isRevealed, setIsRevealed] = useState(false);
   const isMobile = useIsMobile();
+  const touchStartY = useRef(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerWidth < 768) {
-        const scrolled = window.scrollY;
-        const maxScroll = 250;
-        const progress = Math.min(scrolled / maxScroll, 1);
-        setScrollProgress(progress);
-      } else {
-        setScrollProgress(1);
-      }
-    };
+    // On desktop, skip the reveal animation
+    if (!isMobile) {
+      setScrollProgress(1);
+      setIsRevealed(true);
+      return;
+    }
 
-    // Lock scroll on mobile until reveal completes
-    const preventScroll = (e: TouchEvent) => {
-      if (window.innerWidth < 768 && scrollProgress < 1) {
-        // Allow scrolling but with resistance
-      }
-    };
+    // Lock body scroll on mobile until revealed
+    if (!isRevealed) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = '0';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+    }
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
-    
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
     };
-  }, [scrollProgress]);
+  }, [isMobile, isRevealed]);
+
+  useEffect(() => {
+    if (!isMobile || isRevealed) return;
+
+    const maxScroll = 250;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (isRevealed) return;
+      e.preventDefault();
+      
+      setScrollProgress(prev => {
+        const newProgress = Math.min(Math.max(prev + (e.deltaY / maxScroll), 0), 1);
+        if (newProgress >= 1) {
+          setIsRevealed(true);
+        }
+        return newProgress;
+      });
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isRevealed) return;
+      e.preventDefault();
+      
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartY.current - touchY;
+      touchStartY.current = touchY;
+
+      setScrollProgress(prev => {
+        const newProgress = Math.min(Math.max(prev + (deltaY / maxScroll), 0), 1);
+        if (newProgress >= 1) {
+          setIsRevealed(true);
+        }
+        return newProgress;
+      });
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [isMobile, isRevealed]);
 
   // Calculate opacities based on scroll (mobile only)
-  const whiteOverlayOpacity = isMobile ? 0.7 - (scrollProgress * 0.7) : 0;
+  const whiteOverlayOpacity = isMobile && !isRevealed ? 0.7 - (scrollProgress * 0.7) : 0;
   const textOpacity = isMobile ? 1 - scrollProgress : 1;
 
   return <section className="relative min-h-[60vh] md:min-h-[85vh] flex items-center overflow-hidden pt-8 md:pt-0">
