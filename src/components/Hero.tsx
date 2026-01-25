@@ -1,8 +1,44 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Hero = () => {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth < 768) {
+        const scrolled = window.scrollY;
+        const maxScroll = 250;
+        const progress = Math.min(scrolled / maxScroll, 1);
+        setScrollProgress(progress);
+      } else {
+        setScrollProgress(1);
+      }
+    };
+
+    // Lock scroll on mobile until reveal completes
+    const preventScroll = (e: TouchEvent) => {
+      if (window.innerWidth < 768 && scrollProgress < 1) {
+        // Allow scrolling but with resistance
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial call
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrollProgress]);
+
+  // Calculate opacities based on scroll (mobile only)
+  const whiteOverlayOpacity = isMobile ? 0.7 - (scrollProgress * 0.7) : 0;
+  const textOpacity = isMobile ? 1 - scrollProgress : 1;
+
   return <section className="relative min-h-[60vh] md:min-h-[85vh] flex items-center overflow-hidden pt-8 md:pt-0">
       {/* Background Image with Parallax */}
       <motion.div className="absolute inset-0 z-0" initial={{
@@ -21,19 +57,23 @@ const Hero = () => {
         />
       </motion.div>
 
+      {/* White Overlay - Fades out on scroll (mobile only) */}
+      <div 
+        className="absolute inset-0 z-[5] bg-white md:hidden transition-opacity duration-300 pointer-events-none"
+        style={{ opacity: whiteOverlayOpacity }}
+      />
+
       {/* Content */}
       <div className="container mx-auto px-4 relative z-20">
         <div className="max-w-xl ml-4 md:ml-12">
-          <motion.div initial={{
-          opacity: 0,
-          y: 40
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.3
-        }}>
+          {/* Text content that fades on mobile scroll */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="transition-opacity duration-300"
+            style={{ opacity: textOpacity }}
+          >
             <h1 className="font-script text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-2">
               <span className="non-italic font-sans font-semibold">​The Wellness Escape</span>
             </h1>
@@ -42,29 +82,23 @@ const Hero = () => {
             </p>
           </motion.div>
 
-        <motion.p initial={{
-          opacity: 0,
-          y: 30
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.5
-        }} className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed lg:text-xl">
+          <motion.p 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8, delay: 0.5 }} 
+            className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed lg:text-xl transition-opacity duration-300"
+            style={{ opacity: textOpacity }}
+          >
             Your destination for advanced skincare and aesthetic treatments. Elevate your beauty and well-being with us.
           </motion.p>
 
-          <motion.div initial={{
-          opacity: 0,
-          y: 30
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.7
-        }} className="flex flex-wrap gap-3">
+          {/* Buttons - Always visible, no fade */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8, delay: 0.7 }} 
+            className="flex flex-wrap gap-3"
+          >
             <Button asChild size="default" className="gradient-accent text-accent-foreground hover:opacity-90 transition-all duration-300 hover:scale-105 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
               <Link to="/book-consultation">Book Consultation</Link>
             </Button>
