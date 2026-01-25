@@ -106,7 +106,8 @@ const Hero = () => {
           {/* Text content that fades IN on mobile */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }} 
-            animate={{ opacity: 1, y: 0 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             style={{ 
               opacity: displayTextOpacity,
@@ -123,7 +124,8 @@ const Hero = () => {
 
           <motion.p 
             initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.8, delay: 0.5 }} 
             className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed lg:text-xl"
             style={{ 
@@ -137,7 +139,8 @@ const Hero = () => {
           {/* Buttons - Slide up from bottom on mobile */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.8, delay: 0.7 }} 
             className={`flex flex-wrap gap-3 transition-all duration-500 ease-out ${
               displayButtonsVisible 
