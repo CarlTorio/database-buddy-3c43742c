@@ -108,9 +108,9 @@ const AddBookingDialog = ({ onBookingAdded }: AddBookingDialogProps) => {
       if (!isOpen) resetForm();
     }}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Booking
+        <Button className="gap-1 sm:gap-2 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4">
+          <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <span className="hidden sm:inline">Add </span>Book
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">

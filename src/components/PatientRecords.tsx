@@ -668,60 +668,60 @@ const PatientRecords = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 relative z-0">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground">Patient Records</h2>
-        <div className="flex gap-2 sm:gap-3">
+    <div className="space-y-2 sm:space-y-6 relative z-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+        <h2 className="font-display text-lg sm:text-2xl font-semibold text-foreground">Patient Records</h2>
+        <div className="flex gap-1.5 sm:gap-3">
           <AddPatientDialog onPatientAdded={fetchPatients} />
-          <Button variant="outline" className="gap-2 h-10 sm:h-9 text-sm">
-            <Download className="h-4 w-4" />
+          <Button variant="outline" className="gap-1 sm:gap-2 h-9 sm:h-9 text-[10px] sm:text-sm px-2 sm:px-4">
+            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             Export
           </Button>
         </div>
       </div>
 
       <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardContent className="p-3 sm:p-6">
-          <div className="flex flex-col md:flex-row gap-4 mb-4 sm:mb-6">
+        <CardContent className="p-2 sm:p-6">
+          <div className="flex flex-col md:flex-row gap-2 sm:gap-4 mb-2 sm:mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
               <Input
-                placeholder="Search patients..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11 sm:h-10"
+                className="pl-8 sm:pl-10 h-9 sm:h-10 text-sm"
               />
             </div>
           </div>
 
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center py-6 sm:py-8">
+              <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-muted-foreground" />
             </div>
           ) : filteredPatients.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <User className="h-12 w-12 mx-auto mb-2 opacity-30" />
-              <p className="text-sm">No patient records found.</p>
+            <div className="text-center py-6 sm:py-8 text-muted-foreground">
+              <User className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-2 opacity-30" />
+              <p className="text-xs sm:text-sm">No patient records found.</p>
             </div>
           ) : (
             <>
               {/* Mobile Card Layout - Only show Name and View button */}
-              <div className="block sm:hidden space-y-3">
+              <div className="block sm:hidden space-y-1.5">
                 {filteredPatients.map(patient => (
                   <div 
                     key={patient.id} 
-                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border/50"
+                    className="flex items-center justify-between p-2 bg-muted/30 rounded-lg border border-border/50"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-sm truncate">{patient.name}</p>
+                      <p className="font-medium text-xs truncate">{patient.name}</p>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => openDetail(patient)}
-                      className="gap-2 h-10 ml-3 flex-shrink-0"
+                      className="gap-1 h-7 ml-2 flex-shrink-0 text-[10px] px-2"
                     >
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-3 w-3" />
                       View
                     </Button>
                   </div>

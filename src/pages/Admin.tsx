@@ -605,15 +605,15 @@ const HilomeAdminDashboard = () => {
     >
       <Card className="relative overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-elevated transition-all duration-300">
         <div className={`absolute inset-0 opacity-10 ${gradient}`} />
-        <CardContent className="p-4 sm:p-6 relative">
-          <div className="flex items-start justify-between gap-2">
-            <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
-              <p className="text-xs sm:text-sm text-muted-foreground font-medium">{title}</p>
-              <p className="text-lg sm:text-3xl font-display font-bold text-foreground break-words leading-tight">{value}</p>
-              {subtitle && <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight">{subtitle}</p>}
+        <CardContent className="p-2.5 sm:p-6 relative">
+          <div className="flex items-start justify-between gap-1.5 sm:gap-2">
+            <div className="space-y-0.5 sm:space-y-2 min-w-0 flex-1">
+              <p className="text-[10px] sm:text-sm text-muted-foreground font-medium leading-tight">{title}</p>
+              <p className="text-base sm:text-3xl font-display font-bold text-foreground break-words leading-tight">{value}</p>
+              {subtitle && <p className="text-[9px] sm:text-xs text-muted-foreground leading-tight">{subtitle}</p>}
             </div>
-            <div className={`p-2 sm:p-3 rounded-xl ${gradient} flex-shrink-0`}>
-              <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+            <div className={`p-1.5 sm:p-3 rounded-lg sm:rounded-xl ${gradient} flex-shrink-0`}>
+              <Icon className="h-3.5 w-3.5 sm:h-6 sm:w-6 text-white" />
             </div>
           </div>
         </CardContent>
@@ -622,23 +622,23 @@ const HilomeAdminDashboard = () => {
   );
 
   const renderDashboard = () => (
-    <div className="space-y-6 sm:space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground">Dashboard Overview</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">Last updated: Just now</p>
+    <div className="space-y-3 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
+        <h2 className="font-display text-lg sm:text-2xl font-semibold text-foreground">Dashboard Overview</h2>
+        <p className="text-[10px] sm:text-sm text-muted-foreground">Last updated: Just now</p>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-        <StatCard icon={DollarSign} title="Total Sales" value={`₱${totalSales.toLocaleString()}`} subtitle="Based on membership payments" gradient="gradient-accent" />
-        <StatCard icon={Users} title="Total Members" value={totalMembers} subtitle="Active memberships" gradient="bg-green-600" />
-        <StatCard icon={Clock} title="For Confirmation" value={pendingConfirmations} subtitle="Awaiting confirmation" gradient="bg-amber-500" />
-        <StatCard icon={Calendar} title="Active Bookings" value={activeBookings} subtitle="This week" gradient="bg-sage-600" />
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
+        <StatCard icon={DollarSign} title="Total Sales" value={`₱${totalSales.toLocaleString()}`} subtitle="Membership payments" gradient="gradient-accent" />
+        <StatCard icon={Users} title="Members" value={totalMembers} subtitle="Active" gradient="bg-green-600" />
+        <StatCard icon={Clock} title="Pending" value={pendingConfirmations} subtitle="For confirmation" gradient="bg-amber-500" />
+        <StatCard icon={Calendar} title="Bookings" value={activeBookings} subtitle="Active" gradient="bg-sage-600" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-6">
         <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="font-display text-base sm:text-lg">Revenue Trend (Membership)</CardTitle>
+          <CardHeader className="p-2.5 sm:p-6 pb-1 sm:pb-4">
+            <CardTitle className="font-display text-sm sm:text-lg">Revenue Trend</CardTitle>
           </CardHeader>
           <CardContent className="p-2 sm:p-6 pt-0">
             <div className="overflow-x-auto -mx-2 sm:mx-0">
@@ -666,8 +666,8 @@ const HilomeAdminDashboard = () => {
         </Card>
 
         <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="font-display text-base sm:text-lg">Membership Distribution</CardTitle>
+          <CardHeader className="p-2.5 sm:p-6 pb-1 sm:pb-4">
+            <CardTitle className="font-display text-sm sm:text-lg">Membership Distribution</CardTitle>
           </CardHeader>
           <CardContent className="p-2 sm:p-6 pt-0">
             <ResponsiveContainer width="100%" height={250}>
@@ -697,22 +697,22 @@ const HilomeAdminDashboard = () => {
   );
 
   const renderBookings = () => (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-col gap-4">
-        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground">Bookings Management</h2>
-        <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3 sm:flex-wrap">
+    <div className="space-y-2 sm:space-y-6">
+      <div className="flex flex-col gap-2 sm:gap-4">
+        <h2 className="font-display text-lg sm:text-2xl font-semibold text-foreground">Bookings</h2>
+        <div className="grid grid-cols-4 sm:flex gap-1.5 sm:gap-3 sm:flex-wrap">
           <AddBookingDialog onBookingAdded={fetchData} />
-          <Button variant="outline" className="gap-2 h-11 sm:h-10 text-xs sm:text-sm" onClick={fetchData}>
-            <RefreshCw className="h-4 w-4" />
+          <Button variant="outline" className="gap-1 sm:gap-2 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4" onClick={fetchData}>
+            <RefreshCw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Reload</span>
           </Button>
-          <Button variant="outline" className="gap-2 h-11 sm:h-10 text-xs sm:text-sm" onClick={() => setShowBookingHistory(true)}>
-            <History className="h-4 w-4" />
+          <Button variant="outline" className="gap-1 sm:gap-2 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4" onClick={() => setShowBookingHistory(true)}>
+            <History className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Booking </span>History
           </Button>
-          <Button variant="outline" className="gap-2 h-11 sm:h-10 text-xs sm:text-sm">
-            <Download className="h-4 w-4" />
-            Export
+          <Button variant="outline" className="gap-1 sm:gap-2 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4">
+            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
         </div>
       </div>
@@ -726,19 +726,19 @@ const HilomeAdminDashboard = () => {
       />
 
       <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardContent className="p-3 sm:p-6">
-          <div className="flex flex-col gap-3 mb-4 sm:mb-6">
+        <CardContent className="p-2 sm:p-6">
+          <div className="flex flex-col gap-2 sm:gap-3 mb-2 sm:mb-6">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
               <Input
-                placeholder="Search bookings..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11 sm:h-10 text-base sm:text-sm"
+                className="pl-8 sm:pl-10 h-9 sm:h-10 text-sm"
               />
             </div>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-full sm:w-[180px] h-11 sm:h-10">
+              <SelectTrigger className="w-full sm:w-[180px] h-9 sm:h-10 text-sm">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -752,7 +752,7 @@ const HilomeAdminDashboard = () => {
           </div>
 
           {/* Mobile Card Layout */}
-          <div className="block sm:hidden space-y-3">
+          <div className="block sm:hidden space-y-2">
             {bookings
               .filter(booking => filterStatus === 'all' || booking.status === filterStatus)
               .filter(booking => 
@@ -762,18 +762,18 @@ const HilomeAdminDashboard = () => {
               )
               .map(booking => (
               <Card key={booking.id} className="border-border/50">
-                <CardContent className="p-4 space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-medium text-sm">{booking.name}</p>
-                      <p className="text-xs text-muted-foreground truncate max-w-[180px]">{booking.email}</p>
-                      <p className="text-xs text-muted-foreground">{booking.contact_number}</p>
+                <CardContent className="p-2.5 space-y-2">
+                  <div className="flex items-start justify-between gap-1">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-xs">{booking.name}</p>
+                      <p className="text-[10px] text-muted-foreground truncate">{booking.email}</p>
+                      <p className="text-[10px] text-muted-foreground">{booking.contact_number}</p>
                     </div>
                     <Select 
                       value={booking.status} 
                       onValueChange={(value) => handleStatusChange(booking.id, value)}
                     >
-                      <SelectTrigger className="w-[100px] h-8 text-xs">
+                      <SelectTrigger className="w-[85px] h-7 text-[10px]">
                         <span className={`font-medium capitalize ${getStatusColor(booking.status)}`}>
                           {booking.status}
                         </span>
@@ -786,17 +786,17 @@ const HilomeAdminDashboard = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
+                  <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                    <Calendar className="h-2.5 w-2.5" />
                     <span>{booking.preferred_date}</span>
-                    <Clock className="h-3 w-3 ml-2" />
+                    <Clock className="h-2.5 w-2.5 ml-1" />
                     <span>{booking.preferred_time}</span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="gap-1 h-9 text-xs flex-1"
+                      className="gap-1 h-8 text-[10px] flex-1 min-w-0 px-2"
                       asChild
                     >
                       <a href={`tel:${booking.contact_number.replace(/-/g, '')}`}>
@@ -805,34 +805,34 @@ const HilomeAdminDashboard = () => {
                       </a>
                     </Button>
                     {booking.patient_id || addedToRecord.has(booking.id) ? (
-                      <Badge variant="secondary" className="gap-1 text-green-700 bg-green-100 h-9 px-3">
-                        <CheckCircle2 className="h-3 w-3" />
+                      <Badge variant="secondary" className="gap-1 text-green-700 bg-green-100 h-8 px-2 text-[10px]">
+                        <CheckCircle2 className="h-2.5 w-2.5" />
                         Added
                       </Badge>
                     ) : hasPatientRecord(booking.email) ? (
-                      <Badge variant="secondary" className="gap-1 text-muted-foreground bg-muted h-9 px-3">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Has Record
+                      <Badge variant="secondary" className="gap-1 text-muted-foreground bg-muted h-8 px-2 text-[10px]">
+                        <CheckCircle2 className="h-2.5 w-2.5" />
+                        Record
                       </Badge>
                     ) : (
                       <Button
                         variant="outline"
                         size="sm"
-                        className="gap-1 h-9 text-xs flex-1"
+                        className="gap-1 h-8 text-[10px] flex-1 min-w-0 px-2"
                         onClick={() => handleAddToPatientRecord(booking)}
                       >
                         <FileText className="h-3 w-3" />
-                        Add Record
+                        Add
                       </Button>
                     )}
                     {booking.message && (
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-9 w-9"
+                        className="h-8 w-8"
                         onClick={() => setSelectedBookingMessage({ name: booking.name, message: booking.message! })}
                       >
-                        <MessageSquare className="h-4 w-4" />
+                        <MessageSquare className="h-3.5 w-3.5" />
                       </Button>
                     )}
                     <AlertDialog>
@@ -840,9 +840,9 @@ const HilomeAdminDashboard = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="mx-4 max-w-[calc(100vw-2rem)]">
@@ -1039,50 +1039,50 @@ const HilomeAdminDashboard = () => {
     }
 
     return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-col gap-4">
-        <h2 className="font-display text-xl sm:text-2xl font-semibold text-foreground">Members Database</h2>
-        <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3 sm:flex-wrap">
+    <div className="space-y-2 sm:space-y-6">
+      <div className="flex flex-col gap-2 sm:gap-4">
+        <h2 className="font-display text-lg sm:text-2xl font-semibold text-foreground">Members</h2>
+        <div className="grid grid-cols-3 sm:flex gap-1.5 sm:gap-3 sm:flex-wrap">
           <Button 
-            className="gap-2 bg-accent hover:bg-accent/90 h-11 sm:h-10 text-xs sm:text-sm col-span-2 sm:col-span-1"
+            className="gap-1 sm:gap-2 bg-accent hover:bg-accent/90 h-9 sm:h-10 text-[10px] sm:text-sm col-span-3 sm:col-span-1 px-2 sm:px-4"
             onClick={() => setShowRegisterMember(true)}
           >
-            <UserPlus className="h-4 w-4" />
+            <UserPlus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             Register Member
           </Button>
-          <Button variant="outline" className="gap-2 h-11 sm:h-10 text-xs sm:text-sm" onClick={() => { fetchMembers(); toast.success('Members database reloaded'); }}>
-            <RefreshCw className="h-4 w-4" />
+          <Button variant="outline" className="gap-1 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4" onClick={() => { fetchMembers(); toast.success('Members database reloaded'); }}>
+            <RefreshCw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Reload</span>
           </Button>
           <Button 
             variant="outline" 
-            className="gap-2 relative h-11 sm:h-10 text-xs sm:text-sm"
+            className="gap-1 relative h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4"
             onClick={() => setShowForConfirmation(true)}
           >
-            <UserCheck className="h-4 w-4" />
+            <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">For </span>Confirm
             {pendingConfirmations > 0 && (
-              <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-destructive text-white text-xs flex items-center justify-center">
+              <span className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-destructive text-white text-[9px] sm:text-xs flex items-center justify-center">
                 {pendingConfirmations}
               </span>
             )}
           </Button>
           <Button 
             variant="outline" 
-            className="gap-2 relative h-11 sm:h-10 text-xs sm:text-sm"
+            className="gap-1 relative h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4"
             onClick={() => { fetchRejectedMembers(); setShowRejectionHistory(true); }}
           >
-            <History className="h-4 w-4" />
+            <History className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Rejection </span>History
             {rejectedMembers.length > 0 && (
-              <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-muted-foreground text-white text-xs flex items-center justify-center">
+              <span className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-muted-foreground text-white text-[9px] sm:text-xs flex items-center justify-center">
                 {rejectedMembers.length}
               </span>
             )}
           </Button>
-          <Button variant="outline" className="gap-2 h-11 sm:h-10 text-xs sm:text-sm">
-            <Download className="h-4 w-4" />
-            Export
+          <Button variant="outline" className="gap-1 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4">
+            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
         </div>
       </div>
@@ -1572,21 +1572,21 @@ const HilomeAdminDashboard = () => {
       </Dialog>
 
       <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardContent className="p-3 sm:p-6">
-          <div className="mb-4 sm:mb-6">
+        <CardContent className="p-2 sm:p-6">
+          <div className="mb-2 sm:mb-6">
             <div className="relative w-full sm:max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
               <Input
-                placeholder="Search members..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11 sm:h-10 text-base sm:text-sm"
+                className="pl-8 sm:pl-10 h-9 sm:h-10 text-sm"
               />
             </div>
           </div>
 
           {/* Mobile Card Layout */}
-          <div className="block sm:hidden space-y-3">
+          <div className="block sm:hidden space-y-2">
             {activeMembers
               .filter(member => 
                 member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1596,19 +1596,19 @@ const HilomeAdminDashboard = () => {
                 const daysLeft = calculateDaysLeft(member.membership_expiry_date);
                 return (
                   <Card key={member.id} className="border-border/50">
-                    <CardContent className="p-4 space-y-3">
-                      <div className="flex items-start justify-between">
+                    <CardContent className="p-2.5 space-y-1.5">
+                      <div className="flex items-start justify-between gap-1">
                         <div className="min-w-0 flex-1">
-                          <p className="font-medium text-sm">{member.name}</p>
-                          <p className="text-xs text-muted-foreground truncate max-w-[200px]">{member.email}</p>
+                          <p className="font-medium text-xs">{member.name}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{member.email}</p>
                         </div>
-                        <Badge variant="outline" className={`${getMembershipColor(member.membership_type)} text-xs`}>
+                        <Badge variant="outline" className={`${getMembershipColor(member.membership_type)} text-[10px] px-1.5 py-0.5`}>
                           {member.membership_type}
                         </Badge>
                       </div>
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 text-muted-foreground" />
+                          <Calendar className="h-2.5 w-2.5 text-muted-foreground" />
                           <span className="text-muted-foreground">
                             {member.membership_start_date 
                               ? new Date(member.membership_start_date).toLocaleDateString()
@@ -1618,40 +1618,40 @@ const HilomeAdminDashboard = () => {
                         </div>
                         {daysLeft !== null && (
                           <span className={`font-medium ${daysLeft <= 30 ? 'text-destructive' : daysLeft <= 90 ? 'text-amber-500' : 'text-green-600'}`}>
-                            {daysLeft > 0 ? `${daysLeft}d left` : 'Expired'}
+                            {daysLeft > 0 ? `${daysLeft}d` : 'Exp'}
                           </span>
                         )}
-                        <Badge className={`${getStatusColor(member.status)} text-xs`}>
+                        <Badge className={`${getStatusColor(member.status)} text-[10px] px-1.5 py-0`}>
                           {member.status}
                         </Badge>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           {member.referral_code && (
-                            <div className="flex items-center gap-1">
-                              <code className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded">{member.referral_code}</code>
+                            <div className="flex items-center gap-0.5">
+                              <code className="text-[10px] font-mono bg-muted px-1 py-0.5 rounded">{member.referral_code}</code>
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6"
+                                className="h-5 w-5"
                                 onClick={() => copyToClipboard(member.referral_code!)}
                               >
-                                <Copy className="h-3 w-3" />
+                                <Copy className="h-2.5 w-2.5" />
                               </Button>
                             </div>
                           )}
-                          <div className="flex items-center gap-1">
-                            <Gift className="h-3 w-3 text-accent" />
-                            <span className="text-xs font-medium">{member.referral_count || 0}</span>
+                          <div className="flex items-center gap-0.5">
+                            <Gift className="h-2.5 w-2.5 text-accent" />
+                            <span className="text-[10px] font-medium">{member.referral_count || 0}</span>
                           </div>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-9 gap-1"
+                          className="h-7 gap-1 text-[10px] px-2"
                           onClick={() => setSelectedMember(member)}
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-3 w-3" />
                           View
                         </Button>
                       </div>
@@ -1832,8 +1832,8 @@ const HilomeAdminDashboard = () => {
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'patient-records', label: 'Patient Records' },
     { id: 'bookings', label: 'Bookings' },
+    { id: 'patient-records', label: 'Records' },
     { id: 'members', label: 'Members' },
   ];
 
@@ -1841,20 +1841,20 @@ const HilomeAdminDashboard = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-soft">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-                <ArrowLeft className="h-5 w-5" />
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-10 sm:w-10" onClick={() => navigate('/')}>
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <div className="flex items-center gap-3">
-                <img src="https://i.imgur.com/9beP2dq.png" alt="Hilomè" className="h-8" />
-                <span className="font-display text-xl font-semibold text-foreground">Admin Portal</span>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <img src="https://i.imgur.com/9beP2dq.png" alt="Hilomè" className="h-6 sm:h-8" />
+                <span className="font-display text-base sm:text-xl font-semibold text-foreground">Admin</span>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <span className="text-sm text-muted-foreground hidden md:block">Admin User</span>
-              <div className="h-9 w-9 rounded-full gradient-accent flex items-center justify-center text-white font-medium">
+              <div className="h-7 w-7 sm:h-9 sm:w-9 rounded-full gradient-accent flex items-center justify-center text-white font-medium text-xs sm:text-base">
                 A
               </div>
             </div>
@@ -1864,13 +1864,13 @@ const HilomeAdminDashboard = () => {
 
       {/* Navigation Tabs */}
       <nav className="bg-card border-b border-border">
-        <div className="container mx-auto px-2 sm:px-4">
-          <div className="flex overflow-x-auto scrollbar-hide -mx-2 sm:mx-0">
+        <div className="container mx-auto px-1 sm:px-4">
+          <div className="flex overflow-x-auto scrollbar-hide">
             {tabs.map((tab, index) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-3 sm:py-4 px-3 sm:px-6 border-b-2 transition-all whitespace-nowrap relative text-center flex-1 min-w-[80px] text-xs sm:text-sm ${
+                className={`py-2 sm:py-4 px-2 sm:px-6 border-b-2 transition-all whitespace-nowrap relative text-center flex-1 min-w-[60px] text-[11px] sm:text-sm ${
                   index < tabs.length - 1 ? 'border-r border-border' : ''
                 } ${
                   activeTab === tab.id
@@ -1886,7 +1886,7 @@ const HilomeAdminDashboard = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-2 sm:py-8">
         {activeTab === 'dashboard' && renderDashboard()}
         {activeTab === 'patient-records' && <PatientRecords />}
         {activeTab === 'bookings' && renderBookings()}
