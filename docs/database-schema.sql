@@ -1,9 +1,9 @@
 -- ===========================================================================
 -- HILOMÈ CLINIC DATABASE SCHEMA
 -- Consolidated from supabase/migrations/
--- Generated: 2026-01-24
+-- Generated: 2026-01-25
 -- ===========================================================================
--- Migration History (27 files):
+-- Migration History (28 files):
 -- 1. 20260114155747 - Initial bookings, membership_applications, members tables
 -- 2. 20260114173526 - Recreate with TEXT date columns
 -- 3. 20260122063913 - Simplified schema with public access
@@ -27,10 +27,11 @@
 -- 21. 20260124174442 - Final schema restructure
 -- 22. 20260124175231 - Membership benefits system
 -- 23. 20260124180521 - Additional anon policies and benefits fixes
--- 24. 20260124182403 - Complete 4-table schema with functions
+-- 24. 20260124182403 - Complete schema with functions
 -- 25. 20260124183057 - Membership benefits tables recreation
 -- 26. 20260124183447 - Update policy for anon on members
 -- 27. 20260124183905 - Delete policies for anon
+-- 28. 20260124190158 - Final consolidated schema with seed data
 -- ===========================================================================
 
 
@@ -375,6 +376,7 @@ CREATE TRIGGER update_referral_rewards_updated_at
 
 -- ===========================================================================
 -- FUNCTION: Generate unique referral code
+-- Automatically generates a referral code on member insert
 -- ===========================================================================
 CREATE OR REPLACE FUNCTION public.generate_referral_code()
 RETURNS TRIGGER AS $$
@@ -408,6 +410,7 @@ CREATE TRIGGER generate_member_referral_code
 
 -- ===========================================================================
 -- FUNCTION: Sync member to patient record on activation
+-- Creates/updates patient record when member becomes active
 -- ===========================================================================
 CREATE OR REPLACE FUNCTION public.sync_member_to_patient()
 RETURNS TRIGGER AS $$
@@ -453,19 +456,19 @@ CREATE TRIGGER trigger_sync_member_to_patient
 -- SEED DATA: Default Membership Benefits
 -- ===========================================================================
 INSERT INTO public.membership_benefits (membership_type, benefit_name, benefit_type, total_quantity, description) VALUES
--- Green membership
+-- Green Membership
 ('Green', 'Discount on all services', 'inclusion', 1, '10% discount on all services'),
 ('Green', 'Priority booking', 'inclusion', 1, 'Priority booking for appointments'),
 ('Green', 'Free Facial', 'claimable', 2, 'Free facial treatment sessions'),
 ('Green', 'Free Consultation', 'claimable', 4, 'Free consultation sessions'),
 ('Green', 'Celebrity Drip', 'claimable', 1, 'Free Celebrity Drip session'),
--- Gold membership
+-- Gold Membership
 ('Gold', 'Discount on all services', 'inclusion', 1, '15% discount on all services'),
 ('Gold', 'Priority booking', 'inclusion', 1, 'Priority booking for appointments'),
 ('Gold', 'Free Facial', 'claimable', 4, 'Free facial treatment sessions'),
 ('Gold', 'Free Consultation', 'claimable', 6, 'Free consultation sessions'),
 ('Gold', 'Free Diamond Peel', 'claimable', 2, 'Free diamond peel sessions'),
--- Platinum membership
+-- Platinum Membership
 ('Platinum', 'Discount on all services', 'inclusion', 1, '20% discount on all services'),
 ('Platinum', 'Priority booking', 'inclusion', 1, 'Priority booking for appointments'),
 ('Platinum', 'VIP lounge access', 'inclusion', 1, 'Access to VIP lounge'),
@@ -478,13 +481,13 @@ INSERT INTO public.membership_benefits (membership_type, benefit_name, benefit_t
 -- ===========================================================================
 -- RELATIONSHIPS SUMMARY
 -- ===========================================================================
--- members.referral_code -> UNIQUE (for referral tracking)
--- bookings.patient_id -> patient_records.id (link booking to patient)
+-- members.referral_code -> unique (for referral tracking)
 -- bookings.member_id -> members.id (link booking to member)
+-- bookings.patient_id -> patient_records.id (link booking to patient)
 -- patient_records.member_id -> members.id (link patient to membership)
 -- patient_records.booking_id -> bookings.id (original booking reference)
 -- transactions.member_id -> members.id (link transaction to member)
--- member_benefit_claims.member_id -> members.id (track claims per member)
--- member_benefit_claims.benefit_id -> membership_benefits.id (what was claimed)
--- referral_rewards.member_id -> members.id (rewards earned from referrals)
+-- member_benefit_claims.member_id -> members.id (link claim to member)
+-- member_benefit_claims.benefit_id -> membership_benefits.id (link claim to benefit)
+-- referral_rewards.member_id -> members.id (link reward to member)
 -- ===========================================================================
