@@ -422,11 +422,15 @@ const HilomeAdminDashboard = () => {
   const pendingConfirmations = pendingMembers.length;
   const activeBookings = bookings.length;
 
-  // Compute membership distribution (placeholder data)
+  // Compute membership distribution from actual members data
+  const greenCount = activeMembers.filter(m => m.membership_type?.toLowerCase() === 'green').length;
+  const goldCount = activeMembers.filter(m => m.membership_type?.toLowerCase() === 'gold').length;
+  const platinumCount = activeMembers.filter(m => m.membership_type?.toLowerCase() === 'platinum').length;
+  
   const membershipDistribution = [
-    { name: 'Green', value: 0, color: 'hsl(var(--green-600))' },
-    { name: 'Gold', value: 0, color: 'hsl(var(--accent))' },
-    { name: 'Platinum', value: 0, color: 'hsl(var(--muted-foreground))' },
+    { name: 'Green', value: greenCount || 1, color: '#22c55e' },
+    { name: 'Gold', value: goldCount || 1, color: '#d4a574' },
+    { name: 'Platinum', value: platinumCount || 1, color: '#6b7280' },
   ];
 
   // Revenue trend showing membership revenue per month
@@ -602,14 +606,14 @@ const HilomeAdminDashboard = () => {
       <Card className="relative overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm hover:shadow-elevated transition-all duration-300">
         <div className={`absolute inset-0 opacity-10 ${gradient}`} />
         <CardContent className="p-4 sm:p-6 relative">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start justify-between gap-2">
             <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
               <p className="text-xs sm:text-sm text-muted-foreground font-medium">{title}</p>
-              <p className="text-xl sm:text-3xl font-display font-bold text-foreground truncate">{value}</p>
-              {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+              <p className="text-lg sm:text-3xl font-display font-bold text-foreground break-words leading-tight">{value}</p>
+              {subtitle && <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight">{subtitle}</p>}
             </div>
             <div className={`p-2 sm:p-3 rounded-xl ${gradient} flex-shrink-0`}>
-              <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+              <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
             </div>
           </div>
         </CardContent>
