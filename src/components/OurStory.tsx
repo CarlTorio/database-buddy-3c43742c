@@ -30,10 +30,10 @@ const OurStory = () => {
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="max-w-xl bg-background/70 p-8 md:p-12 rounded-2xl shadow-elevated"
         >
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mb-6">
+          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground mb-4">
             Our Story
           </h2>
-          <div className="space-y-4 text-muted-foreground text-base md:text-lg leading-relaxed">
+          <div className="space-y-3 text-muted-foreground text-sm md:text-base leading-relaxed">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
