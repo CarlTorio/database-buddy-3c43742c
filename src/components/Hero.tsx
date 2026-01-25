@@ -17,7 +17,7 @@ const Hero = () => {
         <img
           src="https://i.imgur.com/EeiPqJv.jpeg"
           alt="Beautiful women with radiant skin"
-          className="w-full h-full object-cover object-top md:object-[50%_35%]"
+          className="w-full h-full object-cover object-top md:object-[20%_35%]"
         />
       </motion.div>
 
