@@ -24,54 +24,56 @@ const Hero = () => {
       {/* Content */}
       <div className="container mx-auto px-4 relative z-20">
         <div className="max-w-xl ml-4 md:ml-12">
-          <motion.div initial={{
-          opacity: 0,
-          y: 40
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.3
-        }}>
-            <h1 className="font-script text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-2">
-              <span className="non-italic font-sans font-semibold">​The Wellness Escape</span>
-            </h1>
-            <p className="text-lg sm:text-2xl font-semibold text-foreground tracking-wide uppercase mb-3 md:mb-5 font-sans md:text-4xl">
-              FUTURE OF WELLNESS
-            </p>
-          </motion.div>
+          <div className="bg-black/50 backdrop-blur-sm p-8 rounded-lg md:bg-transparent md:backdrop-blur-none md:p-0 md:rounded-none">
+            <motion.div initial={{
+            opacity: 0,
+            y: 40
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            duration: 0.8,
+            delay: 0.3
+          }}>
+              <h1 className="font-script text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-2">
+                <span className="non-italic font-sans font-semibold">​The Wellness Escape</span>
+              </h1>
+              <p className="text-lg sm:text-2xl font-semibold text-foreground tracking-wide uppercase mb-3 md:mb-5 font-sans md:text-4xl">
+                FUTURE OF WELLNESS
+              </p>
+            </motion.div>
 
-        <motion.p initial={{
-          opacity: 0,
-          y: 30
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.5
-        }} className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed lg:text-xl">
-            Your destination for advanced skincare and aesthetic treatments. Elevate your beauty and well-being with us.
-          </motion.p>
+            <motion.p initial={{
+            opacity: 0,
+            y: 30
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            duration: 0.8,
+            delay: 0.5
+          }} className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed lg:text-xl">
+              Your destination for advanced skincare and aesthetic treatments. Elevate your beauty and well-being with us.
+            </motion.p>
 
-          <motion.div initial={{
-          opacity: 0,
-          y: 30
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.8,
-          delay: 0.7
-        }} className="flex flex-wrap gap-3">
-            <Button asChild size="default" className="gradient-accent text-accent-foreground hover:opacity-90 transition-all duration-300 hover:scale-105 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
-              <Link to="/book-consultation">Book Consultation</Link>
-            </Button>
-            <Button asChild size="default" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/5 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
-              <Link to="/membership">Join Now</Link>
-            </Button>
-          </motion.div>
+            <motion.div initial={{
+            opacity: 0,
+            y: 30
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            duration: 0.8,
+            delay: 0.7
+          }} className="flex flex-wrap gap-3">
+              <Button asChild size="default" className="gradient-accent text-accent-foreground hover:opacity-90 transition-all duration-300 hover:scale-105 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
+                <Link to="/book-consultation">Book Consultation</Link>
+              </Button>
+              <Button asChild size="default" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/5 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
+                <Link to="/membership">Join Now</Link>
+              </Button>
+            </motion.div>
+          </div>
         </div>
       </div>
 
