@@ -5,39 +5,53 @@ import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Hero = () => {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [fadeProgress, setFadeProgress] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerWidth < 768) {
-        const scrolled = window.scrollY;
-        const maxScroll = 250;
-        const progress = Math.min(scrolled / maxScroll, 1);
-        setScrollProgress(progress);
-      } else {
-        setScrollProgress(1);
-      }
-    };
+    // Only run auto-play animation on mobile
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      // Lock scroll initially
+      document.body.style.overflow = 'hidden';
 
-    // Lock scroll on mobile until reveal completes
-    const preventScroll = (e: TouchEvent) => {
-      if (window.innerWidth < 768 && scrollProgress < 1) {
-        // Allow scrolling but with resistance
-      }
-    };
+      // Start fade animation after a short delay
+      const startDelay = setTimeout(() => {
+        const duration = 2500; // 2.5 seconds fade
+        const startTime = Date.now();
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [scrollProgress]);
+        const animateFade = () => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          setFadeProgress(progress);
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateFade);
+          } else {
+            // Animation complete - unlock scroll
+            setIsAnimating(false);
+            document.body.style.overflow = 'auto';
+          }
+        };
 
-  // Calculate opacities based on scroll (mobile only)
-  const whiteOverlayOpacity = isMobile ? 0.7 - (scrollProgress * 0.7) : 0;
-  const textOpacity = isMobile ? 1 - scrollProgress : 1;
+        requestAnimationFrame(animateFade);
+      }, 500); // Wait 500ms before starting fade
+
+      return () => {
+        clearTimeout(startDelay);
+        document.body.style.overflow = 'auto'; // Cleanup
+      };
+    } else {
+      // Desktop: no animation, show content immediately
+      setFadeProgress(1);
+      setIsAnimating(false);
+    }
+  }, []);
+
+  // Calculate opacities based on fade progress (mobile only)
+  const whiteOverlayOpacity = isMobile ? 0.7 - (fadeProgress * 0.7) : 0;
+  const textOpacity = isMobile ? 1 - fadeProgress : 1;
 
   return <section className="relative min-h-[60vh] md:min-h-[85vh] flex items-center overflow-hidden pt-8 md:pt-0">
       {/* Background Image with Parallax */}
