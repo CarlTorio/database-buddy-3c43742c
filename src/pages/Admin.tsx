@@ -1854,10 +1854,12 @@ const HilomeAdminDashboard = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="text-sm text-muted-foreground hidden md:block">Admin User</span>
-              <div className="h-7 w-7 sm:h-9 sm:w-9 rounded-full gradient-accent flex items-center justify-center text-white font-medium text-xs sm:text-base">
-                A
-              </div>
+              <span className="text-sm text-muted-foreground hidden md:block">Dr. Herbert Ryan Cruz</span>
+              <img 
+                src="/dr-herbert-cruz.jpg" 
+                alt="Dr. Herbert Ryan Cruz" 
+                className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border-2 border-primary/20"
+              />
               <Button
                 variant="ghost"
                 size="sm"
