@@ -16,7 +16,6 @@ const patientSchema = z.object({
   date_of_birth: z.string().optional(),
   gender: z.string().optional(),
   emergency_contact: z.string().max(100, "Emergency contact too long").optional(),
-  membership: z.string().optional(),
 });
 
 interface AddPatientDialogProps {
@@ -33,7 +32,6 @@ const AddPatientDialog = ({ onPatientAdded }: AddPatientDialogProps) => {
     date_of_birth: '',
     gender: '',
     emergency_contact: '',
-    membership: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -45,7 +43,6 @@ const AddPatientDialog = ({ onPatientAdded }: AddPatientDialogProps) => {
       date_of_birth: '',
       gender: '',
       emergency_contact: '',
-      membership: '',
     });
     setErrors({});
   };
@@ -105,7 +102,6 @@ const AddPatientDialog = ({ onPatientAdded }: AddPatientDialogProps) => {
           age: age,
           gender: formData.gender || null,
           emergency_contact: formData.emergency_contact.trim() || null,
-          membership: formData.membership || null,
         });
 
       if (error) throw error;
@@ -213,20 +209,6 @@ const AddPatientDialog = ({ onPatientAdded }: AddPatientDialogProps) => {
             {errors.emergency_contact && <p className="text-xs text-destructive">{errors.emergency_contact}</p>}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="membership">Membership</Label>
-            <Select value={formData.membership} onValueChange={(value) => setFormData({ ...formData, membership: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select membership (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                <SelectItem value="Green">Green</SelectItem>
-                <SelectItem value="Gold">Gold</SelectItem>
-                <SelectItem value="Platinum">Platinum</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
