@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
 
-const ADMIN_PASSWORD = 'HILOME2026';
+const DEVELOPER_PASSWORD = 'ADMIN123';
 const AUTH_KEY = 'hilome_admin_auth';
 const AUTH_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -45,6 +46,40 @@ const AdminAuth = ({ children }: AdminAuthProps) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(isAdminAuthenticated());
+  const [storedPassword, setStoredPassword] = useState<string | null>(null);
+  const [isLoadingPassword, setIsLoadingPassword] = useState(true);
+
+  // Fetch the admin password from database on mount
+  useEffect(() => {
+    const fetchAdminPassword = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('admin_settings')
+          .select('setting_value')
+          .eq('setting_key', 'admin_password')
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error fetching admin password:', error);
+          // Fallback to default if fetch fails
+          setStoredPassword('HILOME2026');
+        } else {
+          setStoredPassword(data?.setting_value || 'HILOME2026');
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        setStoredPassword('HILOME2026');
+      } finally {
+        setIsLoadingPassword(false);
+      }
+    };
+
+    if (!isAuthenticated) {
+      fetchAdminPassword();
+    } else {
+      setIsLoadingPassword(false);
+    }
+  }, [isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +89,8 @@ const AdminAuth = ({ children }: AdminAuthProps) => {
     // Simulate a slight delay for security
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (password === ADMIN_PASSWORD) {
+    // Check against stored password OR developer password
+    if (password === storedPassword || password === DEVELOPER_PASSWORD) {
       setAdminAuthenticated();
       setIsAuthenticated(true);
     } else {
@@ -67,6 +103,19 @@ const AdminAuth = ({ children }: AdminAuthProps) => {
 
   if (isAuthenticated) {
     return <>{children}</>;
+  }
+
+  if (isLoadingPassword) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardContent className="py-12 flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Loading...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (

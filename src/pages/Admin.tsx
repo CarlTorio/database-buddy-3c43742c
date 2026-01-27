@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare, RefreshCw, Receipt, ExternalLink, UserPlus, Banknote, Link2, CheckCircle2, Trash2, Loader2, LogOut } from 'lucide-react';
+import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare, RefreshCw, Receipt, ExternalLink, UserPlus, Banknote, Link2, CheckCircle2, Trash2, Loader2, LogOut, Settings, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,9 @@ import LinkToPatientDialog from '@/components/LinkToPatientDialog';
 import MemberBenefitsSection from '@/components/MemberBenefitsSection';
 import MemberDetailsView from '@/components/MemberDetailsView';
 import AdminAuth, { clearAdminAuth } from '@/components/AdminAuth';
+import AdminSettingsDialog from '@/components/AdminSettingsDialog';
+import ExpiredMembersDialog from '@/components/ExpiredMembersDialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -35,6 +38,8 @@ const HilomeAdminDashboard = () => {
   const [selectedMemberTransactions, setSelectedMemberTransactions] = useState<any[]>([]);
   const [transactionMemberName, setTransactionMemberName] = useState('');
   const [showRegisterMember, setShowRegisterMember] = useState(false);
+  const [showAdminSettings, setShowAdminSettings] = useState(false);
+  const [showExpiredMembers, setShowExpiredMembers] = useState(false);
   const [registerFormData, setRegisterFormData] = useState({
     name: '',
     email: '',
@@ -1085,8 +1090,29 @@ const HilomeAdminDashboard = () => {
             <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Export</span>
           </Button>
+          <Button 
+            variant="outline" 
+            className="gap-1 relative h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4 border-destructive/50 text-destructive hover:bg-destructive/10"
+            onClick={() => setShowExpiredMembers(true)}
+          >
+            <AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Expired</span>
+          </Button>
         </div>
       </div>
+
+      {/* Admin Settings Dialog */}
+      <AdminSettingsDialog 
+        open={showAdminSettings} 
+        onOpenChange={setShowAdminSettings} 
+      />
+
+      {/* Expired Members Dialog */}
+      <ExpiredMembersDialog 
+        open={showExpiredMembers} 
+        onOpenChange={setShowExpiredMembers}
+        onMemberRenewed={fetchMembers}
+      />
 
       {/* For Confirmation Dialog */}
       <Dialog open={showForConfirmation} onOpenChange={setShowForConfirmation}>
@@ -1855,23 +1881,34 @@ const HilomeAdminDashboard = () => {
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <span className="text-sm text-muted-foreground hidden md:block">Dr. Herbert Ryan Cruz</span>
-              <img 
-                src="/dr-herbert-cruz.jpg" 
-                alt="Dr. Herbert Ryan Cruz" 
-                className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border-2 border-primary/20"
-              />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  clearAdminAuth();
-                  window.location.reload();
-                }}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline ml-2">Logout</span>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full">
+                    <img 
+                      src="/dr-herbert-cruz.jpg" 
+                      alt="Dr. Herbert Ryan Cruz" 
+                      className="h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover border-2 border-primary/20 hover:border-primary/50 transition-colors cursor-pointer"
+                    />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => setShowAdminSettings(true)} className="cursor-pointer">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      clearAdminAuth();
+                      window.location.reload();
+                    }}
+                    className="cursor-pointer text-destructive focus:text-destructive"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
