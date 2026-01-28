@@ -93,7 +93,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fk_bookings_patient"
+            foreignKeyName: "bookings_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patient_records"
@@ -108,6 +108,7 @@ export type Database = {
           claimed_by: string | null
           id: string
           member_id: string
+          notes: string | null
           session_number: number
         }
         Insert: {
@@ -116,7 +117,8 @@ export type Database = {
           claimed_by?: string | null
           id?: string
           member_id: string
-          session_number: number
+          notes?: string | null
+          session_number?: number
         }
         Update: {
           benefit_id?: string
@@ -124,6 +126,7 @@ export type Database = {
           claimed_by?: string | null
           id?: string
           member_id?: string
+          notes?: string | null
           session_number?: number
         }
         Relationships: [
@@ -273,7 +276,7 @@ export type Database = {
           payment_status: string | null
           preferred_date: string | null
           preferred_time: string | null
-          source: string
+          source: string | null
           stripe_customer_id: string | null
           stripe_payment_intent_id: string | null
           stripe_receipt_url: string | null
@@ -303,7 +306,7 @@ export type Database = {
           payment_status?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
-          source?: string
+          source?: string | null
           stripe_customer_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_receipt_url?: string | null
@@ -333,7 +336,7 @@ export type Database = {
           payment_status?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
-          source?: string
+          source?: string | null
           stripe_customer_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_receipt_url?: string | null
@@ -341,7 +344,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "patient_records_booking_id_fkey"
+            foreignKeyName: "fk_patient_records_booking"
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
