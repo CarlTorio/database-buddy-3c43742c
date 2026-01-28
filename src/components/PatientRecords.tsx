@@ -673,10 +673,6 @@ const PatientRecords = () => {
         <h2 className="font-display text-lg sm:text-2xl font-semibold text-foreground">Patient Records</h2>
         <div className="flex gap-1.5 sm:gap-3">
           <AddPatientDialog onPatientAdded={fetchPatients} />
-          <Button variant="outline" className="gap-1 sm:gap-2 h-9 sm:h-9 text-[10px] sm:text-sm px-2 sm:px-4">
-            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            Export
-          </Button>
         </div>
       </div>
 

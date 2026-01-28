@@ -719,10 +719,6 @@ const HilomeAdminDashboard = () => {
             <History className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Booking </span>History
           </Button>
-          <Button variant="outline" className="gap-1 sm:gap-2 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4">
-            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            <span className="hidden sm:inline">Export</span>
-          </Button>
         </div>
       </div>
       
@@ -1088,10 +1084,6 @@ const HilomeAdminDashboard = () => {
                 {rejectedMembers.length}
               </span>
             )}
-          </Button>
-          <Button variant="outline" className="gap-1 h-9 sm:h-10 text-[10px] sm:text-sm px-2 sm:px-4">
-            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            <span className="hidden sm:inline">Export</span>
           </Button>
           <Button 
             variant="outline" 
