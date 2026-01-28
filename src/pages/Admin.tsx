@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare, RefreshCw, Receipt, ExternalLink, UserPlus, Banknote, Link2, CheckCircle2, Trash2, Loader2, LogOut, Settings, AlertTriangle } from 'lucide-react';
+import { Calendar, Users, DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Search, Download, Eye, ArrowLeft, History, Phone, CreditCard, Wallet, Gift, Copy, UserCheck, FileText, MessageSquare, RefreshCw, Receipt, ExternalLink, UserPlus, Banknote, Link2, CheckCircle2, Trash2, Loader2, LogOut, Settings, AlertTriangle, FileSpreadsheet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,9 +22,11 @@ import ExpiredMembersDialog from '@/components/ExpiredMembersDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useExportData } from '@/hooks/useExportData';
 
 const HilomeAdminDashboard = () => {
   const navigate = useNavigate();
+  const { exportToExcel, isExporting } = useExportData();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -1881,6 +1883,25 @@ const HilomeAdminDashboard = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={exportToExcel}
+                disabled={isExporting}
+                className="gap-1.5 h-8 sm:h-9 text-xs sm:text-sm px-2 sm:px-3 bg-accent/10 border-accent/30 text-accent hover:bg-accent hover:text-white"
+              >
+                {isExporting ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
+                    <span className="hidden sm:inline">Exporting...</span>
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Export Data</span>
+                  </>
+                )}
+              </Button>
               <span className="text-sm text-muted-foreground hidden md:block">Dr. Herbert Ryan Cruz</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
