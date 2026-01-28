@@ -840,6 +840,15 @@ const HilomeAdminDashboard = () => {
                         <MessageSquare className="h-3.5 w-3.5" />
                       </Button>
                     )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1 h-8 text-[10px] px-2 text-green-700 border-green-300 hover:bg-green-50"
+                      onClick={() => handleStatusChange(booking.id, 'completed')}
+                    >
+                      <CheckCircle className="h-3 w-3" />
+                      Done
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
@@ -967,6 +976,15 @@ const HilomeAdminDashboard = () => {
                             <MessageSquare className="h-4 w-4" />
                           </Button>
                         )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 text-green-700 border-green-300 hover:bg-green-50"
+                          onClick={() => handleStatusChange(booking.id, 'completed')}
+                        >
+                          <CheckCircle className="h-4 w-4" />
+                          Mark Complete
+                        </Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
