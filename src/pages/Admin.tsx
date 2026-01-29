@@ -888,11 +888,11 @@ const HilomeAdminDashboard = () => {
             <table className="w-full table-fixed">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left py-4 px-3 text-sm font-medium text-muted-foreground w-[15%]">Name</th>
-                  <th className="text-left py-4 px-3 text-sm font-medium text-muted-foreground w-[25%]">Contact</th>
-                  <th className="text-left py-4 px-3 text-sm font-medium text-muted-foreground w-[15%]">Date & Time</th>
-                  <th className="text-left py-4 px-3 text-sm font-medium text-muted-foreground w-[10%]">Status</th>
-                  <th className="text-left py-4 px-3 text-sm font-medium text-muted-foreground w-[35%]">Action</th>
+                  <th className="text-left py-3 px-2 text-xs font-medium text-muted-foreground w-[120px]">Name</th>
+                  <th className="text-left py-3 px-2 text-xs font-medium text-muted-foreground w-[180px]">Contact</th>
+                  <th className="text-left py-3 px-2 text-xs font-medium text-muted-foreground w-[100px]">Date & Time</th>
+                  <th className="text-left py-3 px-2 text-xs font-medium text-muted-foreground w-[90px]">Status</th>
+                  <th className="text-left py-3 px-2 text-xs font-medium text-muted-foreground">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -905,21 +905,21 @@ const HilomeAdminDashboard = () => {
                   )
                   .map(booking => (
                   <tr key={booking.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                    <td className="py-4 px-3 font-medium truncate">{booking.name}</td>
-                    <td className="py-4 px-3">
-                      <p className="text-sm truncate">{booking.email}</p>
+                    <td className="py-3 px-2 font-medium text-sm truncate">{booking.name}</td>
+                    <td className="py-3 px-2">
+                      <p className="text-xs truncate">{booking.email}</p>
                       <p className="text-xs text-muted-foreground truncate">{booking.contact_number}</p>
                     </td>
-                    <td className="py-4 px-3">
-                      <p className="text-sm">{booking.preferred_date}</p>
+                    <td className="py-3 px-2">
+                      <p className="text-xs">{booking.preferred_date}</p>
                       <p className="text-xs text-muted-foreground">{booking.preferred_time}</p>
                     </td>
-                    <td className="py-4 px-3">
+                    <td className="py-3 px-2">
                       <Select 
                         value={booking.status} 
                         onValueChange={(value) => handleStatusChange(booking.id, value)}
                       >
-                        <SelectTrigger className="w-full h-8 border-none bg-transparent p-0">
+                        <SelectTrigger className="w-full h-7 border-none bg-transparent p-0 text-xs">
                           <span className={`font-medium capitalize ${getStatusColor(booking.status)}`}>
                             {booking.status}
                           </span>
@@ -932,26 +932,21 @@ const HilomeAdminDashboard = () => {
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="py-4 px-3">
-                      <div className="flex gap-2">
+                    <td className="py-3 px-2">
+                      <div className="flex items-center gap-1.5">
                         <Button
                           variant="outline"
                           size="sm"
-                          className="gap-2"
+                          className="gap-1 h-7 px-2 text-xs"
                           asChild
                         >
                           <a href={`tel:${booking.contact_number.replace(/-/g, '')}`}>
-                            <Phone className="h-4 w-4" />
+                            <Phone className="h-3 w-3" />
                             Call
                           </a>
                         </Button>
-                        {booking.patient_id || addedToRecord.has(booking.id) ? (
-                          <Badge variant="secondary" className="gap-1 text-green-700 bg-green-100 hover:bg-green-100">
-                            <CheckCircle2 className="h-3 w-3" />
-                            Added
-                          </Badge>
-                        ) : hasPatientRecord(booking.email) ? (
-                          <Badge variant="secondary" className="gap-1 text-muted-foreground bg-muted hover:bg-muted">
+                        {booking.patient_id || addedToRecord.has(booking.id) || hasPatientRecord(booking.email) ? (
+                          <Badge variant="secondary" className="gap-1 h-7 px-2 text-xs text-muted-foreground bg-muted hover:bg-muted whitespace-nowrap">
                             <CheckCircle2 className="h-3 w-3" />
                             Has Record
                           </Badge>
@@ -959,10 +954,10 @@ const HilomeAdminDashboard = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="gap-2"
+                            className="gap-1 h-7 px-2 text-xs whitespace-nowrap"
                             onClick={() => handleAddToPatientRecord(booking)}
                           >
-                            <FileText className="h-4 w-4" />
+                            <FileText className="h-3 w-3" />
                             Add to Record
                           </Button>
                         )}
@@ -970,19 +965,19 @@ const HilomeAdminDashboard = () => {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-7 w-7"
                             onClick={() => setSelectedBookingMessage({ name: booking.name, message: booking.message! })}
                           >
-                            <MessageSquare className="h-4 w-4" />
+                            <MessageSquare className="h-3 w-3" />
                           </Button>
                         )}
                         <Button
                           variant="outline"
                           size="sm"
-                          className="gap-2 text-blue-700 border-blue-300 hover:bg-blue-50"
+                          className="gap-1 h-7 px-2 text-xs text-blue-700 border-blue-300 hover:bg-blue-50 whitespace-nowrap"
                           onClick={() => handleStatusChange(booking.id, 'completed')}
                         >
-                          <History className="h-4 w-4" />
+                          <History className="h-3 w-3" />
                           Add to History
                         </Button>
                         <AlertDialog>
@@ -990,9 +985,9 @@ const HilomeAdminDashboard = () => {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-3 w-3" />
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
