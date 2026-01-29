@@ -3,7 +3,7 @@
 -- Consolidated from supabase/migrations/
 -- Last Updated: 2026-01-29
 -- ===========================================================================
--- Migration History (42 files):
+-- Migration History (43 files):
 -- 1. 20260114155747 - Initial bookings, membership_applications, members tables
 -- 2. 20260114173526 - Recreate with TEXT date columns
 -- 3. 20260122063913 - Simplified schema with public access

@@ -65,8 +65,9 @@ const handler = async (req: Request): Promise<Response> => {
     const timestamp = getPhilippineTimestamp();
 
     // EMAIL #1: Customer Confirmation
+    // NOTE: Using Resend test domain until hilomewellness.com is verified
     const customerEmailResponse = await resend.emails.send({
-      from: "Hilomè Wellness Resort <noreply@hilomewellness.com>",
+      from: "Hilomè Wellness Resort <onboarding@resend.dev>",
       to: [email],
       subject: "Booking Confirmed — Hilomè Wellness Resort",
       html: `
@@ -150,8 +151,9 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Customer email sent successfully:", customerEmailResponse);
 
     // EMAIL #2: Business Notification
+    // NOTE: Using Resend test domain until hilomewellness.com is verified
     const businessEmailResponse = await resend.emails.send({
-      from: "Hilomè Booking System <noreply@hilomewellness.com>",
+      from: "Hilomè Booking System <onboarding@resend.dev>",
       to: ["cruzskin@gmail.com"],
       subject: `New Booking Received — ${name}`,
       html: `

@@ -53,8 +53,9 @@ const handler = async (req: Request): Promise<Response> => {
     const tierColor = getTierColor(membershipTier);
 
     // EMAIL #3: Member Welcome Email
+    // NOTE: Using Resend test domain until hilomewellness.com is verified
     const memberEmailResponse = await resend.emails.send({
-      from: "Hilomè Wellness Resort <noreply@hilomewellness.com>",
+      from: "Hilomè Wellness Resort <onboarding@resend.dev>",
       to: [email],
       subject: "Welcome to Hilomè Wellness Resort — Membership Confirmed",
       html: `
@@ -138,8 +139,9 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Member welcome email sent successfully:", memberEmailResponse);
 
     // EMAIL #4: Business Notification
+    // NOTE: Using Resend test domain until hilomewellness.com is verified
     const businessEmailResponse = await resend.emails.send({
-      from: "Hilomè Membership System <noreply@hilomewellness.com>",
+      from: "Hilomè Membership System <onboarding@resend.dev>",
       to: ["cruzskin@gmail.com"],
       subject: `New Member Registered — ${name}`,
       html: `
