@@ -9,34 +9,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-interface BookingEmailRequest {
+interface MembershipEmailRequest {
   name: string;
   email: string;
   contactNumber: string;
-  membership?: string;
-  date: string;
-  time: string;
-  message?: string;
+  membershipTier: string;
+  referralCode: string;
+  amountPaid?: number;
 }
-
-// Format date to Philippine timezone
-const formatDatePH = (dateString: string): { formatted: string; dayOfWeek: string } => {
-  const date = new Date(dateString + 'T00:00:00');
-  const options: Intl.DateTimeFormatOptions = { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric',
-    timeZone: 'Asia/Manila'
-  };
-  const dayOptions: Intl.DateTimeFormatOptions = { 
-    weekday: 'long',
-    timeZone: 'Asia/Manila'
-  };
-  return {
-    formatted: date.toLocaleDateString('en-PH', options),
-    dayOfWeek: date.toLocaleDateString('en-PH', dayOptions)
-  };
-};
 
 // Get current timestamp in Philippine timezone
 const getPhilippineTimestamp = (): string => {
@@ -51,24 +31,32 @@ const getPhilippineTimestamp = (): string => {
   });
 };
 
+// Get tier color based on membership type
+const getTierColor = (tier: string): string => {
+  const tierLower = tier.toLowerCase();
+  if (tierLower.includes('platinum')) return '#94A3B8';
+  if (tierLower.includes('gold')) return '#EAB308';
+  return '#22C55E'; // Green
+};
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { name, email, contactNumber, membership, date, time, message }: BookingEmailRequest = await req.json();
+    const { name, email, contactNumber, membershipTier, referralCode, amountPaid }: MembershipEmailRequest = await req.json();
 
-    console.log(`Sending booking confirmation to: ${email}`);
+    console.log(`Sending membership confirmation to: ${email}`);
     
-    const { formatted: formattedDate, dayOfWeek } = formatDatePH(date);
     const timestamp = getPhilippineTimestamp();
+    const tierColor = getTierColor(membershipTier);
 
-    // EMAIL #1: Customer Confirmation
-    const customerEmailResponse = await resend.emails.send({
+    // EMAIL #3: Member Welcome Email
+    const memberEmailResponse = await resend.emails.send({
       from: "Hilomè Wellness Resort <noreply@hilomewellness.com>",
       to: [email],
-      subject: "Booking Confirmed — Hilomè Wellness Resort",
+      subject: "Welcome to Hilomè Wellness Resort — Membership Confirmed",
       html: `
         <!DOCTYPE html>
         <html>
@@ -84,44 +72,44 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="color: #ffffff; margin: 10px 0 0; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">Wellness Resort</p>
             </div>
             
+            <!-- Celebration Banner -->
+            <div style="background: linear-gradient(135deg, ${tierColor}15 0%, ${tierColor}05 100%); padding: 30px; text-align: center; border-bottom: 3px solid ${tierColor};">
+              <p style="font-size: 40px; margin: 0 0 10px;">🎉</p>
+              <h2 style="color: #333; margin: 0; font-size: 22px; font-weight: 600;">Congratulations!</h2>
+              <p style="color: #666; margin: 10px 0 0; font-size: 15px;">Your membership registration is successful.</p>
+            </div>
+            
             <!-- Content -->
             <div style="padding: 40px 30px;">
-              <h2 style="color: #8B7355; margin: 0 0 20px; font-size: 24px; font-weight: 400;">Hi ${name},</h2>
+              <h2 style="color: #8B7355; margin: 0 0 20px; font-size: 22px; font-weight: 400;">Hi ${name},</h2>
               
-              <p style="color: #666666; line-height: 1.8; margin: 0 0 25px; font-size: 16px;">
-                Your booking has been confirmed. Here are your details:
-              </p>
-              
-              <!-- Booking Details Card -->
-              <div style="background-color: #f8f5f2; border-radius: 16px; padding: 30px; margin: 25px 0; border-left: 4px solid #8B7355;">
-                <h3 style="color: #8B7355; margin: 0 0 20px; font-size: 18px; font-weight: 600;">📅 Booking Details</h3>
+              <!-- Membership Details Card -->
+              <div style="background-color: #f8f5f2; border-radius: 16px; padding: 30px; margin: 25px 0; border-left: 4px solid ${tierColor};">
+                <h3 style="color: #8B7355; margin: 0 0 20px; font-size: 18px; font-weight: 600;">💎 Membership Details</h3>
                 
                 <table style="width: 100%; border-collapse: collapse;">
                   <tr>
-                    <td style="padding: 12px 0; color: #888888; font-size: 14px; font-weight: 500;">Date</td>
-                    <td style="padding: 12px 0; color: #333333; font-size: 16px; text-align: right; font-weight: 600;">${formattedDate}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 12px 0; color: #888888; font-size: 14px; font-weight: 500;">Day</td>
-                    <td style="padding: 12px 0; color: #333333; font-size: 16px; text-align: right; font-weight: 600;">${dayOfWeek}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 12px 0; color: #888888; font-size: 14px; font-weight: 500;">Time</td>
-                    <td style="padding: 12px 0; color: #333333; font-size: 16px; text-align: right; font-weight: 600;">${time}</td>
+                    <td style="padding: 12px 0; color: #888888; font-size: 14px; font-weight: 500;">Membership Tier</td>
+                    <td style="padding: 12px 0; color: ${tierColor}; font-size: 18px; text-align: right; font-weight: 700;">${membershipTier}</td>
                   </tr>
                 </table>
               </div>
               
-              <!-- Important Note -->
-              <div style="background-color: #FFF8E7; border-radius: 12px; padding: 20px; margin: 25px 0; border: 1px solid #F5E6C8;">
-                <p style="color: #8B6914; margin: 0; font-size: 15px; text-align: center;">
-                  ⏰ <strong>Please arrive 10 minutes before your scheduled time.</strong>
+              <!-- Referral Code Card -->
+              <div style="background: linear-gradient(135deg, #FFF8E7 0%, #FEF3C7 100%); border-radius: 16px; padding: 30px; margin: 25px 0; text-align: center; border: 2px dashed #EAB308;">
+                <p style="color: #8B6914; margin: 0 0 10px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">🎁 Your Referral Code</p>
+                <div style="background: #ffffff; border-radius: 12px; padding: 20px; margin: 15px 0; border: 2px solid #EAB308;">
+                  <p style="color: #333; margin: 0; font-size: 32px; font-weight: 700; letter-spacing: 4px; font-family: 'Courier New', monospace;">${referralCode}</p>
+                </div>
+                <p style="color: #8B6914; margin: 15px 0 0; font-size: 14px; line-height: 1.6;">
+                  Share this code with friends and family!<br>
+                  <strong>Earn FREE services and inclusions</strong> as referral rewards.
                 </p>
               </div>
               
               <!-- Closing -->
               <p style="color: #666666; line-height: 1.8; margin: 25px 0 0; font-size: 16px;">
-                We look forward to seeing you! ✨
+                Thank you for joining the Hilomè family. We're excited to have you! 🌟
               </p>
             </div>
             
@@ -144,16 +132,16 @@ const handler = async (req: Request): Promise<Response> => {
         </body>
         </html>
       `,
-      text: `Hi ${name},\n\nYour booking has been confirmed.\n\nBooking Details:\n- Date: ${formattedDate}\n- Day: ${dayOfWeek}\n- Time: ${time}\n\nPlease arrive 10 minutes before your scheduled time.\n\nWe look forward to seeing you!\n\nHilomè Wellness Resort\n0977 334 4200\ncruzskin@gmail.com`,
+      text: `Hi ${name},\n\nCongratulations! Your membership registration is successful.\n\nMembership Details:\n- Membership Tier: ${membershipTier}\n- Referral Code: ${referralCode}\n\nShare your referral code with friends and earn FREE services and inclusions as rewards!\n\nThank you for joining the Hilomè family. We're excited to have you!\n\nHilomè Wellness Resort\n0977 334 4200\ncruzskin@gmail.com`,
     });
 
-    console.log("Customer email sent successfully:", customerEmailResponse);
+    console.log("Member welcome email sent successfully:", memberEmailResponse);
 
-    // EMAIL #2: Business Notification
+    // EMAIL #4: Business Notification
     const businessEmailResponse = await resend.emails.send({
-      from: "Hilomè Booking System <noreply@hilomewellness.com>",
+      from: "Hilomè Membership System <noreply@hilomewellness.com>",
       to: ["cruzskin@gmail.com"],
-      subject: `New Booking Received — ${name}`,
+      subject: `New Member Registered — ${name}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -164,17 +152,17 @@ const handler = async (req: Request): Promise<Response> => {
         <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
           <div style="max-width: 500px; margin: 20px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             <!-- Header -->
-            <div style="background: linear-gradient(135deg, #8B7355 0%, #6B5344 100%); padding: 25px; text-align: center;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600;">📅 New Booking Alert</h1>
+            <div style="background: linear-gradient(135deg, ${tierColor} 0%, ${tierColor}CC 100%); padding: 25px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600;">👤 New Membership Alert</h1>
             </div>
             
             <!-- Content -->
             <div style="padding: 25px;">
-              <h3 style="color: #333; margin: 0 0 20px; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 15px;">Customer Details</h3>
+              <h3 style="color: #333; margin: 0 0 20px; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 15px;">Member Details</h3>
               
               <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px; width: 40%;">Name</td>
+                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px; width: 45%;">Name</td>
                   <td style="padding: 10px 0; color: #333; font-size: 14px;">${name}</td>
                 </tr>
                 <tr>
@@ -185,33 +173,18 @@ const handler = async (req: Request): Promise<Response> => {
                   <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px;">Email</td>
                   <td style="padding: 10px 0; color: #333; font-size: 14px;">${email}</td>
                 </tr>
-              </table>
-              
-              <h3 style="color: #333; margin: 25px 0 20px; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 15px;">Booking Details</h3>
-              
-              <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px; width: 40%;">Date</td>
-                  <td style="padding: 10px 0; color: #333; font-size: 14px; font-weight: 600;">${formattedDate}</td>
+                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px;">Membership Tier</td>
+                  <td style="padding: 10px 0; color: ${tierColor}; font-size: 14px; font-weight: 700;">${membershipTier}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px;">Day</td>
-                  <td style="padding: 10px 0; color: #333; font-size: 14px;">${dayOfWeek}</td>
+                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px;">Referral Code Assigned</td>
+                  <td style="padding: 10px 0; color: #333; font-size: 14px; font-family: 'Courier New', monospace; font-weight: 600;">${referralCode}</td>
                 </tr>
+                ${amountPaid ? `
                 <tr>
-                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px;">Time</td>
-                  <td style="padding: 10px 0; color: #333; font-size: 14px; font-weight: 600;">${time}</td>
-                </tr>
-                ${membership ? `
-                <tr>
-                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px;">Membership</td>
-                  <td style="padding: 10px 0; color: #333; font-size: 14px;">${membership}</td>
-                </tr>
-                ` : ''}
-                ${message ? `
-                <tr>
-                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px; vertical-align: top;">Message</td>
-                  <td style="padding: 10px 0; color: #333; font-size: 14px;">${message}</td>
+                  <td style="padding: 10px 0; font-weight: 600; color: #666; font-size: 14px;">Amount Paid</td>
+                  <td style="padding: 10px 0; color: #22C55E; font-size: 14px; font-weight: 600;">₱${amountPaid.toLocaleString()}</td>
                 </tr>
                 ` : ''}
               </table>
@@ -220,21 +193,21 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Footer -->
             <div style="background-color: #f8f8f8; padding: 15px 25px; border-top: 1px solid #eee;">
               <p style="color: #999; margin: 0; font-size: 12px; text-align: center;">
-                📍 Booking received on ${timestamp}
+                📍 Registration received on ${timestamp}
               </p>
             </div>
           </div>
         </body>
         </html>
       `,
-      text: `New Booking Alert\n\nCustomer Details:\n- Name: ${name}\n- Contact: ${contactNumber}\n- Email: ${email}\n\nBooking Details:\n- Date: ${formattedDate}\n- Day: ${dayOfWeek}\n- Time: ${time}${membership ? `\n- Membership: ${membership}` : ''}${message ? `\n- Message: ${message}` : ''}\n\nBooking received on ${timestamp}`,
+      text: `New Membership Alert\n\nMember Details:\n- Name: ${name}\n- Contact: ${contactNumber}\n- Email: ${email}\n- Membership Tier: ${membershipTier}\n- Referral Code: ${referralCode}${amountPaid ? `\n- Amount Paid: ₱${amountPaid.toLocaleString()}` : ''}\n\nRegistration received on ${timestamp}`,
     });
 
     console.log("Business notification sent successfully:", businessEmailResponse);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      customerEmail: customerEmailResponse,
+      memberEmail: memberEmailResponse,
       businessEmail: businessEmailResponse 
     }), {
       status: 200,
@@ -244,7 +217,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: unknown) {
-    console.error("Error in send-booking-confirmation function:", error);
+    console.error("Error in send-membership-confirmation function:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return new Response(
       JSON.stringify({ error: errorMessage }),
