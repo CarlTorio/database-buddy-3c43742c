@@ -456,45 +456,22 @@ const HilomeAdminDashboard = () => {
   const handleConfirmMember = async (id: string) => {
     try {
       const member = pendingMembers.find(m => m.id === id);
-      const expiryDate = new Date();
-      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
 
-      const referralCode = member ? generateReferralCode(member.name) : generateReferralCode('MEM');
-      
-      const { error } = await supabase
-        .from('members')
-        .update({ 
-          status: 'active',
-          membership_start_date: new Date().toISOString(),
-          membership_expiry_date: expiryDate.toISOString(),
-          referral_code: referralCode
-        })
-        .eq('id', id);
+      const { error } = await supabase.functions.invoke('admin-mutations', {
+        body: {
+          action: 'confirm_member',
+          memberId: id,
+        },
+      });
 
       if (error) throw error;
-
-      // If member was referred, increment referrer's count
-      if (member?.referred_by) {
-        const { data: referrer } = await supabase
-          .from('members')
-          .select('id, referral_count')
-          .eq('referral_code', member.referred_by)
-          .maybeSingle();
-
-        if (referrer) {
-          await supabase
-            .from('members')
-            .update({ referral_count: (referrer.referral_count || 0) + 1 })
-            .eq('id', referrer.id);
-        }
-      }
 
       // Note: Patient record is now created/updated automatically by the database trigger
       // when member status changes to 'active'
 
       toast.success(`${member?.name || 'Member'} confirmed successfully!`);
-      fetchPendingMembers();
-      fetchMembers();
+      await fetchPendingMembers();
+      await fetchMembers();
       
       // Navigate to Members tab to show the confirmed member
       setActiveTab('members');
@@ -530,10 +507,13 @@ const HilomeAdminDashboard = () => {
   // Update booking status
   const handleStatusChange = async (bookingId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ status: newStatus })
-        .eq('id', bookingId);
+      const { error } = await supabase.functions.invoke('admin-mutations', {
+        body: {
+          action: 'update_booking_status',
+          bookingId,
+          status: newStatus,
+        },
+      });
 
       if (error) throw error;
 

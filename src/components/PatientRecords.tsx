@@ -251,20 +251,19 @@ const PatientRecords = () => {
     
     setIsSaving(true);
     try {
-      const { data, error } = await supabase
-        .from('patient_records')
-        .update({
-          medical_records: updatedMedicalRecords as unknown as Json,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', editedPatient.id)
-        .select();
+      const { data, error } = await supabase.functions.invoke('admin-mutations', {
+        body: {
+          action: 'append_medical_record',
+          patientId: editedPatient.id,
+          record: newRecord,
+        },
+      });
 
       if (error) {
-        console.error('Supabase error saving medical record:', error);
+        console.error('Function error saving medical record:', error);
         throw error;
       }
-      
+
       console.log('Medical record saved successfully:', data);
 
       const updatedPatient = { ...editedPatient, medical_records: updatedMedicalRecords };
