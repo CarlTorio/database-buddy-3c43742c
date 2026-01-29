@@ -537,10 +537,20 @@ const HilomeAdminDashboard = () => {
 
       if (error) throw error;
 
-      setBookings(prev => 
-        prev.map(b => b.id === bookingId ? { ...b, status: newStatus } : b)
-      );
-      toast.success(`Status updated to ${newStatus}`);
+      // For completed/cancelled/no-show, remove from pending list and open history
+      if (['completed', 'cancelled', 'no-show'].includes(newStatus)) {
+        setBookings(prev => prev.filter(b => b.id !== bookingId));
+        toast.success(`Booking moved to history with status: ${newStatus}`);
+        // Small delay to ensure DB is updated before opening history
+        setTimeout(() => {
+          setShowBookingHistory(true);
+        }, 300);
+      } else {
+        setBookings(prev => 
+          prev.map(b => b.id === bookingId ? { ...b, status: newStatus } : b)
+        );
+        toast.success(`Status updated to ${newStatus}`);
+      }
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Failed to update status');

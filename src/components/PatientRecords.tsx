@@ -234,7 +234,10 @@ const PatientRecords = () => {
   };
 
   const handleAddMedicalRecord = async () => {
-    if (!editedPatient || !newMedicalNote.trim()) return;
+    if (!editedPatient || !newMedicalNote.trim()) {
+      console.log('Cannot add medical record - missing data:', { editedPatient: !!editedPatient, note: newMedicalNote });
+      return;
+    }
 
     const newRecord: MedicalRecord = {
       id: crypto.randomUUID(),
@@ -244,17 +247,25 @@ const PatientRecords = () => {
 
     const updatedMedicalRecords = [...editedPatient.medical_records, newRecord];
     
+    console.log('Saving medical record:', { patientId: editedPatient.id, newRecord, updatedMedicalRecords });
+    
     setIsSaving(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('patient_records')
         .update({
           medical_records: updatedMedicalRecords as unknown as Json,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', editedPatient.id);
+        .eq('id', editedPatient.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error saving medical record:', error);
+        throw error;
+      }
+      
+      console.log('Medical record saved successfully:', data);
 
       const updatedPatient = { ...editedPatient, medical_records: updatedMedicalRecords };
       setEditedPatient(updatedPatient);
