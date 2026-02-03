@@ -15,11 +15,12 @@ const Hero = () => {
     if (window.innerWidth < 768) {
       document.body.style.overflow = 'hidden';
 
-      const stage1Timer = setTimeout(() => {
+      // Wait 2 seconds before starting the fade-in
+      const delayTimer = setTimeout(() => {
         setAnimationStage('white-fading');
         
         const startTime = Date.now();
-        const duration = 1000;
+        const duration = 800; // Fade duration
         
         const animateFadeIn = () => {
           const elapsed = Date.now() - startTime;
@@ -44,10 +45,10 @@ const Hero = () => {
         };
         
         requestAnimationFrame(animateFadeIn);
-      }, 2500);
+      }, 2000); // 2 second delay
 
       return () => {
-        clearTimeout(stage1Timer);
+        clearTimeout(delayTimer);
         document.body.style.overflow = 'auto';
       };
     } else {
