@@ -75,7 +75,7 @@ const Hero = () => {
         <img
           src="/hero-bg.png"
           alt="Holistic wellness treatment"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-[70%_center] md:object-center"
         />
       </motion.div>
 
