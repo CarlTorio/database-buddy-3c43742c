@@ -98,7 +98,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 40 }} 
             whileInView={{ opacity: 1, y: 0 }} 
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 2.3 }}
             style={{ 
               opacity: displayTextOpacity,
               transition: 'opacity 0.1s ease-out'
@@ -116,7 +116,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }} 
             whileInView={{ opacity: 1, y: 0 }} 
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.8, delay: 0.5 }} 
+            transition={{ duration: 0.8, delay: 2.5 }} 
             className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-md mb-5 md:mb-6 leading-relaxed"
             style={{ 
               opacity: displayTextOpacity,
@@ -131,7 +131,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }} 
             whileInView={{ opacity: 1, y: 0 }} 
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.8, delay: 0.7 }} 
+            transition={{ duration: 0.8, delay: 2.7 }}
             className={`flex flex-wrap gap-3 transition-all duration-500 ease-out ${
               displayButtonsVisible 
                 ? 'translate-y-0 opacity-100' 
@@ -154,7 +154,7 @@ const Hero = () => {
           className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20" 
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
-          transition={{ delay: isMobile ? 0 : 1.2 }}
+          transition={{ delay: isMobile ? 0 : 3.2 }}
         >
           <motion.div 
             animate={{ y: [0, 10, 0] }} 
