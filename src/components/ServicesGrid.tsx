@@ -8,16 +8,24 @@ import cuppingImg from "@/assets/service-cupping.png";
 import moxibustionImg from "@/assets/service-moxibustion.png";
 import guashaImg from "@/assets/service-guasha.png";
 import electroAcupunctureImg from "@/assets/service-electro-acupuncture.png";
+import strokeImg from "@/assets/service-stroke.png";
+import sciaticaImg from "@/assets/service-sciatica.png";
+import frozenShoulderImg from "@/assets/service-frozen-shoulder.png";
+import backPainImg from "@/assets/service-back-pain.png";
+import sprainImg from "@/assets/service-sprain.png";
+import scoliosisImg from "@/assets/service-scoliosis.png";
+import boneImg from "@/assets/service-bone.png";
+import nerveImg from "@/assets/service-nerve.png";
 
 const holisticServices = [
-  { title: "Stroke Management", description: "Rehabilitation and recovery support through holistic methods", image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&h=500&fit=crop" },
-  { title: "Sciatica Remedies", description: "Natural pain relief for sciatic nerve conditions", image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=500&fit=crop" },
-  { title: "Frozen Shoulder", description: "Restore mobility and reduce shoulder pain", image: "https://images.unsplash.com/photo-1519824145371-296894a0daa9?w=400&h=500&fit=crop" },
-  { title: "Body/Back Pain", description: "Targeted relief for chronic body and back pain", image: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&h=500&fit=crop" },
-  { title: "Sprain Recovery", description: "Traditional healing methods for sprains and joint injuries", image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=500&fit=crop" },
-  { title: "Scoliosis Management", description: "Holistic approach to spinal alignment and pain relief", image: "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400&h=500&fit=crop" },
-  { title: "Bone Manipulation", description: "Manual adjustment techniques for skeletal alignment", image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=500&fit=crop" },
-  { title: "Nerve Therapy", description: "Specialized treatment for nerve-related conditions", image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&h=500&fit=crop" },
+  { title: "Stroke Management", description: "Rehabilitation and recovery support through holistic methods", image: strokeImg },
+  { title: "Sciatica Remedies", description: "Natural pain relief for sciatic nerve conditions", image: sciaticaImg },
+  { title: "Frozen Shoulder", description: "Restore mobility and reduce shoulder pain", image: frozenShoulderImg },
+  { title: "Body/Back Pain", description: "Targeted relief for chronic body and back pain", image: backPainImg },
+  { title: "Sprain Recovery", description: "Traditional healing methods for sprains and joint injuries", image: sprainImg },
+  { title: "Scoliosis Management", description: "Holistic approach to spinal alignment and pain relief", image: scoliosisImg },
+  { title: "Bone Manipulation", description: "Manual adjustment techniques for skeletal alignment", image: boneImg },
+  { title: "Nerve Therapy", description: "Specialized treatment for nerve-related conditions", image: nerveImg },
   { title: "Filipino Hilot", description: "Traditional Filipino healing massage passed down through generations", image: "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=400&h=500&fit=crop" },
 ];
 
