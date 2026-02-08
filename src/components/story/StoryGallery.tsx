@@ -14,6 +14,7 @@ import gallery8 from "@/assets/story/gallery-8.png";
 import gallery9 from "@/assets/story/gallery-9.png";
 import gallery10 from "@/assets/story/gallery-10.png";
 import gallery11 from "@/assets/story/gallery-11.png";
+import gallery12 from "@/assets/story/gallery-12.png";
 
 const galleryImages = [
   { src: graduationToga, alt: "Dr. Esperanza in graduation toga - Doctor of Humanities" },
@@ -27,6 +28,7 @@ const galleryImages = [
   { src: gallery9, alt: "Dr. Esperanza recognition" },
   { src: gallery10, alt: "Dr. Esperanza with fellow practitioners" },
   { src: gallery11, alt: "Dr. Esperanza healing practice" },
+  { src: gallery12, alt: "Dr. Esperanza at wellness event" },
 ];
 
 const StoryGallery = () => {
