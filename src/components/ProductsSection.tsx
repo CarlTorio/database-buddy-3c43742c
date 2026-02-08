@@ -13,31 +13,37 @@ const products = [
     name: "Cell Power Trio Plus+",
     tagline: "Detoxify. Nourish. Activate.",
     image: productCellPowerTrio,
+    link: "https://1hcibizonline.com/cell-power-trio/",
   },
   {
     name: "CRJ (Cell Rejuvenate Juice)",
     tagline: "Healthy Life Starts from the Guts",
     image: productCrj,
+    link: "https://1hcibizonline.com/crj-cell-rejuvenate-juice/",
   },
   {
     name: "NAB Peptides",
     tagline: "Absorption. Regeneration. Renewal.",
     image: productNabPeptides,
+    link: "https://1hcibizonline.com/nab-peptides/",
   },
   {
     name: "HCI CMD (Cell Mineral Drops)",
     tagline: "Essential Minerals for Cellular Health",
     image: productHciCmd,
+    link: "https://1hcibizonline.com/cell-mineral-drops/",
   },
   {
     name: "CBF (Cell Bio Food)",
     tagline: "Nourish Your Body Naturally",
     image: productCbf,
+    link: "https://1hcibizonline.com/cell-bio-food/",
   },
   {
     name: "CBJ (Cell Bio Juice)",
     tagline: "Natural Wellness in Every Sip",
     image: productCbj,
+    link: "https://1hcibizonline.com/cell-bio-juice/",
   },
 ];
 
@@ -87,9 +93,14 @@ const ProductsSection = () => {
                 <p className="text-muted-foreground text-xs md:text-sm mb-2">
                   {product.tagline}
                 </p>
-                <button className="text-primary text-xs md:text-sm font-medium hover:underline transition-colors">
+                <a 
+                  href={product.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary text-xs md:text-sm font-medium hover:underline transition-colors"
+                >
                   Learn More
-                </button>
+                </a>
               </div>
             </motion.div>
           ))}
