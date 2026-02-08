@@ -87,7 +87,7 @@ const MembershipPage = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/#membership">
+                <Link to="/book-consultation">
                   <Button className="gradient-accent text-primary-foreground rounded-full px-8">
                     Inquire Now
                   </Button>
