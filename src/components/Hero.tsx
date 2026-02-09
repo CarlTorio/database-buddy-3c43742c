@@ -143,7 +143,7 @@ const Hero = () => {
               <Link to="/book-consultation">Book Consultation</Link>
             </Button>
             <Button asChild size="default" variant="outline" className="border-primary text-primary hover:bg-primary/5 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-full">
-              <a href="#membership">Join Now</a>
+              <a href="#membership-inquiry">Join Now</a>
             </Button>
           </motion.div>
         </div>

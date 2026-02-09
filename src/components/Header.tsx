@@ -108,7 +108,16 @@ const Header = () => {
               <Button 
                 variant="outline"
                 className="border-primary text-primary hover:bg-primary/5 rounded-full"
-                onClick={() => navigate("/membership")}
+                onClick={() => {
+                  if (location.pathname === "/") {
+                    document.getElementById("membership-inquiry")?.scrollIntoView({ behavior: "smooth" });
+                  } else {
+                    navigate("/");
+                    setTimeout(() => {
+                      document.getElementById("membership-inquiry")?.scrollIntoView({ behavior: "smooth" });
+                    }, 100);
+                  }
+                }}
               >
                 Join Now
               </Button>
@@ -168,7 +177,14 @@ const Header = () => {
                     className="w-full border-primary text-primary rounded-full"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      navigate("/membership");
+                      if (location.pathname === "/") {
+                        document.getElementById("membership-inquiry")?.scrollIntoView({ behavior: "smooth" });
+                      } else {
+                        navigate("/");
+                        setTimeout(() => {
+                          document.getElementById("membership-inquiry")?.scrollIntoView({ behavior: "smooth" });
+                        }, 100);
+                      }
                     }}
                   >
                     Join Now
