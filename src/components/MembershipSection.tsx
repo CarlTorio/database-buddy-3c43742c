@@ -133,10 +133,11 @@ const MembershipSection = () => {
 
           {/* Inquiry Form */}
           <motion.div
+            id="membership-inquiry"
             initial={{ opacity: 0, x: 40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-card p-6 rounded-xl shadow-soft"
+            className="bg-card p-6 rounded-xl shadow-soft scroll-mt-24"
           >
             <h3 className="font-display text-lg font-semibold text-foreground mb-4">
               Inquire About Membership
