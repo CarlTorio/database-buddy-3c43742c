@@ -31,7 +31,7 @@ const OurStory = () => {
           className="max-w-xl bg-background/70 p-6 md:p-8 rounded-2xl shadow-elevated"
         >
           <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-foreground mb-4">
-            Meet Esperanza
+            Meet Ms. Esperanza
           </h2>
           <div className="space-y-3 text-muted-foreground text-sm md:text-base leading-relaxed">
             <motion.p

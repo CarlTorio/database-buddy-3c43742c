@@ -4,7 +4,7 @@ import { Award, GraduationCap, BadgeCheck, Users, ShieldCheck } from "lucide-rea
 const credentials = [
   {
     icon: GraduationCap,
-    title: "Doctor of Humanities",
+    title: "Doctor of Humanities (Honorary)",
     source: "Watchman Ministry of Academics",
   },
   {
@@ -15,7 +15,7 @@ const credentials = [
   },
   {
     icon: BadgeCheck,
-    title: "Certified Natural Practitioner (CNP)",
+    title: "Naturopath Practitioner (NAND)",
     source: "Professional Certification",
   },
   {
@@ -30,12 +30,22 @@ const credentials = [
   },
   {
     icon: Users,
+    title: "Asian Manual Therapy International Inc. Member",
+    source: "Professional Membership",
+  },
+  {
+    icon: Users,
+    title: "PANMED Member",
+    source: "Professional Membership",
+  },
+  {
+    icon: Users,
     title: "NAB International Member",
     source: "Nutrition Advisory Board",
   },
   {
     icon: BadgeCheck,
-    title: "HCIBiz Authorized Stockist",
+    title: "HCIBiz CMD North Fairview Authorized Dealer",
     source: "Health Code International",
   },
 ];

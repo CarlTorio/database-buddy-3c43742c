@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import CredentialsBadges from "@/components/story/CredentialsBadges";
 import StoryGallery from "@/components/story/StoryGallery";
 import StoryCTA from "@/components/story/StoryCTA";
+import StoryCertificates from "@/components/story/StoryCertificates";
 
 const OurStory = () => {
   const navigate = useNavigate();
@@ -71,7 +72,10 @@ const OurStory = () => {
               Esperanza's Holistic Wellness
             </h1>
             <p className="text-lg md:text-xl text-accent font-display italic">
-              The Story of Dr. Esperanza T. Lopez CNP
+              The Story of Ms. Esperanza T. Lopez NAND
+            </p>
+            <p className="text-sm md:text-base text-muted-foreground mt-2 tracking-wide">
+              HCIBiz CMD North Fairview — Authorized Dealer / Health & Wellness Practitioner
             </p>
           </motion.div>
         </div>
@@ -90,10 +94,10 @@ const OurStory = () => {
               className="mb-16"
             >
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6">
-                In the heart of Novaliches, Quezon City, Dr. Esperanza T. Lopez CNP — lovingly called "Espie" by her patients — discovered her calling: a passion for natural healing that would transform countless lives. What began as a personal journey toward wellness became a mission to share the gift of holistic health with her community.
+                In the heart of Novaliches, Quezon City, Ms. Esperanza T. Lopez NAND — lovingly called "Espie" by her patients — discovered her calling: a passion for natural healing that would transform countless lives. What began as a personal journey toward wellness became a mission to share the gift of holistic health with her community.
               </p>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                Esperanza, whose name means "hope" in Spanish, has always believed that true healing comes from within. Her approach combines time-honored Filipino traditional medicine with modern holistic practices, creating a unique path to wellness that honors both heritage and innovation. Today, she stands as an award-winning practitioner recognized for her Excellence in Holistic Healing.
+                Esperanza, whose name means "hope" in Spanish, has always believed that true healing comes from within. Her approach combines time-honored Filipino traditional medicine with modern holistic practices, creating a unique path to wellness that honors both heritage and innovation. As an HCIBiz CMD North Fairview Authorized Dealer and Health & Wellness Practitioner, she stands as an award-winning practitioner recognized for her Excellence in Holistic Healing.
               </p>
             </motion.div>
 
@@ -116,7 +120,7 @@ const OurStory = () => {
                   Growing up, Esperanza watched her grandmother prepare herbal remedies and perform traditional healing rituals. These early memories planted the seeds of her lifelong dedication to natural wellness. Driven by a desire to help others, she pursued extensive training in holistic healing modalities — from traditional Filipino Hilot massage to Traditional Chinese Medicine techniques including Auriculo Therapy, Guasha, Moxibustion, Cupping, and Acupuncture.
                 </p>
                 <p>
-                  Her dedication led her to complete certifications from Asian Manual International Inc. as an Auriculo Chiro Manual Therapy Practitioner, and she earned the distinguished title of Certified Natural Practitioner (CNP). Her pursuit of knowledge culminated in receiving her Doctor of Humanities degree from the Watchman Ministry of Academics — a testament to her commitment to the healing arts and service to humanity.
+                  Her dedication led her to complete certifications from Asian Manual International Inc. as an Auriculo Chiro Manual Therapy Practitioner, and she earned the distinguished title of Naturopath Practitioner (NAND). She is a proud member of Asian Manual Therapy International Inc. and PANMED, and received her Doctor of Humanities (Honorary) degree from the Watchman Ministry of Academics — a testament to her commitment to the healing arts and service to humanity.
                 </p>
               </div>
             </motion.div>
@@ -137,7 +141,7 @@ const OurStory = () => {
               </div>
               <div className="pl-0 md:pl-16 space-y-4 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  Dr. Esperanza is known for her intuitive touch and compassionate care. Her clients often describe sessions with her as transformative experiences that address not just physical ailments, but emotional and spiritual imbalances as well. She believes that every person carries the power to heal themselves — she simply helps guide them on that journey.
+                  Ms. Esperanza is known for her intuitive touch and compassionate care. Her clients often describe sessions with her as transformative experiences that address not just physical ailments, but emotional and spiritual imbalances as well. She believes that every person carries the power to heal themselves — she simply helps guide them on that journey.
                 </p>
                 <p>
                   Her expertise spans a wide range of conditions: Stroke Management, Sciatica Remedies, Frozen Shoulder, Body Pain and Back Pain, Sprain Recovery (Tapilok), Scoliosis, Bone Manipulation, and Nerve Therapy. Through Filipino Hilot and Traditional Chinese Medicine techniques, she has helped countless patients find relief and restoration.
@@ -161,7 +165,7 @@ const OurStory = () => {
               </div>
               <div className="pl-0 md:pl-16 space-y-4 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  Dr. Esperanza's dedication to holistic healing has not gone unnoticed. On November 22, 2025, she was honored with the prestigious Excellence in Holistic Healing Award by The Great Hashem Corporation at the Auriculo Asian Manual Therapy International Awarding Ceremony held at Eli Josh Resort & Event Place in Silang, Cavite.
+                  Ms. Esperanza's dedication to holistic healing has not gone unnoticed. On November 22, 2025, she was honored with the prestigious Excellence in Holistic Healing Award by The Great Hashem Corporation at the Auriculo Asian Manual Therapy International Awarding Ceremony held at Eli Josh Resort & Event Place in Silang, Cavite.
                 </p>
                 <motion.blockquote
                   initial={{ opacity: 0, x: -20 }}
@@ -199,10 +203,10 @@ const OurStory = () => {
               </div>
               <div className="pl-0 md:pl-16 space-y-4 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  "Healing is not just about treating symptoms," Dr. Esperanza often says. "It's about restoring harmony between body, mind, and spirit." Her practice integrates massage therapy, Traditional Chinese Medicine, herbal treatments, and health supplements to create personalized wellness plans for each client. She treats every individual as a whole person, not just a collection of symptoms.
+                  "Healing is not just about treating symptoms," Ms. Esperanza often says. "It's about restoring harmony between body, mind, and spirit." Her practice integrates massage therapy, Traditional Chinese Medicine, herbal treatments, and health supplements to create personalized wellness plans for each client. She treats every individual as a whole person, not just a collection of symptoms.
                 </p>
                 <p>
-                  As a trusted HCIBiz stockist and NAB International member, she also provides premium health food supplements to complement her therapeutic services — ensuring her patients have access to quality products for their continued wellness journey.
+                  As the HCIBiz CMD North Fairview Authorized Dealer and NAB International member, as well as a member of Asian Manual Therapy International Inc. and PANMED, she also provides premium health food supplements to complement her therapeutic services — ensuring her patients have access to quality products for their continued wellness journey.
                 </p>
               </div>
             </motion.div>
@@ -223,7 +227,7 @@ const OurStory = () => {
               </div>
               <div className="pl-0 md:pl-16 space-y-4 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  From her clinic at #60 Forest Hill Drive, Forest Hill Subdivision, Novaliches, Quezon City, Dr. Esperanza has been a trusted healer for her community. Word of her gift has spread through generations of families who have experienced the benefits of her treatments. From chronic pain relief to stroke recovery, from post-surgery rehabilitation to general wellness maintenance, her clients return again and again, often bringing their loved ones along.
+                  From her clinic at #60 Forest Hill Drive, Forest Hill Subdivision, Novaliches, Quezon City, Ms. Esperanza has been a trusted healer for her community. Word of her gift has spread through generations of families who have experienced the benefits of her treatments. From chronic pain relief to stroke recovery, from post-surgery rehabilitation to general wellness maintenance, her clients return again and again, often bringing their loved ones along.
                 </p>
                 <p>
                   Her clinic operates Monday to Saturday, 8:00 AM to 5:00 PM, by appointment only — ensuring each patient receives her full attention and personalized care.
@@ -258,6 +262,9 @@ const OurStory = () => {
 
       {/* Credentials Section */}
       <CredentialsBadges />
+
+      {/* Certificates Section */}
+      <StoryCertificates />
 
       {/* Gallery Section */}
       <StoryGallery />

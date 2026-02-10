@@ -2,42 +2,21 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Import gallery images
-import graduationToga from "@/assets/story/graduation-toga.png";
-import graduationDiploma from "@/assets/story/graduation-diploma.png";
-import spineModel from "@/assets/story/spine-model.png";
-import awardPlaque from "@/assets/story/award-plaque.png";
-import certificateAppreciation from "@/assets/story/certificate-appreciation.png";
-import groupPhoto from "@/assets/story/group-photo.png";
-import gallery7 from "@/assets/story/gallery-7.png";
-import gallery8 from "@/assets/story/gallery-8.png";
-import gallery9 from "@/assets/story/gallery-9.png";
-import gallery10 from "@/assets/story/gallery-10.png";
-import gallery11 from "@/assets/story/gallery-11.png";
-import gallery12 from "@/assets/story/gallery-12.png";
-
-const galleryImages = [
-  { src: graduationToga, alt: "Ms. Esperanza in graduation toga - Doctor of Humanities" },
-  { src: graduationDiploma, alt: "Ms. Esperanza holding diploma at graduation ceremony" },
-  { src: spineModel, alt: "Ms. Esperanza with spine model and ear acupuncture model" },
-  { src: awardPlaque, alt: "Excellence in Holistic Healing Award plaque" },
-  { src: certificateAppreciation, alt: "Certificate of Appreciation" },
-  { src: groupPhoto, alt: "Group photo from Auriculo Asian Manual Therapy event" },
-  { src: gallery7, alt: "Ms. Esperanza award ceremony" },
-  { src: gallery8, alt: "Ms. Esperanza at wellness event" },
-  { src: gallery9, alt: "Ms. Esperanza recognition" },
-  { src: gallery10, alt: "Ms. Esperanza with fellow practitioners" },
-  { src: gallery11, alt: "Ms. Esperanza healing practice" },
-  { src: gallery12, alt: "Ms. Esperanza at wellness event" },
-  { src: "https://i.imgur.com/mgDwCuj.png", alt: "Ms. Esperanza gallery photo" },
-  { src: "https://i.imgur.com/Oec76kx.png", alt: "Ms. Esperanza gallery photo" },
-  { src: "https://i.imgur.com/RJB8snV.png", alt: "Ms. Esperanza gallery photo" },
-  { src: "https://i.imgur.com/TxOAClb.png", alt: "Ms. Esperanza gallery photo" },
-  { src: "https://i.imgur.com/G28y5H4.png", alt: "Ms. Esperanza gallery photo" },
-  { src: "https://i.imgur.com/QaC2142.png", alt: "Ms. Esperanza gallery photo" },
+const certificateImages = [
+  { src: "https://i.imgur.com/PR6GHF6.png", alt: "Certificate 1" },
+  { src: "https://i.imgur.com/GIxXNyR.png", alt: "Certificate 2" },
+  { src: "https://i.imgur.com/MoGP6tR.png", alt: "Certificate 3" },
+  { src: "https://i.imgur.com/BaKYeQA.png", alt: "Certificate 4" },
+  { src: "https://i.imgur.com/OsC9CyC.png", alt: "Certificate 5" },
+  { src: "https://i.imgur.com/gjDt2ut.png", alt: "Certificate 6" },
+  { src: "https://i.imgur.com/km7YzJV.png", alt: "Certificate 7" },
+  { src: "https://i.imgur.com/PzEtgkk.png", alt: "Certificate 8" },
+  { src: "https://i.imgur.com/0VXuglQ.png", alt: "Certificate 9" },
+  { src: "https://i.imgur.com/lTOOWIh.png", alt: "Certificate 10" },
+  { src: "https://i.imgur.com/3v3yU7n.png", alt: "Certificate 11" },
 ];
 
-const StoryGallery = () => {
+const StoryCertificates = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const openLightbox = (index: number) => setSelectedIndex(index);
@@ -45,13 +24,13 @@ const StoryGallery = () => {
 
   const goToPrevious = () => {
     if (selectedIndex !== null) {
-      setSelectedIndex(selectedIndex === 0 ? galleryImages.length - 1 : selectedIndex - 1);
+      setSelectedIndex(selectedIndex === 0 ? certificateImages.length - 1 : selectedIndex - 1);
     }
   };
 
   const goToNext = () => {
     if (selectedIndex !== null) {
-      setSelectedIndex(selectedIndex === galleryImages.length - 1 ? 0 : selectedIndex + 1);
+      setSelectedIndex(selectedIndex === certificateImages.length - 1 ? 0 : selectedIndex + 1);
     }
   };
 
@@ -62,7 +41,7 @@ const StoryGallery = () => {
   };
 
   return (
-    <section className="py-12 md:py-20 bg-cream/30">
+    <section className="py-12 md:py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -75,33 +54,33 @@ const StoryGallery = () => {
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="w-12 h-[2px] gradient-accent" />
               <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground">
-                Gallery
+                Certificates
               </h2>
               <div className="w-12 h-[2px] gradient-accent" />
             </div>
             <p className="text-muted-foreground">
-              Moments from Ms. Esperanza's journey in holistic healing
+              Professional certifications and recognitions of Ms. Esperanza T. Lopez NAND
             </p>
           </motion.div>
 
-          {/* Gallery Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            {galleryImages.map((image, index) => (
+            {certificateImages.map((image, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group"
+                className="relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer group border border-border"
                 onClick={() => openLightbox(index)}
               >
                 <img
                   src={image.src}
                   alt={image.alt}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
               </motion.div>
             ))}
           </div>
@@ -120,7 +99,6 @@ const StoryGallery = () => {
             onKeyDown={handleKeyDown}
             tabIndex={0}
           >
-            {/* Close button */}
             <button
               className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
               onClick={closeLightbox}
@@ -128,44 +106,34 @@ const StoryGallery = () => {
               <X className="w-6 h-6 text-white" />
             </button>
 
-            {/* Previous button */}
             <button
               className="absolute left-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                goToPrevious();
-              }}
+              onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
             >
               <ChevronLeft className="w-8 h-8 text-white" />
             </button>
 
-            {/* Image */}
             <motion.img
               key={selectedIndex}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
-              src={galleryImages[selectedIndex].src}
-              alt={galleryImages[selectedIndex].alt}
+              src={certificateImages[selectedIndex].src}
+              alt={certificateImages[selectedIndex].alt}
               className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
 
-            {/* Next button */}
             <button
               className="absolute right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                goToNext();
-              }}
+              onClick={(e) => { e.stopPropagation(); goToNext(); }}
             >
               <ChevronRight className="w-8 h-8 text-white" />
             </button>
 
-            {/* Image counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm">
-              {selectedIndex + 1} / {galleryImages.length}
+              {selectedIndex + 1} / {certificateImages.length}
             </div>
           </motion.div>
         )}
@@ -174,4 +142,4 @@ const StoryGallery = () => {
   );
 };
 
-export default StoryGallery;
+export default StoryCertificates;
