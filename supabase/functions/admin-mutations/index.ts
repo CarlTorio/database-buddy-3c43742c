@@ -21,6 +21,9 @@ type AdminMutationsRequest =
       action: "append_medical_record";
       patientId: string;
       record: { id: string; date: string; notes: string };
+    }
+  | {
+      action: "clear_all_data";
     };
 
 const generateReferralCode = (name: string): string => {
@@ -173,6 +176,19 @@ serve(async (req: Request): Promise<Response> => {
       if (updateError) throw updateError;
 
       return new Response(JSON.stringify({ patient: updatedPatient }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    if (body.action === "clear_all_data") {
+      const { error: aptError } = await admin.from("appointments").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      if (aptError) throw aptError;
+
+      const { error: inqError } = await admin.from("membership_inquiries").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      if (inqError) throw inqError;
+
+      return new Response(JSON.stringify({ success: true, message: "All data cleared" }), {
         status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });

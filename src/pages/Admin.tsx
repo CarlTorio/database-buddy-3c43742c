@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Clock, CheckCircle, Search, Eye, ArrowLeft, LogOut, Settings, RefreshCw } from 'lucide-react';
+import { Calendar, Users, Clock, CheckCircle, Search, Eye, ArrowLeft, LogOut, Settings, RefreshCw, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -179,6 +179,22 @@ const HCIAdminDashboard = () => {
     return <Badge className={styles[status] || 'bg-gray-100 text-gray-800'}>{status}</Badge>;
   };
 
+  const handleClearAllData = async () => {
+    if (!window.confirm('Are you sure you want to delete ALL appointments and membership inquiries? This cannot be undone.')) return;
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-mutations', {
+        body: { action: 'clear_all_data' },
+      });
+      if (error) throw error;
+      toast.success('All data has been cleared');
+      fetchAppointments();
+      fetchInquiries();
+    } catch (error) {
+      console.error('Error clearing data:', error);
+      toast.error('Failed to clear data');
+    }
+  };
+
   const handleLogout = () => {
     clearAdminAuth();
     navigate('/');
@@ -235,6 +251,12 @@ const HCIAdminDashboard = () => {
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
+              <div className="flex justify-end">
+                <Button variant="destructive" size="sm" onClick={handleClearAllData} className="gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Clear All Data
+                </Button>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card>
                   <CardContent className="pt-6">
