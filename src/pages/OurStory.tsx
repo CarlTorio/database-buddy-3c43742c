@@ -72,7 +72,7 @@ const OurStory = () => {
               Esperanza's Holistic Wellness
             </h1>
             <p className="text-lg md:text-xl text-accent font-display italic">
-              The Story of Ms. Esperanza T. Lopez NAND
+              The Story of Ms. Esperanza T. Lopez CNP
             </p>
             <p className="text-sm md:text-base text-muted-foreground mt-2 tracking-wide">
               HCIBiz CMD North Fairview — Authorized Dealer / Health & Wellness Practitioner
@@ -94,7 +94,7 @@ const OurStory = () => {
               className="mb-16"
             >
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6">
-                In the heart of Novaliches, Quezon City, Ms. Esperanza T. Lopez NAND — lovingly called "Espie" by her patients — discovered her calling: a passion for natural healing that would transform countless lives. What began as a personal journey toward wellness became a mission to share the gift of holistic health with her community.
+                In the heart of Novaliches, Quezon City, Ms. Esperanza T. Lopez CNP — lovingly called "Espie" by her patients — discovered her calling: a passion for natural healing that would transform countless lives. What began as a personal journey toward wellness became a mission to share the gift of holistic health with her community.
               </p>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                 Esperanza, whose name means "hope" in Spanish, has always believed that true healing comes from within. Her approach combines time-honored Filipino traditional medicine with modern holistic practices, creating a unique path to wellness that honors both heritage and innovation. As an HCIBiz CMD North Fairview Authorized Dealer and Health & Wellness Practitioner, she stands as an award-winning practitioner recognized for her Excellence in Holistic Healing.
@@ -120,7 +120,7 @@ const OurStory = () => {
                   Growing up, Esperanza watched her grandmother prepare herbal remedies and perform traditional healing rituals. These early memories planted the seeds of her lifelong dedication to natural wellness. Driven by a desire to help others, she pursued extensive training in holistic healing modalities — from traditional Filipino Hilot massage to Traditional Chinese Medicine techniques including Auriculo Therapy, Guasha, Moxibustion, Cupping, and Acupuncture.
                 </p>
                 <p>
-                  Her dedication led her to complete certifications from Asian Manual International Inc. as an Auriculo Chiro Manual Therapy Practitioner, and she earned the distinguished title of Naturopath Practitioner (NAND). She is a proud member of Asian Manual Therapy International Inc. and PANMED, and received her Doctor of Humanities (Honorary) degree from the Watchman Ministry of Academics — a testament to her commitment to the healing arts and service to humanity.
+                  Her dedication led her to complete certifications from Asian Manual International Inc. as an Auriculo Chiro Manual Therapy Practitioner, and she earned the distinguished title of Naturopath Practitioner (CNP). She is a proud member of Asian Manual Therapy International Inc. and PANMED, and received her Doctor of Humanities (Honorary) degree from the Watchman Ministry of Academics — a testament to her commitment to the healing arts and service to humanity.
                 </p>
               </div>
             </motion.div>
